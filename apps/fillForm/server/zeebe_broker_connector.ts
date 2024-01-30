@@ -19,6 +19,7 @@ import {PhDInputVariables} from "/imports/model/tasksTypes";
 import {auditLogConsoleOut} from "/imports/lib/logging";
 import {PhDCustomHeaderShape} from "phd-assess-meta/types/fillForm/headers";
 import {NotificationLog, NotificationStartMessage} from "phd-assess-meta/types/notification";
+import {updateTaskWithASimulatedReminder} from "/server/methods/Reminder";
 
 const debug = debug_('phd-assess:zeebe-connector')
 const auditLog = auditLogConsoleOut.extend('server/zeebe_broker_connector')
@@ -30,7 +31,7 @@ interface OutputVariables {
 }
 
 // redeclare what is a job in the PhD context
-interface PhDZeebeJob<WorkerInputVariables = PhDInputVariables, CustomHeaderShape = PhDCustomHeaderShape, WorkerOutputVariables = IOutputVariables> extends Job<WorkerInputVariables, CustomHeaderShape>, JobCompletionInterface<WorkerOutputVariables> {
+export interface PhDZeebeJob<WorkerInputVariables = PhDInputVariables, CustomHeaderShape = PhDCustomHeaderShape, WorkerOutputVariables = IOutputVariables> extends Job<WorkerInputVariables, CustomHeaderShape>, JobCompletionInterface<WorkerOutputVariables> {
 }
 
 // list which variables are not encrypted.
@@ -310,7 +311,6 @@ export default {
 
       debug(`Job ${job.key} is eligible for a notification receipt. Sending the receipt...`)
 
-
       // as the To, Cc or Bcc can come as string, a string of array of string (!, yep that's something like that : "[email1, email2]"), and
       // some are empty, let's have a function that process them correctly. They are all field specifier, not direct values
       const parseCustomHeadersNotify = (notifyVar: string | undefined) => {
@@ -355,6 +355,8 @@ export default {
         return
       }
 
+      const currentElementId = job.elementId
+
       zBClient!.publishMessage({
         // to have one idempotent message per fillForm activity task, sign it with the current step
         messageId: `${ job.elementId }-${ job.variables.uuid }`,
@@ -366,11 +368,29 @@ export default {
           bcc: notifyBcc,
           subject: notifySubject,
           message: notifyMessage,
-          fromElementId: encrypt(job.elementId),
+          fromElementId: encrypt(currentElementId),
           pdfType: job.customHeaders.pdfType ? encrypt(job.customHeaders.pdfType) : undefined,
           pdfName: job.customHeaders.pdfName ? encrypt(job.customHeaders.pdfName) : undefined,
         } as NotificationStartMessage
       }).then( () => { debug(`Notification receipt sent for Job ${job.key}.`) } )
+
+      // ok, notification call has been sent. As we don't want to wait for
+      // a task refresh to get the real value
+      // of when the message sent date, we update the
+      // local data only (leave Zeebe fill the variables.notificationLogs by itself)
+      await updateTaskWithASimulatedReminder(
+        job,
+        Array.isArray(notifyTo) ?
+          notifyTo.map( to => decrypt(to)) :
+          [decrypt(notifyTo)],
+        Array.isArray(notifyCc) ?
+        notifyCc.map( cc => decrypt(cc)) :
+        notifyCc ? [decrypt(notifyCc)] : [],
+        Array.isArray(notifyBcc) ?
+        notifyBcc.map( bcc => decrypt(bcc)) :
+        notifyBcc ? [decrypt(notifyBcc)] : [],
+        false
+      )
     }
   }
 }

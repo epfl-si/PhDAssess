@@ -1,21 +1,24 @@
 import {Meteor} from "meteor/meteor";
+import _ from "lodash";
+
 import {DoctoralSchools} from "/imports/api/doctoralSchools/schema"
 import {ImportScipersList} from "/imports/api/importScipers/schema"
-import {
-  getUserPermittedTaskDetailed
-} from "/imports/policy/tasks";
+
+import {getUserPermittedTaskDetailed} from "/imports/policy/tasks";
 import {getUserPermittedTasksForDashboard} from "/imports/policy/dashboard/tasks";
 import {getUserPermittedTasksForList} from "/imports/policy/tasksList/tasks";
 import {canEditAtLeastOneDoctoralSchool, canEditDoctoralSchool} from "/imports/policy/doctoralSchools";
 import {canImportScipersFromISA} from "/imports/policy/importScipers";
-import {Task, Tasks, isObsolete} from "/imports/model/tasks";
+import {getUserPermittedTaskReminder} from "/imports/policy/reminders";
+
 import {refreshAlreadyStartedImportScipersList} from "/imports/api/importScipers/helpers";
-import _ from "lodash";
+
+import {Task, Tasks, isObsolete} from "/imports/model/tasks";
 
 
 Meteor.publish('taskDetailed', function (args: [string]) {
   if (this.userId) {
-    const user = Meteor.users.findOne({ _id: this.userId }) ?? null
+    const user: Meteor.User | null = Meteor.users.findOne({ _id: this.userId }) ?? null
     return getUserPermittedTaskDetailed(user, args[0])
   } else {
     this.ready()
@@ -103,6 +106,15 @@ Meteor.publish('tasksDashboard', function () {
   this.ready()
 
   if (handle) this.onStop(() => handle.stop());
+})
+
+Meteor.publish('taskReminder', function (args: [string]) {
+  if (this.userId) {
+    const user = Meteor.users.findOne({ _id: this.userId }) ?? null
+    return getUserPermittedTaskReminder(user, args[0])
+  } else {
+    this.ready()
+  }
 })
 
 Meteor.publish('doctoralSchools', function() {
