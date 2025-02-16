@@ -1,4 +1,6 @@
-FROM node:alpine
+ARG BASE_IMAGE=node:alpine
+
+FROM $BASE_IMAGE
 
 WORKDIR /app
 COPY package.json yarn.lock ./
