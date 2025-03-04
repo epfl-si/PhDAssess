@@ -20,11 +20,9 @@ hot-module-replacement@0.5.3  # Update client in development without reloading t
 static-html@1.3.2             # Define static page content in .html files
 react-meteor-data       # React higher-order component for reactively tracking Meteor data
 tracker@1.3.3
-epfl:accounts-tequila
-epfl:loginfirst
 aldeed:collection2
 dev-error-overlay@0.1.2
-service-configuration@1.3.4
+service-configuration
 mdg:validated-method
 aldeed:schema-index
 meteortesting:mocha
@@ -32,3 +30,5 @@ xolvio:cleaner
 adriancbo:chalk
 dburles:factory
 johanbrook:publication-collector
+epfl-si:entra-oauth
+epfl-si:accounts-entra
