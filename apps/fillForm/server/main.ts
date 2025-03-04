@@ -11,6 +11,8 @@ import './methods'
 import './publish'
 import '/imports/policy'
 
+import {setEntraAuthConfig} from "/server/entraAuth";
+
 import ZeebeClient from './zeebe/connector'
 import {validateEnv} from "/server/validateEnv";
 
@@ -31,19 +33,7 @@ Meteor.startup(async () => {
 
   ZeebeClient.start()
 
-  Tequila.start({
-    getUserId: (tequila: any) => {
-      return tequila.uniqueid;
-    },
-    service: 'PhD Annual Report',
-    allows: 'categorie=epfl-guests',
-    request: ['uniqueid', 'username', 'name', 'firstname', 'displayname', 'personaltitle', 'email', 'group'],
-    fakeLocalServer: Meteor.settings.fake_tequila,
-    bypass: Tequila.defaultOptions.bypass.concat("/metrics"),
-    tequila_fetchattributes_options: {
-      allowedrequesthosts: process.env.TEQUILA_ALLOWED_REQUEST_HOSTS,
-    }
-  })
+  setEntraAuthConfig()
 
   PrometheusSource.start()
 

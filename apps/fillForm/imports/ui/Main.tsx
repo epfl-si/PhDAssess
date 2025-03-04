@@ -8,6 +8,7 @@ import {PhDHeader} from "/imports/ui/components/PhDHeader";
 import {PhDBreadcrumb} from "/imports/ui/components/Breadcrumb";
 import {AsideMenu} from "/imports/ui/components/AsideMenu";
 import {ConnectionStatusFooter} from "/imports/ui/components/ConnectionStatus";
+import {useAccountContext} from "/imports/ui/contexts/Account";
 
 /**
  * The base UI for all pages, where other pages are rendered into
@@ -15,7 +16,34 @@ import {ConnectionStatusFooter} from "/imports/ui/components/ConnectionStatus";
 export default function Main() {
   const mainPanelBackgroundColor: CSSProperties = Meteor.settings.public.isTest && !Meteor.settings.public.ignoreTestBackgroundColor ? {backgroundColor: 'Cornsilk'} : {}
 
+  const account = useAccountContext()
   const error:any = useRouteError();
+
+  if (!account?.loginServiceConfigured) return <div>Please wait with loading auth configuration</div>
+
+  if (!account?.userId) {
+    return <div>
+      <a
+        href={ '' }
+        onClick={
+          () => {
+            Meteor.entraSignIn(//loginWithEntra(
+              options = {},
+              callback = (error: any) => {
+                if (error) {
+                  alert(`Login failed: ${ JSON.stringify(error) }`);
+                } else {
+                  alert(`Successful login !`);
+                }
+              },
+            );
+          }
+        }
+      >Login Entra</a>
+    </div>
+  } else {
+    <a href={ '' } onClick={ () => Meteor.logout() }>Logout</a>
+  }
 
   return (
     <>
