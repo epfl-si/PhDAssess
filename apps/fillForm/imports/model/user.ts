@@ -27,7 +27,6 @@ import { Mongo } from 'meteor/mongo'
 import Cursor = Mongo.Cursor;
 import * as MongoNpmModule from 'mongodb';
 import { LocalCollection } from 'meteor/minimongo'
-import SimpleSchema from 'simpl-schema'
 
 import debug_ from 'debug'
 const debug = debug_('phd-assess:model:user')
@@ -94,35 +93,12 @@ export class User {
       return userId == null ? null : User.byId(userId)
     }
 
-    static Schema = new SimpleSchema({
-        // Let Meteor do its thing e.g. for session tokens
-        // Taken from https://github.com/aldeed/meteor-collection2#attach-a-schema-to-meteorusers
-        services: {
-            type: Object,
-            optional: true,
-            blackbox: true
-        },
-
-        // `profile` is a feature of Meteor.User; it is "self-service" in
-        // the sense that the field is autopublished, and writes to one's
-        // own profile are accepted (provided they match the `deny` rules,
-        // i.e. in our case, the schema). See
-        // https://docs.meteor.com/api/accounts.html#Meteor-user
-        profile: <any>Object,   // Just `Object,` makes TypeScript cry for no good reason :(
-        'profile.language': {
-            type: String,
-            allowedValues: ["en", "fr"]
-        }
-    })
-
     public static transform = new Transform(MeteorUsers)
 
     static cast (userDetails : any) : User {
         return _.extend(new User(), userDetails)
     }
 }
-
-MeteorUsers.attachSchema(User.Schema)
 
 const MeteorUsersCollectionName = 'users'
 const UsersDataPubName = 'users.data'
