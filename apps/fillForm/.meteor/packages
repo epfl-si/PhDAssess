@@ -30,5 +30,5 @@ xolvio:cleaner
 adriancbo:chalk
 dburles:factory
 johanbrook:publication-collector
-epfl-si:entra-oauth
-epfl-si:accounts-entra
+epfl:entra-oauth
+epfl:accounts-entra
