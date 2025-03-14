@@ -1,5 +1,5 @@
 import {Meteor} from "meteor/meteor";
-import React, {CSSProperties} from "react";
+import React, {CSSProperties, useEffect} from "react";
 import {Outlet, useRouteError} from "react-router";
 import {FooterLight} from "epfl-elements-react"
 
@@ -10,6 +10,17 @@ import {AsideMenu} from "/imports/ui/components/AsideMenu";
 import {ConnectionStatusFooter} from "/imports/ui/components/ConnectionStatus";
 import {useAccountContext} from "/imports/ui/contexts/Account";
 
+
+/**
+ * This component oblige user to be connected to continue
+ */
+const AutoLoginComponent = () => {
+  useEffect(() => {
+    Meteor.entraSignIn();
+  });
+  return <></>
+}
+
 /**
  * The base UI for all pages, where other pages are rendered into
  */
@@ -19,34 +30,12 @@ export default function Main() {
   const account = useAccountContext()
   const error:any = useRouteError();
 
-  if (!account?.loginServiceConfigured) return <div>Please wait with loading auth configuration</div>
+  if (!account?.loginServiceConfigured) return <div><Loader/></div>
 
   if (!account?.userId) {
-    return <div>
-      <a
-        href={ '' }
-        onClick={
-          () => {
-            Meteor.entraSignIn(//loginWithEntra(
-              options = {},
-              callback = (error: any) => {
-                if (error) {
-                  alert(`Login failed: ${ JSON.stringify(error) }`);
-                } else {
-                  alert(`Successful login !`);
-                }
-              },
-            );
-          }
-        }
-      >Login Entra</a>
-    </div>
+    return <AutoLoginComponent/>
   } else {
-    <a href={ '' } onClick={ () => Meteor.logout() }>Logout</a>
-  }
-
-  return (
-    <>
+    return <>
       <ToasterConfig/>
       <PhDHeader/>
       <PhDBreadcrumb/>
@@ -72,5 +61,5 @@ export default function Main() {
       <ConnectionStatusFooter/>
       <FooterLight/>
     </>
-  )
+  }
 }

@@ -2,8 +2,6 @@ import {Meteor} from 'meteor/meteor'
 import {findUp} from 'find-up-simple'
 import { PrometheusSource } from '/server/prometheus'
 
-import Tequila from 'meteor/epfl:accounts-tequila'
-
 import packageJson from '/package.json'
 import './zeebe'
 import './fixtures/doctoralSchools'
@@ -24,6 +22,7 @@ Meteor.startup(async () => {
 
   console.log(`Starting fillForm version ${ packageJson.version }`)
 
+
   // add custom methods for the devs
   if (Meteor.isDevelopment) {
     import('./methods/Fixtures');
@@ -36,5 +35,4 @@ Meteor.startup(async () => {
   setEntraAuthConfig()
 
   PrometheusSource.start()
-
 })

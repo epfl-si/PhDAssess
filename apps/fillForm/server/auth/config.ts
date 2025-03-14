@@ -1,4 +1,4 @@
-import { ServiceConfiguration } from "meteor/service-configuration";
+import {ServiceConfiguration} from "meteor/service-configuration";
 
 
 export const setEntraAuthConfig = () => {
@@ -23,19 +23,10 @@ export const setEntraAuthConfig = () => {
     { service: "entra" },
     {
       $set: {
-        getTokenBaseURL: "https://login.microsoftonline.com",
-        getTokenAfterTenantURL: "oauth2/v2.0/token",
-
-        refreshTokenBaseURL: "https://login.microsoftonline.com",
-        refreshTokenAfterTenantURL: "oauth2/v2.0/token",
-
-        loginBaseURL: "https://login.microsoftonline.com",
-        loginAfterTenantURL: "oauth2/v2.0/authorize",
-
         clientId: clientId,
         secret: secret,
         tenantId: tenantId,
-        loginStyle: 'popup', //'redirect',
+        loginStyle: 'redirect',
       },
     }
   );

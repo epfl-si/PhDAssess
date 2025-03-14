@@ -1,3 +1,4 @@
+import {Meteor} from "meteor/meteor";
 import React, { useState, useRef } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser, faUserGear } from '@fortawesome/free-solid-svg-icons'
@@ -42,9 +43,10 @@ export const UserAuthInfo = () => {
     <Popper relativeTo={buttonRef.current} options={popperOptions} visible={visible}
             onClickElsewhere={() => setVisibility(false)}>
     <div className="dropdown-menu-popper mt-3">
-      <div className={'mx-3 my-3 text-center'}>
+      <div className={'mx-3 my-3'}>
         <div id={'user-info'}>
-          <span id={'user-info-displayname'}>{ account.user.tequila?.displayname }</span>
+          <div id={'user-info-displayname'}>{ account.user.services?.entra?.displayName }</div>
+          <div id={'user-info-mail'}>{ account.user.services?.entra?.mail }</div>
           {
             ( account.user.isAdmin || account.user.isUberProgramAssistant ) &&
               <div id={ 'user-info-status' } className={ 'small' }>
@@ -59,6 +61,12 @@ export const UserAuthInfo = () => {
           { packageJson.version }
         </div>
         }
+        <a href={ '' } onClick={
+          (e) => {
+            e.preventDefault();
+            Meteor.logout()
+          }
+        }>Logout</a>
       </div>
     </div>
     </Popper>
