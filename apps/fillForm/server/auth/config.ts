@@ -27,6 +27,7 @@ export const setEntraAuthConfig = () => {
         secret: secret,
         tenantId: tenantId,
         loginStyle: 'redirect',
+        // fields: []  // if you want to get specific fields.
       },
     }
   );
