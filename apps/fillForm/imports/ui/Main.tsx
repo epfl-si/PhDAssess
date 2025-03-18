@@ -30,10 +30,10 @@ export default function Main() {
   const account = useAccountContext()
   const error:any = useRouteError();
 
-  if (!account?.loginServiceConfigured) return <div><Loader/></div>
+  if (!account?.loginServiceConfigured) return <div><Loader message={'Signing in...'}/></div>
 
   if (!account?.userId) {
-    return <AutoLoginComponent/>
+    return <div><Loader message={'Signing in...'}/><AutoLoginComponent/></div>
   } else {
     return <>
       <ToasterConfig/>
