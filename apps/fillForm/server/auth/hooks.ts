@@ -20,7 +20,11 @@ Accounts.onExternalLogin((options:any, user: any) => {
   );
 });
 
+/**
+ * Use sciper as Mongo _id
+ */
 Accounts.onCreateUser((options, user) => {
   debug(`onCreateUser called: ${JSON.stringify(options)}, ${JSON.stringify(user)}`);
+  user._id = user.services.entra.employeeId;
   return user;
 });
