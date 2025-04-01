@@ -4,6 +4,7 @@ import { PrometheusSource } from '/server/prometheus'
 
 import Tequila from 'meteor/epfl:accounts-tequila'
 
+import packageJson from '/package.json'
 import './zeebe'
 import './fixtures/doctoralSchools'
 import './methods'
@@ -16,6 +17,8 @@ require("dotenv").config({path: findUpSync(".env")})
 
 
 Meteor.startup(() => {
+
+  console.log(`Starting fillForm version ${ packageJson.version }`)
 
   // add custom methods for the devs
   if (Meteor.isDevelopment) {
