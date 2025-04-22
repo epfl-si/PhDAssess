@@ -1,0 +1,6 @@
+zeebe:
+  broker:
+    exporters:
+      redis:
+        className: io.zeebe.redis.exporter.RedisExporter
+        jarPath: /usr/local/zeebe/lib/zeebe-redis-exporter-1.0.3-jar-with-dependencies.jar

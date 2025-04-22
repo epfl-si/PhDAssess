@@ -1,0 +1,6 @@
+zeebe:
+  broker:
+    exporters:
+      hazelcast:
+        className: io.zeebe.hazelcast.exporter.HazelcastExporter
+        jarPath: /usr/local/zeebe/lib/zeebe-hazelcast-exporter-1.4.0-jar-with-dependencies.jar
