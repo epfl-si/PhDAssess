@@ -1,2 +1,4 @@
 .env
 Dockerfile.bak
+.meteor/local/
+node_modules/
