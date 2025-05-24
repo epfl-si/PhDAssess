@@ -122,6 +122,16 @@ div[id^=error-list].alert-success {
   display: none;
 }
 
+.fileSelector .loader {
+  display: none;
+}
+
+.formio-component-pdfFile a[ref="fileLink"] {
+  text-decoration-color: rgb(255, 0, 0);
+  text-decoration-line: underline;
+  text-decoration-style: solid;
+}
+
 .bg-awaiting {
   background-color: #ff9933;
 }

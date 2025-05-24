@@ -13,6 +13,7 @@ import {auditLogConsoleOut} from "/imports/lib/logging";
 import {filterUnsubmittableVars} from "/imports/policy/utils";
 import {updateParticipantsInfoForFormData} from "/server/methods/ParticipantsUpdater";
 import {bumpActivityLogsOnTaskSubmit} from "/imports/api/activityLogs/helpers";
+import {processPdfFromForm} from "/server/methods/TaskPDF";
 
 
 const auditLog = auditLogConsoleOut.extend('server/methods/TaskForm')
@@ -76,6 +77,18 @@ Meteor.methods({
     formData = await updateParticipantsInfoForFormData(formData, task)
 
     formData.updated_at = new Date().toJSON()
+
+    // process PDF file, if any
+    if (formData.pdfFile && formData.pdfFile.length > 0) {
+      const pdfName = formData.pdfFile[0].originalName
+      const base64Data = formData.pdfFile[0].url.substring(
+        formData.pdfFile[0].url.indexOf(
+          "data:application/pdf;base64," + "data:application/pdf;base64,".length
+        )
+      )
+      const relativePathOnGed = processPdfFromForm(pdfName, base64Data)
+      formData.pdfFileRelativePathOnGed = relativePathOnGed
+    }
 
     // encrypt all data
     formData = _.mapValues(formData, x => encrypt(x))
