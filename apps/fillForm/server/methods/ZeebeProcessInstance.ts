@@ -37,12 +37,17 @@ Meteor.methods({
     if(!zBClient) throw new Meteor.Error(500, `The Zeebe client has not been able to start on the server.`)
 
     try {
-      const createProcessInstanceResponse = await Promise.resolve(zBClient.createProcessInstance(diagramProcessId, {
-        created_at: encrypt(new Date().toJSON())!,
-        created_by: encrypt(user._id)!,
-        updated_at: encrypt(new Date().toJSON())!,
-        uuid: crypto.randomUUID(),
-      }))
+      const createProcessInstanceResponse = await Promise.resolve(
+        zBClient.createProcessInstance(
+          diagramProcessId,
+          {
+            created_at: encrypt(new Date().toJSON())!,
+            created_by: encrypt(user._id)!,
+            updated_at: encrypt(new Date().toJSON())!,
+            uuid: crypto.randomUUID(),
+          }
+        )
+      )
       auditLog(`created new instance ${diagramProcessId}, response: ${JSON.stringify(createProcessInstanceResponse)}`)
       return createProcessInstanceResponse?.processInstanceKey
     } catch (e) {
