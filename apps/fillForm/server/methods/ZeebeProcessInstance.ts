@@ -39,12 +39,14 @@ Meteor.methods({
     try {
       const createProcessInstanceResponse = await Promise.resolve(
         zBClient.createProcessInstance(
-          diagramProcessId,
           {
-            created_at: encrypt(new Date().toJSON())!,
-            created_by: encrypt(user._id)!,
-            updated_at: encrypt(new Date().toJSON())!,
-            uuid: crypto.randomUUID(),
+            bpmnProcessId: diagramProcessId,
+            variables: {
+              created_at: encrypt(new Date().toJSON())!,
+              created_by: encrypt(user._id)!,
+              updated_at: encrypt(new Date().toJSON())!,
+              uuid: crypto.randomUUID(),
+            }
           }
         )
       )
