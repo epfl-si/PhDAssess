@@ -12,6 +12,7 @@ import './publish'
 import '/imports/policy'
 
 import ZeebeClient from './zeebe/connector'
+import {validateEnv} from "/server/validateEnv";
 
 require("dotenv").config({path: findUpSync(".env")})
 
@@ -24,6 +25,8 @@ Meteor.startup(() => {
   if (Meteor.isDevelopment) {
     import('./methods/Fixtures');
   }
+
+  validateEnv()
 
   ZeebeClient.start()
 
