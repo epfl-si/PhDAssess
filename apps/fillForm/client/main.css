@@ -77,6 +77,13 @@ body .breadcrumb-container::before {
   z-index: 2;
 }
 
+.formio-component-file .fileSelector {
+  position: relative;
+  padding: 15px;
+  border: 2px dashed #ddd;
+  text-align: center;
+}
+
 .epfl-formio-component-textarea-large textarea {
   height: 400px !important;
 }
