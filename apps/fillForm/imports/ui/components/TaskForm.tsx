@@ -11,6 +11,7 @@ import toast from 'react-hot-toast';
 import {toastErrorClosable} from "/imports/ui/components/Toasters";
 import {customEvent} from '/imports/ui/model/formIo'
 import {Task, Tasks} from "/imports/model/tasks";
+import { PdfAnnexLink } from './Task/PdfAnnex';
 
 
 /**
@@ -153,6 +154,11 @@ const TaskFormEdit = ({ task, onSubmitted }: { task: Task, onSubmitted: () => vo
       <div className={ 'alert alert-info' }>Data is automatically saved each time a field is filled in</div>
       <h1 className={ 'h2 mt-4 mb-3' }>{task.customHeaders.title || `Task ${task._id}`}</h1>
       <Errors/>
+      <div>
+        { task.variables.pdfAnnexPath && <>
+          <PdfAnnexLink task={ task }/>
+        </>}
+      </div>
       <Form
         form={ JSON.parse(task.customHeaders.formIO) }
         submission={
