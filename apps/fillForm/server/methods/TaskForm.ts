@@ -13,6 +13,7 @@ import {auditLogConsoleOut} from "/imports/lib/logging";
 import {filterUnsubmittableVars} from "/imports/policy/utils";
 import {updateParticipantsInfoForFormData} from "/server/methods/ParticipantsUpdater";
 import {bumpActivityLogsOnTaskSubmit} from "/imports/api/activityLogs/helpers";
+import {sendPDFAnnexToAlfresco} from "/server/methods/TaskPDF";
 
 
 const auditLog = auditLogConsoleOut.extend('server/methods/TaskForm')
@@ -76,6 +77,34 @@ Meteor.methods({
     formData = await updateParticipantsInfoForFormData(formData, task)
 
     formData.updated_at = new Date().toJSON()
+
+    // process PDF annex file, if any
+    if (formData.pdfAnnexFile && formData.pdfAnnexFile.length > 0) {
+      //const pdfName = formData.pdfFile[0].originalName
+
+      // Remove starting identity that form may have added
+      const base64Data = formData.pdfAnnexFile[0].url.substring(
+        formData.pdfAnnexFile[0].url.indexOf(
+          "data:application/pdf;base64," + "data:application/pdf;base64,".length
+        )
+      )
+
+      debug(`PDF Annex receive. Starting the upload`)
+
+      try {
+        const pdfAnnexPath = await sendPDFAnnexToAlfresco(
+          base64Data,
+          task
+        )
+        formData.pdfAnnexPath = pdfAnnexPath
+        auditLog(`Successfully uploaded a PDF annex on ${ pdfAnnexPath } for job ${ task._id }, process instance ${ task.processInstanceKey }`)
+      } catch (e: any) {
+        throw new Meteor.Error(
+          '504',
+          `Unable to connect to the server to deposit the PDF annex. Please try again later or contact 1234@epfl.ch`
+        )
+      }
+    }
 
     // encrypt all data
     formData = _.mapValues(formData, x => encrypt(x))
