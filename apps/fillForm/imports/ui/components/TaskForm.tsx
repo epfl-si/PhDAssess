@@ -117,6 +117,7 @@ const TaskFormEdit = ({ task, onSubmitted }: { task: Task, onSubmitted: () => vo
       'created_by',
       'created_at',
       'updated_at',
+      'pdfAnnexFile',
       ]
     )
 
