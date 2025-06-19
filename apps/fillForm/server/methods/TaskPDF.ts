@@ -25,43 +25,52 @@ export const sendPDFAnnexToAlfresco = async (
   pdfAsBase64String: string,
   task: Task,
 ) => {
-  const alfrescoInfo: AlfrescoInfo = {
-    serverUrl: process.env.ALFRESCO_URL!,
-    username: process.env.ALFRESCO_USERNAME!,
-    password: process.env.ALFRESCO_PASSWORD!,
-  }
 
-  const studentInfo: StudentInfo = {
-    doctoralAcronym: task.variables.doctoralProgramName ?? '',
-    studentName: buildStudentName(task.variables),
-    sciper: task.variables.phdStudentSciper ?? '',
-  }
+  try {
+    const alfrescoInfo: AlfrescoInfo = {
+      serverUrl: process.env.ALFRESCO_URL!,
+      username: process.env.ALFRESCO_USERNAME!,
+      password: process.env.ALFRESCO_PASSWORD!,
+    }
 
-  // get yourself a ticket to the show
-  const ticket = await fetchTicket(alfrescoInfo)
+    const studentInfo: StudentInfo = {
+      doctoralAcronym: task.variables.doctoralProgramName ?? '',
+      studentName: buildStudentName(task.variables),
+      sciper: task.variables.phdStudentSciper ?? '',
+    }
 
-  // check if the GED is ready for this
-  await readFolder(
-    alfrescoInfo,
-    studentInfo,
-    ticket
-  )
+    // get yourself a ticket to the show
+    const ticket = await fetchTicket(alfrescoInfo)
 
-  // alright, we may be ready to deposit the file
-  const normalizedPDFAnnexName = `Rapport annuel doctorat annex ${ task.variables.year ?? dayjs().year() }.pdf`
+    // check if the GED is ready for this
+    await readFolder(
+      alfrescoInfo,
+      studentInfo,
+      ticket
+    )
 
-  const annexPdfPath = await uploadPDF(
-    alfrescoInfo,
-    studentInfo,
-    ticket,
-    normalizedPDFAnnexName,
-    Buffer.from(pdfAsBase64String, 'base64')
-  )
+    // alright, we may be ready to deposit the file
+    const normalizedPDFAnnexName = `Rapport annuel doctorat annex ${ task.variables.year ?? dayjs().year() }.pdf`
 
-  if (annexPdfPath) {
-    return annexPdfPath
-  } else {
-    auditLog(`While trying to deposit a PDF annex on GED, an error raised for ${ task._id }. The uploadDPF method returned nothing.`)
+    const annexPdfPath = await uploadPDF(
+      alfrescoInfo,
+      studentInfo,
+      ticket,
+      normalizedPDFAnnexName,
+      Buffer.from(pdfAsBase64String, 'base64')
+    )
+
+    if (annexPdfPath) {
+      return annexPdfPath
+    } else {
+      throw new Error(
+        `The uploadDPF method returned nothing when it should have returned the path of uploaded file.`
+      )
+    }
+  } catch (e: any) {
+    // here are the error we can write into auditLog, but not for the client
+    auditLog(`While trying to deposit a PDF annex on GED, an error raised for ${ task._id }, process instance ${ task.processInstanceKey}. Error: ${e}`)
+    // reraise something for the client
     throw new Error('Uploading the PDF failed')
   }
 }
