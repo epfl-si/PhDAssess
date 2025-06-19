@@ -81,19 +81,14 @@ Meteor.methods({
     // process PDF annex file, if any
     if (formData.pdfAnnexFile && formData.pdfAnnexFile.length > 0) {
       //const pdfName = formData.pdfFile[0].originalName
-
-      // Remove starting identity that form may have added
-      const base64Data = formData.pdfAnnexFile[0].url.substring(
-        formData.pdfAnnexFile[0].url.indexOf(
-          "data:application/pdf;base64," + "data:application/pdf;base64,".length
-        )
-      )
-
+      const pdfBase64URI = formData.pdfAnnexFile[0].url
+      // Remove starting identity that form may have added, moving away from the URI type
+      const pdfBase64 = pdfBase64URI.replace("data:application/pdf;base64,", "");
       debug(`PDF Annex receive. Starting the upload`)
 
       try {
         const pdfAnnexPath = await sendPDFAnnexToAlfresco(
-          base64Data,
+          pdfBase64,
           task
         )
         formData.pdfAnnexPath = pdfAnnexPath
