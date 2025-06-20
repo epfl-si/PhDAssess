@@ -91,7 +91,11 @@ Meteor.methods({
           pdfBase64,
           task
         )
+
         formData.pdfAnnexPath = pdfAnnexPath
+        // free to clear the pdf
+        formData.pdfAnnexFile = undefined
+
         auditLog(`Successfully uploaded a PDF annex on ${ pdfAnnexPath } for job ${ task._id }, process instance ${ task.processInstanceKey }`)
       } catch (e: any) {
         throw new Meteor.Error(
