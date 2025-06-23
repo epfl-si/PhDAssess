@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=docker-registry.default.svc:5000/phd-assess-test/node-base:latest
+ARG BASE_IMAGE=quay-its.epfl.ch/svc1394/ubuntu-node-14:latest
 
 FROM $BASE_IMAGE AS build-stage
 
