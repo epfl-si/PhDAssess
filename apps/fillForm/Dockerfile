@@ -35,14 +35,12 @@ FROM $BASE_IMAGE
 RUN groupadd -g 1001 meteoruser && \
     useradd -u 1001 -g meteoruser -m -s /bin/bash meteoruser
 
+USER meteoruser
+
 WORKDIR /app
 
 COPY --from=build-stage /app/output/bundle /app
 
 RUN cd /app/programs/server && npm install --production
-
-RUN chown -R meteoruser:meteoruser /app
-
-USER meteoruser
 
 CMD ["node", "main.js"]
