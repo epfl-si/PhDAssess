@@ -67,9 +67,12 @@ export const sendPDFAnnexToAlfresco = async (
         `The uploadDPF method returned nothing when it should have returned the path of uploaded file.`
       )
     }
-  } catch (e: any) {
+  } catch (error: any) {
     // here are the error we can write into auditLog, but not for the client
-    auditLog(`While trying to deposit a PDF annex on GED, an error raised for ${ task._id }, process instance ${ task.processInstanceKey}. Error: ${e}`)
+    auditLog(
+      `While trying to deposit a PDF annex on GED, an error raised for ${ task._id }, ` +
+      `process instance ${ task.processInstanceKey}. ${ error }`
+    )
     // reraise something for the client
     throw new Error('Uploading the PDF failed')
   }
