@@ -1,18 +1,16 @@
 import React, {useState} from "react";
 import { Meteor } from "meteor/meteor";
 
-import {Loader} from "@epfl/epfl-sti-react-library";
 import toast from 'react-hot-toast';
 import {toastErrorClosable} from "/imports/ui/components/Toasters";
 
 import { Task } from "/imports/model/tasks";
 
 
-export const PdfAnnexLink = ({
-    task
-  }: {
-  task: Task
-}) => {
+export const PdfAnnexLink = (
+  { task }:
+  { task: Task }
+) => {
   const toastId = `pdfAnnexToast-${task._id}`
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
@@ -30,46 +28,47 @@ export const PdfAnnexLink = ({
   }
 
   return <>
-    { isLoading &&
-      <Loader message={"Downloading the annex file. Please wait..."}/>
-    }
-    { !isLoading &&
-      <a
-        href={ '' }
-        onClick={
-          async (e) => {
-            e.preventDefault()
+    <button
+      disabled={ isLoading }
+      onClick={ async () => {
 
-            if (isLoading) return false;
+        if (isLoading) return false;
 
-            try {
-              toast.dismiss(toastId);
-              setHasError(false)
-              setIsLoading(true);
-              const pdfAnnexBase64 = await Meteor.callAsync(
-          'fetchPdfAnnex',
-                task._id
-              )
+        try {
+          toast.dismiss(toastId);
+          setHasError(false)
+          setIsLoading(true);
+          const pdfAnnexBase64 = await Meteor.callAsync(
+            'fetchPdfAnnex',
+            task._id
+          )
 
-              const downloadLink = document.createElement('a');
-              downloadLink.href = `data:application/pdf;base64,${pdfAnnexBase64}`;
-              downloadLink.download = pdfName;
-              setIsLoading(false);
-              downloadLink.click();
+          const downloadLink = document.createElement('a');
+          downloadLink.href = `data:application/pdf;base64,${ pdfAnnexBase64 }`;
+          downloadLink.download = pdfName;
+          setIsLoading(false);
+          downloadLink.click();
 
-              // wait some time before removing it
-              setTimeout(() => {
-                downloadLink.remove();
-              }, 100);
+          // wait some time before removing it
+          setTimeout(() => {
+            downloadLink.remove();
+          }, 100);
 
-            } catch (e) {
-              setIsLoading(false);
-              setHasError(true)
-            }
-          }
+        } catch (e) {
+          setIsLoading(false);
+          setHasError(true)
         }
-      >{ pdfName }
-      </a>
-    }
+      }
+      }
+    >
+      { !isLoading ? <>
+        <i className="fa fa-download mr-2"></i>
+        Download the annex PDF
+      </> : <>
+        <span className={'loader mr-1'}></span>
+        Downloading the annex file. Please wait...
+      </>
+      }
+    </button>
   </>
 }
