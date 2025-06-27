@@ -17,7 +17,9 @@ export const PdfAnnexLink = ({
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
 
-  const pdfName = decodeURI(task.variables.pdfAnnexPath.split('/').pop()) ?? 'annex.pdf'
+  const pdfName = decodeURI(
+    task.variables.pdfAnnexPath?.split('/')?.pop()!
+  ) ?? 'annex.pdf'
 
   if (hasError) {
     toastErrorClosable(
