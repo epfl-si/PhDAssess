@@ -184,7 +184,7 @@ const TaskFormEdit = ({ task, onSubmitted }: { task: Task, onSubmitted: () => vo
       toast.loading("Submitting...",
         {
           id: toastId,
-          duration: 10000,
+          duration: 18000,
         })
 
       // As formio sent all the form fields (disabled included)
