@@ -15,10 +15,6 @@ export const PdfAnnexLink = (
   const [isLoading, setIsLoading] = useState(false);
   const [hasError, setHasError] = useState(false);
 
-  const pdfName = decodeURI(
-    task.variables.pdfAnnexPath?.split('/')?.pop()!
-  ) ?? 'annex.pdf'
-
   if (hasError) {
     toastErrorClosable(
       toastId,
@@ -29,6 +25,7 @@ export const PdfAnnexLink = (
 
   return <>
     <button
+      className={'mb-2'}
       disabled={ isLoading }
       onClick={ async () => {
 
@@ -43,16 +40,22 @@ export const PdfAnnexLink = (
             task._id
           )
 
-          const downloadLink = document.createElement('a');
-          downloadLink.href = `data:application/pdf;base64,${ pdfAnnexBase64 }`;
-          downloadLink.download = pdfName;
-          setIsLoading(false);
-          downloadLink.click();
+          // Create a Blob from the base64 data
+          const byteCharacters = atob(pdfAnnexBase64);
+          const byteNumbers = new Array(byteCharacters.length);
+          for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+          }
+          const byteArray = new Uint8Array(byteNumbers);
+          const blob = new Blob([byteArray], { type: 'application/pdf' });
 
-          // wait some time before removing it
-          setTimeout(() => {
-            downloadLink.remove();
-          }, 100);
+          // Create an object URL for the Blob
+          const url = window.URL.createObjectURL(blob);
+
+          // Open the PDF in a new tab
+          window.open(url, '_blank');
+
+          setIsLoading(false);
 
         } catch (e) {
           setIsLoading(false);
@@ -62,11 +65,11 @@ export const PdfAnnexLink = (
       }
     >
       { !isLoading ? <>
-        <i className="fa fa-download mr-2"></i>
-        Download the annex PDF
+        Open the annex PDF
+        <i className="fa fa-external-link ml-2"></i>
       </> : <>
         <span className={'loader mr-1'}></span>
-        Downloading the annex file. Please wait...
+        Preparing the annex PDF. Please wait...
       </>
       }
     </button>
