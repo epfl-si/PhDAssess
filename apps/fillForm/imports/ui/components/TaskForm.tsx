@@ -5,7 +5,7 @@ import {Errors, Form} from '@formio/react'
 import {Link, useNavigate} from "react-router"
 import _ from "lodash"
 
-import {Button, Loader} from "@epfl/epfl-sti-react-library"
+import {Button, Loader} from "epfl-elements-react"
 import toast from 'react-hot-toast';
 
 import {toastErrorClosable} from "/imports/ui/components/Toasters";
