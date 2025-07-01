@@ -1,6 +1,6 @@
 import React from "react";
 import {matchPath, useLocation} from "react-router";
-import {Breadcrumbs} from "@epfl/epfl-sti-react-library";
+import {Breadcrumbs} from "epfl-elements-react";
 
 export function PhDBreadcrumb() {
   const breadcrumbs = [

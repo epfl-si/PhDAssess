@@ -1,7 +1,7 @@
 import {Link, matchPath, useLocation} from "react-router";
 import React, {useEffect, useState} from "react";
 
-import {Loader} from "@epfl/epfl-sti-react-library";
+import {Loader} from "epfl-elements-react";
 
 import {useAccountContext} from "/imports/ui/contexts/Account";
 import {canEditAtLeastOneDoctoralSchool} from "/imports/policy/doctoralSchools";
