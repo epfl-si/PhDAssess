@@ -11,34 +11,51 @@ export type ZeebeStatus = {
 
 export const zeebeStatusCollection = new Mongo.Collection<ZeebeStatus>('zeebeStatus', {connection: null})
 // Set the initial status
-zeebeStatusCollection.upsert({ type: 'client' }, { $set: { status: 'disconnected' } })
-zeebeStatusCollection.upsert({ type: 'worker' }, { $set : { status: 'disconnected' } })
+await zeebeStatusCollection.upsertAsync({ type: 'client' }, { $set: { status: 'disconnected' } })
+await zeebeStatusCollection.upsertAsync({ type: 'worker' }, { $set : { status: 'disconnected' } })
 
 // Initial values
 export class ZeebeSpreadingClient extends ZBClient {
   constructor(options?: ZBClientOptions) {
-    zeebeStatusCollection.upsert({ type: 'client' }, { $set: { status: 'starting' }})
+    (async () => {
+      await zeebeStatusCollection.upsertAsync(
+        { type: 'client' },
+        { $set: { status: 'starting' } }
+      );
+    })();
+
     super(options);
 
     Object.values(ConnectionStatusEvent).forEach((eventName) => {
-      this.on(eventName, Meteor.bindEnvironment(() => zeebeStatusCollection.upsert(
-        { type: 'client'} , { $set: { status: eventName} }
-      )))
-    })
+      this.on(eventName, async () => {
+        try {
+          await zeebeStatusCollection.upsertAsync(
+            { type: 'client' },
+            { $set: { status: eventName } }
+          );
+        } catch (error) {
+          console.error(`Failed to update client status for event "${eventName}":`, error);
+        }
+      });
+    });
   }
 
-  createWorker(...args: any[]): ZBWorker<any, any, any>{
-    zeebeStatusCollection.upsert({ type: 'worker' }, { $set : { status: 'starting' } })
+  // @ts-ignore
+  async createWorker(...args: any[]): Promise<ZBWorker<any, any, any>> {
+    await zeebeStatusCollection.upsertAsync({ type: 'worker' }, { $set : { status: 'starting' } })
 
-    // Sorry, not ts :(
     // @ts-ignore
     let worker = super.createWorker(...args);
 
+    // Listen to connection status events and update the database
     Object.values(ConnectionStatusEvent).forEach((eventName) => {
-      worker.on(eventName, Meteor.bindEnvironment(() => zeebeStatusCollection.upsert(
-        { type: 'worker' }, { $set : { status: eventName } }
-      )))
-    })
+      worker.on(eventName, async () => {
+        await zeebeStatusCollection.upsertAsync(
+          { type: 'worker' },
+          { $set: { status: eventName } }
+        );
+      });
+    });
 
     return worker;
   }

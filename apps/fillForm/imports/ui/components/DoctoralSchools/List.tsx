@@ -1,4 +1,4 @@
-import React, {useState} from "react"
+import React, {useEffect, useState} from "react"
 import {useTracker} from "meteor/react-meteor-data";
 import {Meteor} from "meteor/meteor";
 import {canEditAtLeastOneDoctoralSchool} from "/imports/policy/doctoralSchools";
@@ -13,6 +13,7 @@ export function DoctoralSchoolsList() {
   const account = useAccountContext()
 
   const [showAdd, setShowAdd] = useState(false)
+  const [isAllowedToEdit, setIsAllowedToEdit] = useState(false)
 
   const doctoralSchoolsLoading = useTracker(() => {
     // Note that this subscription will get cleaned up
@@ -25,9 +26,20 @@ export function DoctoralSchoolsList() {
     () => DoctoralSchools.find({}, { sort: { 'acronym': 1 } }).fetch() as Array<DoctoralSchool & {readonly:boolean}>
   , [])
 
+  useEffect(() => {
+    const getUserAllowance = async (user: Meteor.User | null) => {
+      try {
+        setIsAllowedToEdit(await canEditAtLeastOneDoctoralSchool(user))
+      } catch (error: any) {
+        setIsAllowedToEdit(false)
+      }
+    }
+    getUserAllowance(account?.user ?? null).then().catch(console.error);
+  }, [account?.user]);
+
   if (!account || !account.isLoggedIn) return (<Loader message={'Loading your data...'}/>)
 
-  if (account && account.user && canEditAtLeastOneDoctoralSchool(account.user)) return (
+  if (account && account.user && isAllowedToEdit) return (
     <>
       {doctoralSchoolsLoading ? (
         <Loader message={'Loading doctoral schools...'}/>

@@ -16,13 +16,16 @@ export const AsideMenu = () => {
   const [hasImportSciperLink, setHasImportSciperLink] = useState(false)
 
   useEffect(() => {
-    setHasDoctoralSchoolEditLink(
-      ( account && account.user && canEditAtLeastOneDoctoralSchool(account.user) ) ?? false
-    )
-    setHasImportSciperLink(
-      ( account && account.user && canImportScipersFromISA(account.user) ) ?? false
-    )
-  }, [account])
+      const setLinks = async () => {
+        setHasDoctoralSchoolEditLink(
+          ( account && account.user && await canEditAtLeastOneDoctoralSchool(account.user) ) ?? false
+        )
+        setHasImportSciperLink(
+          ( account && account.user && await canImportScipersFromISA(account.user) ) ?? false
+        )
+      }
+      setLinks().then().catch(console.error);
+    }, [account])
 
   return (
     <aside className="nav-aside-wrapper">

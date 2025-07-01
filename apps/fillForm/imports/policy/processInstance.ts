@@ -67,7 +67,7 @@ export const canEditProcessInstance = async  (
   if (user.isAdmin || user.isUberProgramAssistant) return true;
 
   const allowedProcessInstancesCount = await getUserPermittedProcessInstanceEdit(
-    user, DoctoralSchools.find({}).fetch(),
+    user, await DoctoralSchools.find({}).fetchAsync(),
     processInstanceKey
   )?.countAsync()
 

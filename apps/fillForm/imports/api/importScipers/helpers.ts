@@ -2,10 +2,10 @@
 import {ImportScipersList} from "/imports/api/importScipers/schema";
 
 
-export const refreshAlreadyStartedImportScipersList = (doctoralSchoolAcronym: string,
+export const refreshAlreadyStartedImportScipersList = async (doctoralSchoolAcronym: string,
                                                        hasAlreadyStarted: boolean,
                                                        doctorantSciper: string) => {
-  return ImportScipersList.update(
+  return await ImportScipersList.updateAsync(
     {doctoralSchoolAcronym: doctoralSchoolAcronym},
     {
       $set: {

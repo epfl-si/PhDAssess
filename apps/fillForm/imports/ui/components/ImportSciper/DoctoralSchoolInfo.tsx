@@ -3,6 +3,7 @@ import {DoctoralSchool, DoctoralSchools} from "/imports/api/doctoralSchools/sche
 import {useTracker} from "meteor/react-meteor-data";
 import {Meteor} from "meteor/meteor";
 
+
 export const DoctoralSchoolInfo = ({doctoralSchool}: {doctoralSchool: DoctoralSchool }) => {
   const currentDoctoralSchool = useTracker(
     () => DoctoralSchools.findOne({ acronym: doctoralSchool.acronym }),
@@ -11,13 +12,20 @@ export const DoctoralSchoolInfo = ({doctoralSchool}: {doctoralSchool: DoctoralSc
   const [isFetchingProgramSciperName, setIsFetchingProgramSciperName] = useState(false)
 
   useEffect(() => {
-    setIsFetchingProgramSciperName(true)
-    Meteor.apply(
-      "refreshDoctoralSchoolsProgramNameFromSciper",
-      [ doctoralSchool.acronym ],
-      { wait: false, noRetry: false },
-      () => setIsFetchingProgramSciperName(false)
-    )
+    const refreshDS = async () => {
+      try {
+        setIsFetchingProgramSciperName(true)
+        await Meteor.applyAsync(
+          "refreshDoctoralSchoolsProgramNameFromSciper",
+          [ doctoralSchool.acronym ],
+          { wait: false, noRetry: false }
+        )
+        setIsFetchingProgramSciperName(false)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+    void refreshDS();
   }, [doctoralSchool]);
 
   return (<>

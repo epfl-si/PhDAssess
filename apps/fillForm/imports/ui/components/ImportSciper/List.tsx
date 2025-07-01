@@ -113,14 +113,20 @@ export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralS
   const navigate = useNavigate()
 
   useEffect(() => {
-    Meteor.apply(
-      "getISAScipers", [ doctoralSchool.acronym ], { wait: true, noRetry: true },
-      (error: global_Error | Meteor.Error | undefined) => {
+    const getISAScipers = async () => {
+      try {
+        await Meteor.applyAsync(
+          "getISAScipers",
+          [ doctoralSchool.acronym ],
+          { wait: true, noRetry: true }
+        )
+      } catch (error: any) {
         if (error) {
-          "reason" in error ? setIsErronous(error.reason!) : setIsErronous(error.message)
+          "reason" in error ? setIsErronous(error.reason!) : setIsErronous(error.message);
         }
       }
-    )
+    }
+    void getISAScipers();
   }, [doctoralSchool]);
 
   const startImport = () => {

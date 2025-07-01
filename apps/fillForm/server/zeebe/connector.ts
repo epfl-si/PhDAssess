@@ -33,7 +33,8 @@ export default {
     zBClient = new ZeebeSpreadingClient()
 
     debug(`creating Zeebe worker of type "${taskType}"...`);
-    zBClient.createWorker({
+
+    void zBClient.createWorker({
       taskType: taskType,
       // Here you have to find the balance between getting to many data for a pipe and not enough tasks
       // for a full cycle of activating->activated->reactivating
@@ -42,44 +43,41 @@ export default {
       timeout: process.env.ZEEBE_WORKER_TIMEOUT ?? Duration.seconds.of(20),
       pollInterval: pollInterval,
       // load every job into the in-memory server db
-      taskHandler:
-        Meteor.bindEnvironment(      // therefore, Fiber'd
-          (job: PhDZeebeJob,
-          ) => {
-            Metrics.zeebe.received.inc()
-            let outcome: PersistOutcome
+      taskHandler: async (job: PhDZeebeJob) => {
+        Metrics.zeebe.received.inc()
 
-            try {
-              outcome = persistJob(job)
-            } catch (error) {
-              if (error instanceof MongoInternals.NpmModules.mongodb.module.MongoNetworkError
-              ) {
-                // retry later, Mongo may not be available at that time
-                return job.forward()
-              } else {
-                // unable to create the task or a variable is failing to be decrypted => no good at all
-                // we can't do better than alerting the logs
-                debug(`Unable to decrypt or persist Zeebe job (${job.key}). Sending a task fail to the broker. Task process id : ${job.processInstanceKey}. ${error}.`)
-                Metrics.zeebe.errors.inc()
-                // raise the issue to Zeebe
-                return job.fail(`Unable to decrypt some values or to mirror to Mongo, failing the job. ${error}.`, 0)
-              }
-            }
+        try {
+          const outcome: PersistOutcome = await persistJob(job)
 
-            if (outcome === PersistOutcome.NEW) {
-              Metrics.zeebe.inserted.inc()
+          if (outcome === PersistOutcome.NEW) {
+            Metrics.zeebe.inserted.inc()
 
-              // message user about the task awaiting
-              this.replyWithReceipt(job).then( ()=> {} )
+            // message user about the task awaiting
+            this.replyWithReceipt(job).then( ()=> {} )
 
-              // log the arrival time for the new workflows
-              if (job.variables.uuid) bumpActivityLogsOnTaskNewArrival(job)
-            }
+            // log the arrival time for the new workflows
+            if (job.variables.uuid) await bumpActivityLogsOnTaskNewArrival(job)
+          }
 
-            // as we had no error, tell Zeebe that we'll think about it, and free ourselves to receive more work
+          // as we had no error, tell Zeebe that we'll think about it, and free ourselves to receive more work
+          return job.forward()
+        } catch (error) {
+          if (error instanceof MongoInternals.NpmModules.mongodb.module.MongoNetworkError
+          ) {
+            // retry later, Mongo may not be available at that time
             return job.forward()
-          })
+          } else {
+            // unable to create the task or a variable is failing to be decrypted => no good at all
+            // we can't do better than alerting the logs
+            debug(`Unable to decrypt or persist Zeebe job (${job.key}). Sending a task fail to the broker. Task process id : ${job.processInstanceKey}. ${error}.`)
+            Metrics.zeebe.errors.inc()
+            // raise the issue to Zeebe
+            return job.fail(`Unable to decrypt some values or to mirror to Mongo, failing the job. ${error}.`, 0)
+          }
+        }
+      }
     })
+
     debug(`Zeebe worker "${taskType}" created`);
   },
 

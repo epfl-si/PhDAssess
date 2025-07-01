@@ -22,12 +22,12 @@ Meteor.methods({
   ) {
     let user: Meteor.User | null = null
     if (this.userId) {
-      user = Meteor.users.findOne({_id: this.userId}) ?? null
+      user = await Meteor.users.findOneAsync( { _id: this.userId } ) ?? null
     }
 
     if (!user) return
 
-    const task = ( await getUserPermittedTaskReminder(user, taskId)?.fetchAsync() ?? [] )[0]
+    const task = (await ( await getUserPermittedTaskReminder(user, taskId))?.fetchAsync() ?? [] )[0]
 
     if (!task) throw new Meteor.Error(
       403,

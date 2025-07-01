@@ -28,24 +28,37 @@ const getOptions = (doctorantSciper: string) => {
  * This part takes care of updating the currently displayed
  * import sciper list  everytime there is a move in the task collection.
  */
-export const observeTasksForImportScipers = () => {
-  Tasks.find({}).observe({
-    added: (task) => {
+export const observeTasksForImportScipers = async () => {
+  Tasks.find({}).observeAsync({
+    added: async (task) => {
       if (task.variables?.phdStudentSciper) {
-        ImportScipersList.update(getQuery(), getUpdateDocument(true), getOptions(task.variables.phdStudentSciper))
+        await ImportScipersList.updateAsync(
+          getQuery(),
+          getUpdateDocument(true), getOptions(task.variables.phdStudentSciper)
+        )
       }
     },
-    changed: (new_task, old_task) => {
+    changed: async (new_task, old_task) => {
       const oldStudentSciper = old_task.variables?.phdStudentSciper
       const newStudentSciper = new_task.variables?.phdStudentSciper
+
       if (oldStudentSciper && newStudentSciper && oldStudentSciper !== newStudentSciper) {
-        ImportScipersList.update(getQuery(), getUpdateDocument(true), getOptions(newStudentSciper))
-        ImportScipersList.update(getQuery(), getUpdateDocument(false), getOptions(oldStudentSciper))
+        await ImportScipersList.updateAsync(
+          getQuery(),
+          getUpdateDocument(true), getOptions(newStudentSciper)
+        )
+        await ImportScipersList.updateAsync(
+          getQuery(),
+          getUpdateDocument(false), getOptions(oldStudentSciper)
+        )
       }
     },
-    removed: (task) => {
+    removed: async (task) => {
       if (task.variables?.phdStudentSciper) {
-        ImportScipersList.update(getQuery(), getUpdateDocument(false), getOptions(task.variables.phdStudentSciper))
+        await ImportScipersList.updateAsync(
+          getQuery(),
+          getUpdateDocument(false), getOptions(task.variables.phdStudentSciper)
+        )
       }
     }
   })

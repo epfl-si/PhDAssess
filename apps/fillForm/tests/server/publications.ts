@@ -51,7 +51,7 @@ describe(
 
           assert.isNotEmpty(collections)
           assert.isDefined(collections.tasks)
-          assert.equal(collections.tasks.length, Tasks.find({}).count())
+          assert.equal(collections.tasks.length, await Tasks.find({}).countAsync())
           assert(
             collections.tasks[0].variables.assigneeSciper)
           assert(
@@ -60,7 +60,7 @@ describe(
         });
 
         await it('should return the task for the assignee', async function () {
-          const tasks = Tasks.find({'variables.assigneeSciper': userAssignee._id}).fetch()
+          const tasks = await Tasks.find({'variables.assigneeSciper': userAssignee._id}).fetchAsync()
           assert.isNotEmpty(tasks)
 
           const collector = new PublicationCollector({userId: userAssignee._id});
@@ -72,7 +72,7 @@ describe(
         })
 
         await it('should not return any task for a lambda user that has no tasks assigned', async function () {
-          const tasks = Tasks.find({'variables.assigneeSciper': userLambda._id}).fetch()
+          const tasks = await Tasks.find({'variables.assigneeSciper': userLambda._id}).fetchAsync()
           assert.isEmpty(tasks)
 
           const collector = new PublicationCollector({ userId: userLambda._id });

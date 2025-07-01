@@ -137,22 +137,22 @@ export enum PersistOutcome {
  * @returns `PersistOutcome.ALREADY_SUBMITTED` if the job is new but was marked as submitted. It can happen
  *           if we are pulling some batch data that takes time while the job is being submitted
  */
-export function persistJob (job: PhDZeebeJob) : PersistOutcome {
+export async function persistJob (job: PhDZeebeJob): Promise<PersistOutcome> {
   let status : PersistOutcome
 
   // assert before inserting that this task is not already submitted
-  if (Tasks.find({ _id: job.key, 'journal.submittedAt': { $exists:true } }).count() !== 0) {
+  if (await Tasks.find({ _id: job.key, 'journal.submittedAt': { $exists:true } }).countAsync() !== 0) {
     auditLog(`Refusing to add this task ( job key: ${job.key}, process instance : ${job.processInstanceKey} ) to meteor, as it was flagged as already submitted`)
     return PersistOutcome.ALREADY_SUBMITTED
   }
 
   const task = zeebeJobToTask(job)
-  const taskExistAlready = ( Tasks.find({ _id: job.key }).count() !== 0 )
+  const taskExistAlready = ( await Tasks.find({ _id: job.key }).countAsync() !== 0 )
   let taskId: string;  // keep a log of the created/updated id
 
   if ( !taskExistAlready ) {
     // a new task, insert all data, with journaling set
-    taskId = Tasks.insert({
+    taskId = await Tasks.insertAsync({
         ...{
           journal: {
             lastSeen: new Date(),
@@ -163,7 +163,7 @@ export function persistJob (job: PhDZeebeJob) : PersistOutcome {
     )
   } else {
     // updating the existing for the up-to-date values
-    Tasks.update(job.key, {
+    await Tasks.updateAsync(job.key, {
       $inc: { "journal.seenCount": 1 },
       $set: {
         "journal.lastSeen": new Date(),

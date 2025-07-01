@@ -105,8 +105,8 @@ class TasksCollection extends Mongo.Collection<Task> {
    * journalize the submit operation, then remove the others fields (to free spaces, like a remove would do),
    * and keep it as it is, so we can set check status from incoming zeebe jobs
    */
-    markAsSubmitted(_id: string) {
-    const task = this.findOne( {_id: _id} );
+    async markAsSubmitted(_id: string) {
+    const task = await this.findOneAsync( {_id: _id} );
 
     if (!task) return
 
@@ -118,7 +118,7 @@ class TasksCollection extends Mongo.Collection<Task> {
       Object.keys(task).filter(el => !betterKeepFields.includes(el)).map(v => [v, ""])
     const unsetList = Object.fromEntries(fieldsToUnsets)
 
-    this.update({_id: _id }, {
+    await this.updateAsync({_id: _id }, {
       $unset: unsetList,
       $set: { 'journal.submittedAt': new Date() }
     })

@@ -35,12 +35,12 @@ Meteor.methods({
   async updateTaskParticipants(taskId, participantData: EditableParticipant){
     let user: Meteor.User | null = null
     if (this.userId) {
-      user = Meteor.users.findOne({_id: this.userId}) ?? null
+      user = await Meteor.users.findOneAsync( { _id: this.userId } ) ?? null
     }
 
     if (!user) return
 
-    const task = Tasks.findOne({_id: taskId})
+    const task = await Tasks.findOneAsync( { _id: taskId } )
 
     if (!task) throw new Meteor.Error(
       404,

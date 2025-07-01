@@ -7,11 +7,11 @@ import {getAssistantAdministrativeMemberships} from "/imports/policy/tasks";
  * Whether the currently logged-in user can import SCIPERs from any doctoral school
  *
  */
-export const canImportScipersFromISA = (user: Meteor.User | null) : boolean => {
+export const canImportScipersFromISA = async (user: Meteor.User | null) => {
   if (! user) return false;
 
   if (user.isAdmin || user.isUberProgramAssistant) return true;
 
-  const doctoralSchools = DoctoralSchools.find({}).fetch();
+  const doctoralSchools = await DoctoralSchools.find({}).fetchAsync();
   return Object.keys(getAssistantAdministrativeMemberships(user, doctoralSchools)).length > 0
 }

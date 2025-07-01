@@ -3,11 +3,11 @@ import {PhDZeebeJob} from "/server/zeebe/in";
 import {Task} from "/imports/model/tasks";
 
 
-export const bumpActivityLogsOnTaskNewArrival = (
+export const bumpActivityLogsOnTaskNewArrival = async (
   job: PhDZeebeJob
 )=>  {
 
-  const processInstance = ActivityLogs.findOne(
+  const processInstance = await ActivityLogs.findOneAsync(
     { _id: job.processInstanceKey }
   )
 
@@ -24,23 +24,23 @@ export const bumpActivityLogsOnTaskNewArrival = (
   }
 
   if ( processInstance ) {
-    ActivityLogs.update(
+    await ActivityLogs.updateAsync(
       { _id: job.processInstanceKey },
       { $push: {
           'logs': log
         }})
   } else {
-    ActivityLogs.insert({
+    await ActivityLogs.insertAsync({
       '_id': job.processInstanceKey,
       'logs': [log],
       })
   }
 }
 
-export const bumpActivityLogsOnTaskSubmit = (
+export const bumpActivityLogsOnTaskSubmit = async (
   task: Task
 )=>  {
-  const processInstance = ActivityLogs.findOne(
+  const processInstance = await ActivityLogs.findOneAsync(
     { _id: task.processInstanceKey }
   )
 
@@ -52,13 +52,13 @@ export const bumpActivityLogsOnTaskSubmit = (
   }
 
   if ( processInstance ) {
-    ActivityLogs.update(
+    await ActivityLogs.updateAsync(
       { _id: task.processInstanceKey },
       { $push: {
           'logs': log
         }})
   } else {
-    ActivityLogs.insert({
+    await ActivityLogs.insertAsync({
       '_id': task.processInstanceKey,
       'logs': [log],
     })
