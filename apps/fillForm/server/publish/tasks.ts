@@ -18,9 +18,9 @@ Meteor.publish('taskDetailed', function (args: [string]) {
   }
 })
 
-Meteor.publish('tasksList', function () {
+Meteor.publish('tasksList', async function () {
   if (this.userId) {
-    const user = Meteor.users.findOne({ _id: this.userId }) ?? null
+    const user = await Meteor.users.findOneAsync({ _id: this.userId }) ?? null
 
     // we do not send directly the journal.lastSeen on tasks list, as it trigger updates all the time.
     // Instead, we provide a new boolean attribute 'isObsolete' that changes only when his time as come
@@ -29,7 +29,7 @@ Meteor.publish('tasksList', function () {
     if (!user || !tasksList) {
       this.ready()
     } else {
-      const handle = tasksList.observeChanges({
+      const handle = await tasksList.observeChangesAsync({
         added: (id, fields) => {
           this.added('tasks',  id,{
             isObsolete: isObsolete(fields.journal?.lastSeen),
