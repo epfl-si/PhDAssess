@@ -1,6 +1,6 @@
 import {Meteor} from "meteor/meteor";
 import React, {CSSProperties} from "react";
-import {Outlet, useRouteError} from "react-router-dom";
+import {Outlet, useRouteError} from "react-router";
 import {FooterLight} from "@epfl/epfl-sti-react-library"
 
 import {ToasterConfig} from "/imports/ui/components/Toasters";
