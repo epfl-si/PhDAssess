@@ -11,7 +11,7 @@ import toast from 'react-hot-toast';
 import {toastErrorClosable} from "/imports/ui/components/Toasters";
 import {customEvent} from '/imports/ui/model/formIo'
 import {Task, Tasks} from "/imports/model/tasks";
-import { PdfAnnexLink } from './Task/PdfAnnex';
+import {openAnnexPdf} from './Task/PdfAnnex';
 
 
 /**
@@ -155,11 +155,6 @@ const TaskFormEdit = ({ task, onSubmitted }: { task: Task, onSubmitted: () => vo
       <div className={ 'alert alert-info' }>Data is automatically saved each time a field is filled in</div>
       <h1 className={ 'h2 mt-4 mb-3' }>{task.customHeaders.title || `Task ${task._id}`}</h1>
       <Errors/>
-      <div>
-        { task.variables.pdfAnnexPath && <>
-          <PdfAnnexLink task={ task }/>
-        </>}
-      </div>
       <Form
         form={ JSON.parse(task.customHeaders.formIO) }
         submission={
@@ -169,7 +164,24 @@ const TaskFormEdit = ({ task, onSubmitted }: { task: Task, onSubmitted: () => vo
         }
         onBlur={ onBlur }
         onChange={ onChange }
-        onCustomEvent={ (event: customEvent) => event.type == 'cancelClicked' && navigate('/') }
+        onCustomEvent={
+          async (event: customEvent) => {
+
+            if (event.type == 'cancelClicked') navigate('/');
+
+            if (event.component.key == 'openAnnexPdf') {
+              await toast.promise(
+                openAnnexPdf(task),
+                {
+                  loading: 'Loading the PDF annex...',
+                  error: 'Something went wrong while trying to get the PDF annex. ' +
+                    ' Please try again later or contact 1234@epfl.ch',
+                }
+              )
+            }
+          }
+
+        }
         options={ { hooks: { beforeSubmit: beforeSubmitHook,} } }
       />
     </>
