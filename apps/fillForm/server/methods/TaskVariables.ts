@@ -10,7 +10,7 @@ Meteor.methods({
   async updateZeebeInstanceVariables( { processInstanceKey, newVariables }) {
     let user: Meteor.User | null = null
     if (this.userId) {
-      user = Meteor.users.findOne({_id: this.userId}) ?? null
+      user = await Meteor.users.findOneAsync( { _id: this.userId } ) ?? null
     }
 
     if (!user) return
@@ -22,7 +22,7 @@ Meteor.methods({
       `This task does not exist or you don't have the permission to edit.`,
     )
 
-    if ( !(await canEditProcessInstance(user, processInstanceKey)) ) throw new Meteor.Error(
+    if ( !await canEditProcessInstance(user, processInstanceKey) ) throw new Meteor.Error(
       403,
       'You are not allowed to change the process instance variables',
     )

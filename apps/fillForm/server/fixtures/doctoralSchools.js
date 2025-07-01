@@ -28,12 +28,12 @@ export const initialEcolesDoctorales = [
   {acronym: 'JDPLS', label: 'Doctorat (Learning Sciences (edoc))', 'helpUrl': 'https://www.epfl.ch', 'creditsNeeded': 12, 'programDirectorSciper': '168891', 'administrativeAssistantAccessGroup': 'phd-assess-ops-JDPLS'},
 ]
 
-Meteor.startup(() => {
-  if (DoctoralSchools.find().count() === 0) {
+Meteor.startup( async () => {
+  if (await DoctoralSchools.find().countAsync() === 0) {
     debug_('Doctoral schools is empty. Loading first stack of values..')
 
-    initialEcolesDoctorales.forEach((doctoralSchool) => {
-      DoctoralSchools.insert(doctoralSchool);
-    });
+    for (const doctoralSchool of initialEcolesDoctorales) {
+      await DoctoralSchools.insertAsync(doctoralSchool);
+    }
   }
 });

@@ -12,7 +12,7 @@ import {DoctoralSchools} from "/imports/api/doctoralSchools/schema";
 /**
  * Get the asked task for creating a reminder, but only if permitted
  */
-export const getUserPermittedTaskReminder = (
+export const getUserPermittedTaskReminder = async (
   user?: Meteor.User | null,
   _id?: string
 ) => {
@@ -27,7 +27,7 @@ export const getUserPermittedTaskReminder = (
     ...( !( user.isAdmin || user.isUberProgramAssistant ) && {
       "variables.doctoralProgramName": {
         $in: Object.keys(
-          getAssistantAdministrativeMemberships(user, DoctoralSchools.find({}).fetch())
+          getAssistantAdministrativeMemberships(user, await DoctoralSchools.find({}).fetchAsync())
         )
       }
     }),
@@ -65,14 +65,14 @@ export const getUserPermittedTaskReminder = (
 /**
  * Provide all the reminders for tasks that the user can see in the dashboard
  */
-export const getRemindersForDashboardTasks = (user?: Meteor.User | null) => {
+export const getRemindersForDashboardTasks = async (user?: Meteor.User | null) => {
   if (!user) return
 
-  const permittedTasks = getUserPermittedTasksForDashboard(
+  const permittedTasks = await getUserPermittedTasksForDashboard(
     user,
-    DoctoralSchools.find({}).fetch(),
+    await DoctoralSchools.find({}).fetchAsync(),
     { 'processInstanceKey': 1 }
-  )?.fetch()
+  )?.fetchAsync()
 
   return ReminderLogs.find(
     { _id: {
@@ -84,6 +84,6 @@ export const getRemindersForDashboardTasks = (user?: Meteor.User | null) => {
 }
 
 export const canSendRemindersForThisTask = async (user: Meteor.User, taskId: string) : Promise<boolean> => {
-  const tasksSeenByUser = await getUserPermittedTaskReminder(user, taskId)?.fetchAsync() ?? []
+  const tasksSeenByUser = await (await getUserPermittedTaskReminder(user, taskId))?.fetchAsync() ?? []
   return !!tasksSeenByUser[0]
 }

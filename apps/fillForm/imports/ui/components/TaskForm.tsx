@@ -255,23 +255,22 @@ export const TaskForm = ({ _id }: { _id: string }) => {
   }
 
   useEffect(() => {
-    Meteor.apply(
-      'getTaskForm',
-      [_id],
-      {
-        wait: true,
-        onResultReceived: (error: Error | Meteor.Error | undefined, result) => {
-          if (error) {
-            setTask(undefined)
-            setTaskFormLoading(false) // to remove
-            setTaskLoadingError(error)
-          } else {
-            setTask(result as Task)
-            setTaskFormLoading(false)  // to remove
-          }
-        }
-      },
-    )
+    const getTaskForm = async () => {
+      try {
+        const result = await Meteor.applyAsync(
+          'getTaskForm',
+          [_id],
+          { wait: true }
+        )
+        setTask(result as Task)
+        setTaskFormLoading(false)
+      } catch (error: any) {
+        setTask(undefined)
+        setTaskFormLoading(false)
+        setTaskLoadingError(error)
+      }
+    }
+    getTaskForm().then().catch(console.error);
   }, [_id])
 
   if (!user) return (<Loader message={'Loading your data...'}/>)

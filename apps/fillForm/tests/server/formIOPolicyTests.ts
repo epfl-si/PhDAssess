@@ -35,12 +35,12 @@ describe('Algos around the FormIO definition testing ', function () {
     'sectionCProgressAssessment1',
   ]
 
-  before(function () {
+  before(async function () {
     dbCleaner.resetDatabase({}, () => {
       Factory.create("task");
     });
 
-    const tasks = Tasks.find({}).fetch()
+    const tasks = await Tasks.find({}).fetchAsync()
     assert.isNotEmpty(tasks)
     assert.isDefined(tasks[0].customHeaders?.formIO, JSON.stringify(tasks[0]))
     task = tasks[0]

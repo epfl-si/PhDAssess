@@ -132,8 +132,8 @@ const UsersDataPubName = 'users.data'
 // All users get told whether they are an administrator themselves or not
 if (Meteor.isServer) {
     import('/imports/lib/map-cursor').then(/* Fiber'd */ function({ MapCursor }) {
-        Meteor.publish(UsersDataPubName, function() {
-            const user = Meteor.user(),
+        Meteor.publish(UsersDataPubName, async function() {
+            const user = await Meteor.userAsync(),
                   userId = this.userId
             if (! (user && userId)) return
             const isAdmin = user.isAdmin

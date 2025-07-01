@@ -19,9 +19,9 @@ describe('Unit tests Tasks', function () {
     });
   });
 
-  it('should have at least a task', function () {
-    const tasks = Tasks.find({})
-    assert.notStrictEqual(tasks.count(), 0)
+  it('should have at least a task', async function () {
+    const tasks = Tasks.find({});
+    assert.notStrictEqual(await tasks.countAsync(), 0);
     // tasks.forEach(t => {
     //   // @ts-ignore
     //   const { customHeaders, variables, ...taskLight } = t
@@ -30,13 +30,13 @@ describe('Unit tests Tasks', function () {
   });
 
   // testing the test engine about dates, and how we are able to filter it with Mongo
-  it('should be able to read and write dates', function () {
+  it('should be able to read and write dates', async function () {
     Factory.create("task", {
         "journal.lastSeen": dayjs().subtract(15, 'days').toDate(),
       }
     )
 
-    const tasks = Tasks.find({}).fetch()
+    const tasks = await Tasks.find({}).fetchAsync()
     assert.isNotEmpty(tasks)
 
     tasks.forEach((task) => {
@@ -46,12 +46,12 @@ describe('Unit tests Tasks', function () {
     })
 
     // can we find the obsolete one ?
-    const obsoleteTasks = Tasks.find({
+    const obsoleteTasks = await Tasks.find({
       "journal.lastSeen": { $lte: dayjs().subtract(1, 'day').toDate() },
-    }).fetch()
-    const notObsoleteTasks = Tasks.find({
+    }).fetchAsync()
+    const notObsoleteTasks = await Tasks.find({
       "journal.lastSeen": { $gte: dayjs().subtract(1, 'day').toDate() },
-    }).fetch()
+    }).fetchAsync()
 
     assert.lengthOf(obsoleteTasks, 1)
     assert.isAbove(notObsoleteTasks.length, 1)
@@ -59,7 +59,7 @@ describe('Unit tests Tasks', function () {
 });
 
 
-describe('Unit tests Tasks dashboard definition', function () {
+describe('Unit tests Tasks dashboard definition', async function () {
   let taskWithoutDefinition: Task | undefined
   let tasksWithDefinition: Task[]
 
@@ -74,9 +74,9 @@ describe('Unit tests Tasks dashboard definition', function () {
     });
   });
 
-  it('should have a dashboard definition', function () {
-    taskWithoutDefinition = Tasks.findOne({ 'variables.dashboardDefinition': { $exists: false } })
-    tasksWithDefinition = Tasks.find({ 'variables.dashboardDefinition': { $exists: true } }).fetch()
+  it('should have a dashboard definition', async function () {
+    taskWithoutDefinition = await Tasks.findOneAsync({ 'variables.dashboardDefinition': { $exists: false } })
+    tasksWithDefinition = await Tasks.find({ 'variables.dashboardDefinition': { $exists: true } }).fetchAsync()
 
     assert.isUndefined(taskWithoutDefinition?.variables.dashboardDefinition)
 

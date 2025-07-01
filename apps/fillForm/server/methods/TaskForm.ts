@@ -22,15 +22,15 @@ const debug = require('debug')('server/methods/TaskForm')
 
 Meteor.methods({
 
-  async getTaskForm(_id) {
+  async getTaskForm(_id: string) {
     let user: Meteor.User | null = null
     if (this.userId) {
-      user = Meteor.users.findOne({_id: this.userId}) ?? null
+      user = await Meteor.users.findOneAsync( { _id: this.userId } ) ?? null
     }
 
     if (!user) return
 
-    const task = getUserPermittedTaskDetailed(user, _id)?.fetch()
+    const task = await getUserPermittedTaskDetailed(user, _id)?.fetchAsync()
 
     if (task && task[0]) {
       return task[0]
@@ -43,18 +43,18 @@ Meteor.methods({
   async submit(_id, formData, _formMetaData: FormioActivityLog) {
     let user: Meteor.User | null = null
     if (this.userId) {
-      user = Meteor.users.findOne({_id: this.userId}) ?? null
+      user = await Meteor.users.findOneAsync( { _id: this.userId } ) ?? null
     }
 
     if (!user) return
 
-    const task = Tasks.findOne({_id: _id})
+    const task = await Tasks.findOneAsync( { _id: _id } )
     if (!task) {
       auditLog(`Error: the task that is being submitted can not be found. Task key requested: ${_id}.`)
       throw new Meteor.Error(404, 'Unknown task', 'The task does not exist anymore.')
     }
 
-    if (!canSubmit(user, _id)) {
+    if (!await canSubmit(user, _id)) {
       auditLog(`Unallowed user ${user._id} is trying to submit the task ${_id}`)
       throw new Meteor.Error(403, 'You are not allowed to submit this task')
     }
@@ -112,7 +112,7 @@ Meteor.methods({
     auditLog(`Sending success: job ${task._id} of process instance ${task.processInstanceKey} with data ${JSON.stringify(formData)}`)
 
     debug(`Bumping activity logs about the submit`)
-    bumpActivityLogsOnTaskSubmit(task)
+    await bumpActivityLogsOnTaskSubmit(task)
 
     debug(`Clear the temp form, if any`)
     await UnfinishedTasks.removeAsync({ taskId: task._id!, userId: user._id })
@@ -123,7 +123,7 @@ Meteor.methods({
     })
 
     debug(`Save as submitted in the local db, for journaling operations`)
-    Tasks.markAsSubmitted(task._id!)
+    await Tasks.markAsSubmitted(task._id!)
   },
 
   async saveAsUnfinishedTask(taskId, formData) {

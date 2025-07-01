@@ -20,8 +20,8 @@ export const insertDoctoralSchool = new ValidatedMethod({
     noRetry: true,
   },
 
-  run(newDoctoralSchool: DoctoralSchool) {
-    if (!canCreateDoctoralSchool(Meteor.user())) {
+  async run(newDoctoralSchool: DoctoralSchool) {
+    if (!canCreateDoctoralSchool(await Meteor.userAsync())) {
       if (Meteor.isServer) {
         const auditLog = auditLogConsoleOut.extend('server/methods')
         auditLog(`Unallowed user trying to add a doctoral school`)
@@ -30,7 +30,7 @@ export const insertDoctoralSchool = new ValidatedMethod({
     }
 
     try {
-      const uniqID = DoctoralSchools.insert(newDoctoralSchool)
+      const uniqID = await DoctoralSchools.insertAsync(newDoctoralSchool)
 
       if (Meteor.isServer) {
         const auditLog = auditLogConsoleOut.extend('server/methods')
@@ -59,14 +59,14 @@ export const updateDoctoralSchool = new ValidatedMethod({
     noRetry: true,
   },
 
-  run({ _id, acronym, label, helpUrl, creditsNeeded, programDirectorSciper }: DoctoralSchool) {
-    const doctoralSchool = DoctoralSchools.findOne(_id);
+  async run({ _id, acronym, label, helpUrl, creditsNeeded, programDirectorSciper }: DoctoralSchool) {
+    const doctoralSchool = await DoctoralSchools.findOneAsync(_id);
     if (!doctoralSchool) {
       throw new Meteor.Error('DoctoralSchools.methods.update',
         'Cannot find a doctoral schools to update.');
     }
 
-    if (!canEditDoctoralSchool(Meteor.user(), doctoralSchool)) {
+    if (!canEditDoctoralSchool(await Meteor.userAsync(), doctoralSchool)) {
         if (Meteor.isServer) {
           const auditLog = auditLogConsoleOut.extend('server/methods')
           auditLog(`Unallowed user trying to edit a doctoral school`)
@@ -75,7 +75,7 @@ export const updateDoctoralSchool = new ValidatedMethod({
     }
 
     try {
-      const nbUpdated = DoctoralSchools.update(
+      const nbUpdated = await DoctoralSchools.updateAsync(
         _id!, {
           $set: {
             acronym,
