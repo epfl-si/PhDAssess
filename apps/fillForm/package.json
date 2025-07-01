@@ -21,7 +21,6 @@
   ],
   "dependencies": {
     "@dagrejs/graphlib": "^2",
-    "@epfl/epfl-sti-react-library": "^5",
     "@faker-js/faker": "^9",
     "@floating-ui/react": "^0",
     "@formio/bootstrap": "^3.1.1",
