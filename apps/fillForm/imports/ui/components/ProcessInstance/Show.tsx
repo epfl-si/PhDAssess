@@ -1,5 +1,5 @@
 import React from "react";
-import {useParams} from "react-router-dom";
+import {useParams} from "react-router";
 import {useSubscribe, useFind} from "meteor/react-meteor-data";
 import {Loader} from "@epfl/epfl-elements-react";
 

@@ -2,7 +2,7 @@ import React, {useEffect, useState, useRef} from 'react'
 import {global_Error, Meteor} from 'meteor/meteor'
 import {useTracker} from "meteor/react-meteor-data";
 import {Errors, Form} from '@formio/react'
-import {Link, useNavigate} from "react-router-dom"
+import {Link, useNavigate} from "react-router"
 import _ from "lodash"
 
 import {Button, Loader} from "@epfl/epfl-elements-react"

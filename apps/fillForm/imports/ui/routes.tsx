@@ -5,7 +5,7 @@ import {
   Navigate,
   Route,
   useParams
-} from "react-router-dom";
+} from "react-router";
 
 import {DoctoralSchoolsList} from "/imports/ui/components/DoctoralSchools/List";
 import {ImportScipersForSchool, ImportScipersSchoolSelector} from "/imports/ui/components/ImportSciper/List";

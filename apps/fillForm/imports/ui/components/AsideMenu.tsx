@@ -1,4 +1,4 @@
-import {Link, matchPath, useLocation} from "react-router-dom";
+import {Link, matchPath, useLocation} from "react-router";
 import React, {useEffect, useState} from "react";
 
 import {Loader} from "@epfl/epfl-elements-react";
