@@ -39,6 +39,7 @@
     "dayjs": "^1",
     "debug": "^4",
     "dotenv": "^17",
+    "epfl-elements-react": "^2",
     "find-up": "^7",
     "lodash": "^4",
     "meteor-node-stubs": "^1",
