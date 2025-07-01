@@ -8,7 +8,7 @@
  */
 
 import React, {useState} from "react";
-import {Link, useParams} from "react-router-dom";
+import {Link, useParams} from "react-router";
 import {global_Error, Meteor} from "meteor/meteor";
 import {useTracker} from "meteor/react-meteor-data";
 

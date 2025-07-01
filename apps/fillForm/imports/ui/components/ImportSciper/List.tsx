@@ -1,7 +1,7 @@
 import {global_Error, Meteor} from "meteor/meteor";
 import React, {useEffect, useState} from "react";
 import {useTracker} from "meteor/react-meteor-data";
-import {useNavigate, useParams, Link} from "react-router-dom";
+import {useNavigate, useParams, Link} from "react-router";
 import {Alert, Loader} from "@epfl/epfl-sti-react-library";
 import {DoctorantInfoSelectable, ImportScipersList} from "/imports/api/importScipers/schema";
 import StartButton from '/imports/ui/components/ImportSciper/StartButton';
