@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser, faUserGear } from '@fortawesome/free-solid-svg-icons'
 
-import {Loader} from "@epfl/epfl-elements-react";
+import {Loader} from "epfl-elements-react";
 
 import packageJson from '/package.json'
 import {useAccountContext} from "/imports/ui/contexts/Account";

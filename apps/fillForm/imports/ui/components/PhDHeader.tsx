@@ -1,5 +1,5 @@
 import React from "react"
-import { Drawer, Logo } from "@epfl/epfl-elements-react"
+import { Drawer, Logo } from "epfl-elements-react"
 import {UserAuthInfo} from "/imports/ui/components/UserAuthInfo";
 
 export function PhDHeader() {

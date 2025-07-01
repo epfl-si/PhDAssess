@@ -1,7 +1,7 @@
 import {Link, matchPath, useLocation} from "react-router";
 import React, {useEffect, useState} from "react";
 
-import {Loader} from "@epfl/epfl-elements-react";
+import {Loader} from "epfl-elements-react";
 
 import {useAccountContext} from "/imports/ui/contexts/Account";
 import {canEditAtLeastOneDoctoralSchool} from "/imports/policy/doctoralSchools";
@@ -57,6 +57,11 @@ export const AsideMenu = () => {
             </li>
             <li className={ matchPath("/dashboard", pathname) ? 'active' : undefined }>
               <Link to={ `/dashboard` }>Dashboard</Link>
+              <ul>
+                <li className={ matchPath("/dashboard/old", pathname) ? 'active' : undefined }>
+                  <Link to={ `/dashboard/old` }><small>Dashboard old workflows (before December 2023)</small></Link>
+                </li>
+              </ul>
             </li>
             <li>
               <a href={ 'https://www.epfl.ch/education/phd/annual_report' } target="_blank">

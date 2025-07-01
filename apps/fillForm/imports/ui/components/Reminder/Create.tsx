@@ -14,7 +14,7 @@ import {useTracker} from "meteor/react-meteor-data";
 
 import {useAccountContext} from "/imports/ui/contexts/Account";
 
-import {Button, Loader} from "@epfl/epfl-elements-react";
+import {Button, Loader} from "epfl-elements-react";
 import {toastErrorClosable} from "/imports/ui/components/Toasters";
 
 import { Editor } from "@tinymce/tinymce-react";
