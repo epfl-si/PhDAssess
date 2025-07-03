@@ -163,7 +163,7 @@ div[id^=error-list].alert-success {
     cursor:pointer
 }
 
-.formio-component-pdfFile a[ref="fileLink"] {
+.formio-component-pdfAnnexFile a[ref="fileBrowse"] {
   text-decoration-color: rgb(255, 0, 0);
   text-decoration-line: underline;
   text-decoration-style: solid;
