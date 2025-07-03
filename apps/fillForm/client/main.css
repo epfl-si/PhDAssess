@@ -163,6 +163,10 @@ div[id^=error-list].alert-success {
     cursor:pointer
 }
 
+.formio-component-file .fa-remove::before {
+  content: "\f014"; /* Replace the cross with a bin */
+}
+
 .formio-component-pdfAnnexFile a[ref="fileBrowse"] {
   text-decoration-color: rgb(255, 0, 0);
   text-decoration-line: underline;
