@@ -23,13 +23,11 @@ export const DoctoralSchools = new DoctoralSchoolsCollection('doctoralSchools',
 // @ts-ignore
   persistentDB && Meteor.isServer ? { _driver : persistentDB } : {})
 
-SimpleSchema.setDefaultMessages({
-  messages: {
-    en: {
-      notUnique: "This acronym already exists",
-    },
-  },
-});
+globalThis.simpleSchemaGlobalConfig = {
+  getErrorMessage(error, label) {
+    if (error.type === 'notUnique') return "This acronym already exists"
+  }
+};
 
 DoctoralSchools.schema = new SimpleSchema({
   _id: { type: String, optional: true },
