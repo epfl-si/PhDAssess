@@ -14,12 +14,12 @@
   "engines": {
     "node": "14"
   },
+  "//_dependencies": [
+    "The formiojs lib version is fixed for a reason: the calendar widget behave differently with the input provided to the custom validate function, ",
+    "mainly because of this line: https://github.com/formio/formio.js/pull/4839/files",
+    "If you want to update it, be sure to check correctly the behavior of the calendar widget."
+  ],
   "dependencies": {
-    "//": [
-      "The formiojs lib version is fixed for a reason: the calendar widget behave differently with the input provided to the custom validate function, ",
-      "mainly because of this line: https://github.com/formio/formio.js/pull/4839/files",
-      "If you want to update it, be sure to check correctly the behavior of the calendar widget."
-    ],
     "@babel/core": "^7.19.3",
     "@babel/runtime": "^7.19.4",
     "@dagrejs/graphlib": "^2.1.13",
