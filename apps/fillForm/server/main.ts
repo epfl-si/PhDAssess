@@ -1,5 +1,5 @@
 import {Meteor} from 'meteor/meteor'
-import {findUpSync} from 'find-up'
+import {findUp} from 'find-up-simple'
 import { PrometheusSource } from '/server/prometheus'
 
 import Tequila from 'meteor/epfl:accounts-tequila'
@@ -14,10 +14,11 @@ import '/imports/policy'
 import ZeebeClient from './zeebe/connector'
 import {validateEnv} from "/server/validateEnv";
 
-require("dotenv").config({path: findUpSync(".env")})
 
-
-Meteor.startup(() => {
+Meteor.startup(async () => {
+  console.log("dotenv: loading...")
+  require("dotenv").config({path: await findUp(".env")})
+  console.log("dotenv: loaded")
 
   console.log(`Starting fillForm version ${ packageJson.version }`)
 
