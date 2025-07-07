@@ -11,7 +11,7 @@ _dburlesFactory.Factory.define('doctoralSchool', DoctoralSchools, {
   acronym: () => faker.lorem.word({ length: { min: 3, max: 7 }, strategy: "closest" }),
   label: () => faker.lorem.words(4),
   helpUrl: () => faker.internet.url(),
-  creditsNeeded: () => () => faker.datatype.number({ min: 100000, max: 999999 }),
+  creditsNeeded: () => () => faker.number.int({ min: 100000, max: 999999 }),
   programDirectorSciper: () => faker.sciper(),
   programDirectorName: () => faker.name.fullName(),
   administrativeAssistantAccessGroup: 'phd-assess-ops',
