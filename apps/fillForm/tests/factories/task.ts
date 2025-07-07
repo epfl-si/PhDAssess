@@ -39,10 +39,10 @@ const generateParticipants = (hasThesisCoDirector= true) => {
 
 const buildNotificationLog = (isNotAReminder?: boolean) => {
   return JSON.stringify({
-    sentAt: faker.date.between('2020-01-01T00:00:00.000Z', dayjs().toISOString()).toISOString(),
+    sentAt: faker.date.between({from: '2020-01-01T00:00:00.000Z', to: dayjs().toISOString()}).toISOString(),
     sentTo: {
       to: Array.from(
-        { length: faker.datatype.number({ min: 1, max: 3 }) },
+        { length: faker.number.int({ min: 1, max: 3 }) },
         () => faker.internet.email(
           faker.name.firstName(),
           faker.name.lastName(),
@@ -50,7 +50,7 @@ const buildNotificationLog = (isNotAReminder?: boolean) => {
         )
       ),
       cc: faker.helpers.maybe(() => Array.from(
-        { length: faker.datatype.number({ min: 0, max: 2 }) },
+        { length: faker.number.int({ min: 0, max: 2 }) },
         () => faker.internet.email(
           faker.name.firstName(),
           faker.name.lastName(),
@@ -58,7 +58,7 @@ const buildNotificationLog = (isNotAReminder?: boolean) => {
         )
       )),
       bcc: faker.helpers.maybe(() => Array.from(
-        { length: faker.datatype.number({ min: 0, max: 2 }) },
+        { length: faker.number.int({ min: 0, max: 2 }) },
         () => faker.internet.email(
           faker.name.firstName(),
           faker.name.lastName(),
@@ -78,7 +78,7 @@ export const generateAGenericTaskAttributes = (hasThesisCoDirector = true) => {
   return {
     "journal": {
       "lastSeen": () => dayjs().subtract(15, 'minutes').toDate(),
-      "seenCount": faker.datatype.number(9999),
+      "seenCount": faker.number.int(9999),
     },
     "bpmnProcessId": "phdAssessProcess",
     "customHeaders": {
@@ -94,17 +94,17 @@ export const generateAGenericTaskAttributes = (hasThesisCoDirector = true) => {
     "elementId": faker.helpers.arrayElement([
       "Activity_PHD_fills_annual_report",
     ]),
-    "elementInstanceKey": faker.datatype.number({
+    "elementInstanceKey": faker.number.int({
       min: 1000000000000000, max: 9999999999999999
     }),
-    "key": faker.datatype.number({
+    "key": faker.number.int({
       min: 1000000000000000, max: 9999999999999999
     }),
-    "processDefinitionVersion": faker.datatype.number(50),
-    "processInstanceKey": faker.datatype.number({
+    "processDefinitionVersion": faker.number.int(50),
+    "processInstanceKey": faker.number.int({
       min: 1000000000000000, max: 9999999999999999
     }),
-    "processKey": faker.datatype.number({
+    "processKey": faker.number.int({
       min: 1000000000000000, max: 9999999999999999
     }),
     "retries": 0,
@@ -131,12 +131,12 @@ export const generateAGenericTaskAttributes = (hasThesisCoDirector = true) => {
       "notificationLogs": [
         buildNotificationLog(true),
         ...Array.from(
-        { length: faker.datatype.number({ min: 0, max: 3 }) },
+        { length: faker.number.int({ min: 0, max: 3 }) },
         buildNotificationLog  // this defaults to reminder
       )],
-      "uuid": faker.helpers.maybe(  () => faker.datatype.uuid(), { probability: 0.8 }),
+      "uuid": faker.helpers.maybe(  () => faker.string.uuid(), { probability: 0.8 }),
     },
-    "worker": faker.datatype.uuid(),
+    "worker": faker.string.uuid(),
   }
 }
 
