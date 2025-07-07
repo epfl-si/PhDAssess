@@ -148,13 +148,34 @@ const TaskFormEdit = ({ task, onSubmitted }: { task: Task, onSubmitted: () => vo
   if (unFinishedTask === undefined)
     return (<Loader message={'Loading previous session if any...'}/>)
 
+  const tweakedFormIO = JSON.parse(task.customHeaders.formIO)
+
+  function walkComponents (formio: { components: any}, cb : (formioNode: any) => any) {
+    for (const c of formio.components) {
+      cb(c)
+      if (c.components) walkComponents(c, cb);
+    }
+  }
+
+  walkComponents(tweakedFormIO, (c) => {
+    if (c.widget?.type === "calendar") {
+      // Some old code inside the BPMN XML prevents us from upgrading form.io. Disable it
+      // unless and until form.io restore their existing API for custom validation snippets:
+      delete c.validate.custom
+      if (c.key === "dateOfEnrolment" || c.key === "dateofWhateverJulienCanFixupThis") {
+        // For some reason, the XML should contain a `maxDate` check but doesn't:
+        c.widget.maxDate = "moment().add(-1, 'days')"
+      }
+    }
+  }
+
   return (
     <>
       <div className={ 'alert alert-info' }>Data is automatically saved each time a field is filled in</div>
       <h1 className={ 'h2 mt-4 mb-3' }>{task.customHeaders.title || `Task ${task._id}`}</h1>
       <Errors/>
       <Form
-        form={ JSON.parse(task.customHeaders.formIO) }
+        form={ tweakedFormIO }
         submission={
           // merge has to be best thought, it may be tricky with
           // what we change in zeebe and unfinished one that want to be the truth
