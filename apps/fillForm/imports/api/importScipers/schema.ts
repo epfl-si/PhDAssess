@@ -1,5 +1,6 @@
 import {Mongo} from "meteor/mongo";
-import SimpleSchema from 'simpl-schema';
+import SimpleSchema from 'meteor/aldeed:simple-schema';
+import 'meteor/aldeed:collection2/static';
 import {DoctorantInfo} from "/imports/api/importScipers/isaTypes";
 
 
@@ -69,4 +70,5 @@ ImportScipersList.schema = new SimpleSchema({
   isAllSelected: { type: Boolean, defaultValue: false },
 })
 
-ImportScipersList.attachSchema(ImportScipersList.schema);
+Meteor.startup(() =>
+  ImportScipersList.attachSchema(ImportScipersList.schema));

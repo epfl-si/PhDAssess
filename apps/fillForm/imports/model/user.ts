@@ -24,6 +24,7 @@ import _ from 'lodash'
 
 import { Meteor } from 'meteor/meteor'
 import { Mongo } from 'meteor/mongo'
+import 'meteor/aldeed:collection2/static'
 import Cursor = Mongo.Cursor;
 import * as MongoNpmModule from 'mongodb';
 import { LocalCollection } from 'meteor/minimongo'
@@ -122,7 +123,8 @@ export class User {
     }
 }
 
-MeteorUsers.attachSchema(User.Schema)
+Meteor.startup(() =>
+    MeteorUsers.attachSchema(User.Schema))
 
 const MeteorUsersCollectionName = 'users'
 const UsersDataPubName = 'users.data'
