@@ -56,6 +56,40 @@ const TaskAdminInfo = ({ taskId }: { taskId: string }) => {
   )
 }
 
+/**
+ * FormIO had a fix that changed the way it uses local on the calendar widget.
+ * This fix should validate the update of FormIO from 4.14.8 to ^4.15.0,
+ * for the old BPMNs still running.
+ * Fix that triggered this workaround:
+ * https://github.com/formio/formio.js/pull/4839/files
+ */
+const fixFormIOCustomValidations = (
+  parsedFormIO: { components: any}
+) => {
+  const walkComponents = (
+    formio: { components: any},
+    cb : (formioNode: any) => any
+  ) =>  {
+    for (const c of formio.components) {
+      cb(c)
+      if (c.components) walkComponents(c, cb);
+    }
+  }
+
+  // Find all calendars and rewrite their format valid only for
+  // formIO <=4.14.8
+  walkComponents(
+    parsedFormIO,
+    (component) => {
+      if (
+        component.widget?.type === "calendar" &&
+        component.widget?.dateFormat === "yyyy-MM-dd"
+      )
+        component.widget.dateFormat = "dd.MM.yyyy";
+    }
+  )
+}
+
 /*
  * Here is the React component that manage the form. It can
  *  - show and submit the form
@@ -152,24 +186,7 @@ const TaskFormEdit = ({ task, onSubmitted }: { task: Task, onSubmitted: () => vo
 
   const tweakedFormIO = JSON.parse(task.customHeaders.formIO)
 
-  function walkComponents (formio: { components: any}, cb : (formioNode: any) => any) {
-    for (const c of formio.components) {
-      cb(c)
-      if (c.components) walkComponents(c, cb);
-    }
-  }
-
-  walkComponents(tweakedFormIO, (c) => {
-    if (c.widget?.type === "calendar") {
-      // Some old code inside the BPMN XML prevents us from upgrading form.io. Disable it
-      // unless and until form.io restore their existing API for custom validation snippets:
-      delete c.validate.custom
-      if (c.key === "dateOfEnrolment" || c.key === "dateofWhateverJulienCanFixupThis") {
-        // For some reason, the XML should contain a `maxDate` check but doesn't:
-        c.widget.maxDate = "moment().add(-1, 'days')"
-      }
-    }
-  }
+  fixFormIOCustomValidations(tweakedFormIO)
 
   return (
     <>
