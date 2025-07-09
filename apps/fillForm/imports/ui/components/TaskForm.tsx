@@ -16,7 +16,7 @@ import {openAnnexPdf} from './Task/PdfAnnex';
 
 /**
  * Monitor the task, to reflect to the UI when the task was loaded but is not anymore later.
- * It can happen when multiple assignee are working on the same time on a task
+ * It can happen when multiple assignees are working at the same time on a task
  */
 const TaskMonitor = ({ task }: { task: Task }) => {
   const taskSubscriptionLoading = useTracker(() => {
@@ -91,10 +91,10 @@ const fixFormIOCustomValidations = (
 }
 
 /*
- * Here is the React component that manage the form. It can
+ * Here is the React component that manages the form. It can
  *  - show and submit the form
- *  - automatically save an unfinished form. Unfinished form are created as blur event on inputs.
- *  - retrieve unfinished form on load.
+ *  - automatically save an unfinished form. Unfinished forms are created as blur event on inputs.
+ *  - retrieve unfinished form on load event.
  */
 const TaskFormEdit = ({ task, onSubmitted }: { task: Task, onSubmitted: () => void }) => {
   const [isSubmitted, setIsSubmitted] = useState(false)
@@ -130,10 +130,10 @@ const TaskFormEdit = ({ task, onSubmitted }: { task: Task, onSubmitted: () => vo
   }
 
   const onChange = async (event: any) => {
-    // keep only changed event, not all others changes
+    // keep only changed event, not all other changes
     if (!event.changed ) return
 
-    // filter out the changes coming from TextAreaComponent.
+    // Filter out the changes coming from TextAreaComponent.
     // The onBlur is better at it, as it does not trigger on every keyboard input.
     if (event.changed.component?.inputType === 'text') return
 
@@ -142,7 +142,7 @@ const TaskFormEdit = ({ task, onSubmitted }: { task: Task, onSubmitted: () => vo
   }
 
   const saveAsUnfinishedTask = async (data: any) => {
-    // filter out well known uninteresting data
+    // filter out well-known uninteresting data
     const eventDataChanged = _.omit(data, [
       ...findDisabledFields(JSON.parse(task.customHeaders.formIO!)),
       'assigneeSciper',
@@ -237,9 +237,9 @@ const TaskFormEdit = ({ task, onSubmitted }: { task: Task, onSubmitted: () => vo
           duration: 18000,
         })
 
-      // As formio sent all the form fields (disabled included)
+      // As formio sent all the form fields (disabled included),
       // we remove the "disabled" one, so we can control
-      // the workflow variables with only the needed values
+      // the workflow variables with only the necessary values
       const formDataPicked = _.omit(formData.data, findDisabledFields(this))
 
       Meteor.apply(
@@ -258,7 +258,7 @@ const TaskFormEdit = ({ task, onSubmitted }: { task: Task, onSubmitted: () => vo
             } else {
               toast.dismiss(toastId)
               setIsSubmitted(true)
-              onSubmitted()  // call the event after the submit process has been done successfully
+              onSubmitted()  // call the event after the 'submit' process has been done successfully
               next()
             }
           }
@@ -346,7 +346,7 @@ export const TaskForm = ({ _id }: { _id: string }) => {
 }
 
 /*
- * Get a list of keys of fields that are disabled
+ * Get a list of keys, from the fields that are disabled
  */
 function findDisabledFields(form: any) {
   let disabledFieldKeys: string[] = [];
