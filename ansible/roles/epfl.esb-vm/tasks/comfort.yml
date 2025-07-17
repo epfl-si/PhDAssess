@@ -1,4 +1,0 @@
-- tags: always
-  include_vars: "{{ item }}"
-  with_items:
-    - esb-vm-vars.yml

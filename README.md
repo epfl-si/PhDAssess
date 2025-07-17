@@ -8,12 +8,12 @@ The stack is composed of:
 
 ### Operative tools
 - `./phd.mjs`, to command
-- `./ansible/`, to deploy
+- https://github.com/epfl-si/PhDAssess.ops, to deploy
 - `./scripts/`, to hack
 
 ### Backends
 - the Zeebe stack
-    - a raft of three Zeebes 
+    - a raft of three Zeebes
     - the BPMN
       - You can take a look at the process by installing the [BPMN Modeler](https://camunda.com/download/modeler/) and by opening [the process definition](https://github.com/epfl-si/PhDAssess-meta/blob/main/bpmn/phdAssessProcess.bpmn).
 - the GED uploader, as a nodeJS worker

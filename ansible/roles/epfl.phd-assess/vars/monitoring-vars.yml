@@ -1,6 +1,0 @@
-##### Monitoring-related variables #####
-
-# TODO: this will soon become a responsibility of the VM.
-monitoring_prometheus_external_hostname: prometheus-phdassess.epfl.ch
-
-monitoring_node_disk_usage_exporter_image: "{{ openshift_local_images_base }}/disk-usage-exporter"

@@ -1,4 +1,0 @@
-ssh_tunnel_client_secret_name: ssh-tunnel-client-keys
-
-ssh_tunnel_client_image_name: ssh-tunnel-client
-ssh_tunnel_client_dc_name: "ssh-tunnel-{{ esb_ssh_tunnels.host | hostname_short }}"
