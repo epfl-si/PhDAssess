@@ -16,12 +16,12 @@ const generateParticipants = (hasThesisCoDirector= true) => {
     if (role === 'thesisCoDirector' && !hasThesisCoDirector) return
 
     const firstName = faker.helpers.maybe(
-      () => faker.name.firstName() + ' ' + faker.name.firstName(), { probability: 0.7 }
-    ) ?? faker.name.firstName()
+      () => faker.person.firstName() + ' ' + faker.person.firstName(), { probability: 0.7 }
+    ) ?? faker.person.firstName()
 
     const lastName = faker.helpers.maybe(
-      () => faker.name.lastName() + ' ' + faker.name.lastName(), { probability: 0.7 }
-    ) ?? faker.name.lastName()
+      () => faker.person.lastName() + ' ' + faker.person.lastName(), { probability: 0.7 }
+    ) ?? faker.person.lastName()
 
     if (role === 'phdStudent') {
       // we save student detail, has it used to build the final GED path
@@ -30,7 +30,7 @@ const generateParticipants = (hasThesisCoDirector= true) => {
     }
 
     participants[`${role}Name`] = `${firstName} ${lastName}`
-    participants[`${role}Sciper`] = `${faker.sciper()}`
+    participants[`${role}Sciper`] = `${faker.person.sciper()}`
     participants[`${role}Email`] = `${firstName.toLowerCase()}.${lastName.toLowerCase()}@epfl.ch`
   })
 
@@ -43,27 +43,27 @@ const buildNotificationLog = (isNotAReminder?: boolean) => {
     sentTo: {
       to: Array.from(
         { length: faker.number.int({ min: 1, max: 3 }) },
-        () => faker.internet.email(
-          faker.name.firstName(),
-          faker.name.lastName(),
-          'epfl.ch'
-        )
+        () => faker.internet.email({
+          firstName: faker.person.firstName(),
+          lastName: faker.person.lastName(),
+          provider: 'epfl.ch',
+        })
       ),
       cc: faker.helpers.maybe(() => Array.from(
         { length: faker.number.int({ min: 0, max: 2 }) },
-        () => faker.internet.email(
-          faker.name.firstName(),
-          faker.name.lastName(),
-          'epfl.ch'
-        )
+        () => faker.internet.email({
+          firstName: faker.person.firstName(),
+          lastName: faker.person.lastName(),
+          provider: 'epfl.ch',
+        })
       )),
       bcc: faker.helpers.maybe(() => Array.from(
         { length: faker.number.int({ min: 0, max: 2 }) },
-        () => faker.internet.email(
-          faker.name.firstName(),
-          faker.name.lastName(),
-          'epfl.ch'
-        )
+        () => faker.internet.email({
+          firstName: faker.person.firstName(),
+          lastName: faker.person.lastName(),
+          provider: 'epfl.ch',
+        })
       )),
     },
     // using negative boolean, as a default mandatory is not a reminder
@@ -112,9 +112,9 @@ export const generateAGenericTaskAttributes = (hasThesisCoDirector = true) => {
     "variables": {
       ...participant,
       "assigneeSciper": participant.phdStudentSciper,
-      "created_at": () => faker.date.past(1).toISOString(),
-      "created_by": () => faker.sciper(),
-      "updated_at": () => faker.date.past(1).toISOString(),  //it may be before created at, not a big deal for the moment
+      "created_at": () => faker.date.past({ years: 2 }).toISOString(),
+      "created_by": () => faker.person.sciper(),
+      "updated_at": () => faker.date.past({ years: 2 }).toISOString(),  //it may be before created at, not a big deal for the moment
       "dueDate": () => faker.date.future().toLocaleDateString('fr-CH', {
         day: '2-digit',
         month: '2-digit',
