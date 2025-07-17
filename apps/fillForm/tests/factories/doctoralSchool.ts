@@ -12,7 +12,7 @@ _dburlesFactory.Factory.define('doctoralSchool', DoctoralSchools, {
   label: () => faker.lorem.words(4),
   helpUrl: () => faker.internet.url(),
   creditsNeeded: () => () => faker.number.int({ min: 100000, max: 999999 }),
-  programDirectorSciper: () => faker.sciper(),
-  programDirectorName: () => faker.name.fullName(),
+  programDirectorSciper: () => faker.person.sciper(),
+  programDirectorName: () => faker.person.fullName(),
   administrativeAssistantAccessGroup: 'phd-assess-ops',
 });
