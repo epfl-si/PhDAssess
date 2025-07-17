@@ -77,8 +77,10 @@
     "chai-as-promised": "^8",
     "chai-datetime": "^1",
     "express": "^5",
+    "get-fqdn": "^1",
     "pem": "^1",
     "phd-assess-meta": "git+https://github.com/epfl-si/PhDAssess-meta.git",
+    "request": "^2",
     "typescript": "^5"
   },
   "meteor": {
