@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {Task} from "/imports/model/tasks";
-import {Loader} from "@epfl/epfl-sti-react-library";
+import {Loader} from "@epfl/epfl-elements-react";
 import {ParticipantRoles} from "/imports/model/participants";
 import {camelCaseToLabelParticipant} from "/imports/ui/components/Participant/List";
 

@@ -2,7 +2,7 @@ import React, {useState} from "react"
 import {useTracker} from "meteor/react-meteor-data";
 import {Meteor} from "meteor/meteor";
 import {canEditAtLeastOneDoctoralSchool} from "/imports/policy/doctoralSchools";
-import {Loader} from "@epfl/epfl-sti-react-library";
+import {Loader} from "@epfl/epfl-elements-react";
 import {DoctoralSchool, DoctoralSchools} from "/imports/api/doctoralSchools/schema";
 import {CreateForm} from './Create'
 import {InlineEdit} from './Edit'

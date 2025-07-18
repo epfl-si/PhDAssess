@@ -11,7 +11,7 @@ import {useTracker} from "meteor/react-meteor-data";
 import {Meteor} from "meteor/meteor";
 import {Tasks} from "/imports/model/tasks";
 import {ITaskDashboard} from "/imports/policy/dashboard/type";
-import {Loader} from "@epfl/epfl-sti-react-library";
+import {Loader} from "@epfl/epfl-elements-react";
 import {convertDefinitionToGraph, DashboardGraph} from "/imports/ui/components/Dashboard/DefinitionGraphed";
 import {stepsDefinitionDefault} from "/imports/ui/components/DashboardOld/DefaultDefinition";
 import React, {CSSProperties, useMemo, useState} from "react";

@@ -2,7 +2,7 @@ import _ from "lodash"
 import {Meteor} from "meteor/meteor"
 import React, {useState} from "react"
 import {useTracker} from "meteor/react-meteor-data"
-import {Loader} from "@epfl/epfl-sti-react-library";
+import {Loader} from "@epfl/epfl-elements-react";
 
 import {Tasks} from "../../../model/tasks";
 import {ITaskDashboard} from "../../../policy/dashboard/type";
