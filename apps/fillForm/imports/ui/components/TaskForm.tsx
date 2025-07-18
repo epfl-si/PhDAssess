@@ -5,7 +5,7 @@ import {Errors, Form} from '@formio/react'
 import {Link, useNavigate} from "react-router-dom"
 import _ from "lodash"
 
-import {Button, Loader} from "@epfl/epfl-sti-react-library"
+import {Button, Loader} from "@epfl/epfl-elements-react"
 import toast from 'react-hot-toast';
 
 import {toastErrorClosable} from "/imports/ui/components/Toasters";
@@ -46,7 +46,7 @@ const TaskAdminInfo = ({ taskId }: { taskId: string }) => {
 
   const task = useTracker(() => Tasks.findOne({ '_id': taskId}), [taskId])
 
-  if (taskSubscriptionLoading) return <Loader>Loading task admin info</Loader>
+  if (taskSubscriptionLoading) return <Loader message={'Loading task admin info'}/>
 
   if (!task) return <></>
 

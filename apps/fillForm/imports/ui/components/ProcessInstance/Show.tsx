@@ -1,7 +1,7 @@
 import React from "react";
 import {useParams} from "react-router-dom";
 import {useSubscribe, useFind} from "meteor/react-meteor-data";
-import {Loader} from "@epfl/epfl-sti-react-library";
+import {Loader} from "@epfl/epfl-elements-react";
 
 import {useAccountContext} from "/imports/ui/contexts/Account";
 

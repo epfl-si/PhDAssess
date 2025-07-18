@@ -23,7 +23,7 @@
     "@babel/core": "^7.19.3",
     "@babel/runtime": "^7.19.4",
     "@dagrejs/graphlib": "^2.1.13",
-    "@epfl/epfl-sti-react-library": "^4.5.1",
+    "@epfl/epfl-elements-react": "^2.4.0",
     "@faker-js/faker": "^7.6.0",
     "@floating-ui/react": "^0.26.6",
     "@formio/react": "^5.3.0",

@@ -4,7 +4,7 @@ import _ from "lodash"
 import {useTracker} from 'meteor/react-meteor-data'
 import {Tasks} from "/imports/model/tasks";
 import {WorkflowStarter} from './workflowStarter'
-import {Button, Loader} from "@epfl/epfl-sti-react-library"
+import {Button, Loader} from "@epfl/epfl-elements-react"
 import {Link, useNavigate} from "react-router-dom"
 import {ParticipantsAsRow} from "/imports/ui/components/Participant/List";
 import toast from "react-hot-toast";
