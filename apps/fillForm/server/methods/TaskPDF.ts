@@ -50,7 +50,7 @@ export const sendPDFAnnexToAlfresco = async (
     )
 
     // alright, we may be ready to deposit the file
-    const normalizedPDFAnnexName = `Rapport annuel doctorat annex ${ task.variables.year ?? dayjs().year() }.pdf`
+    const normalizedPDFAnnexName = `Rapport annuel doctorat appendix ${ task.variables.year ?? dayjs().year() }.pdf`
 
     const annexPdfPath = await uploadPDF(
       alfrescoInfo,
@@ -70,7 +70,7 @@ export const sendPDFAnnexToAlfresco = async (
   } catch (error: any) {
     // here are the error we can write into auditLog, but not for the client
     auditLog(
-      `While trying to deposit a PDF annex on GED, an error raised for ${ task._id }, ` +
+      `While trying to deposit a PDF appendix on GED, an error raised for ${ task._id }, ` +
       `process instance ${ task.processInstanceKey}. ${ error }`
     )
     // reraise something for the client
