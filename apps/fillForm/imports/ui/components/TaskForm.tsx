@@ -12,6 +12,7 @@ import {toastErrorClosable} from "/imports/ui/components/Toasters";
 import {customEvent} from '/imports/ui/model/formIo'
 import {Task, Tasks} from "/imports/model/tasks";
 import {openAnnexPdf} from './Task/PdfAnnex';
+import {applyFormIOFixes} from "/imports/ui/components/Task/FormIOFixes";
 
 
 /**
@@ -53,40 +54,6 @@ const TaskAdminInfo = ({ taskId }: { taskId: string }) => {
     <div className={ 'mb-4' }>
       <div>Task last seen on Zeebe at { task.journal.lastSeen?.toLocaleString('fr-CH') }, { task.journal.seenCount }x</div>
     </div>
-  )
-}
-
-/**
- * FormIO had a fix that changed the way it uses local on the calendar widget.
- * This fix should validate the update of FormIO from 4.14.8 to ^4.15.0,
- * for the old BPMNs still running.
- * Fix that triggered this workaround:
- * https://github.com/formio/formio.js/pull/4839/files
- */
-const fixFormIOCustomValidations = (
-  parsedFormIO: { components: any}
-) => {
-  const walkComponents = (
-    formio: { components: any},
-    cb : (formioNode: any) => any
-  ) =>  {
-    for (const c of formio.components) {
-      cb(c)
-      if (c.components) walkComponents(c, cb);
-    }
-  }
-
-  // Find all calendars and rewrite their format valid only for
-  // formIO <=4.14.8
-  walkComponents(
-    parsedFormIO,
-    (component) => {
-      if (
-        component.widget?.type === "calendar" &&
-        component.widget?.dateFormat === "yyyy-MM-dd"
-      )
-        component.widget.dateFormat = "dd.MM.yyyy";
-    }
   )
 }
 
@@ -186,7 +153,7 @@ const TaskFormEdit = ({ task, onSubmitted }: { task: Task, onSubmitted: () => vo
 
   const tweakedFormIO = JSON.parse(task.customHeaders.formIO)
 
-  fixFormIOCustomValidations(tweakedFormIO)
+  applyFormIOFixes(tweakedFormIO)
 
   return (
     <>
