@@ -178,8 +178,8 @@ const TaskFormEdit = ({ task, onSubmitted }: { task: Task, onSubmitted: () => vo
               await toast.promise(
                 openAnnexPdf(task),
                 {
-                  loading: 'Loading the PDF annex...',
-                  error: 'Something went wrong while trying to get the PDF annex. ' +
+                  loading: 'Loading the PDF appendix...',
+                  error: 'Something went wrong while trying to get the PDF appendix. ' +
                     ' Please try again later or contact 1234@epfl.ch',
                 }
               )
