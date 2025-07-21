@@ -1,2 +1,4 @@
 .env
 .meteor/local/
+packages
+node_modules
