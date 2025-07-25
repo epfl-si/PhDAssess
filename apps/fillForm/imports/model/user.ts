@@ -25,7 +25,6 @@ import _ from 'lodash'
 import { Meteor } from 'meteor/meteor'
 import { Mongo } from 'meteor/mongo'
 import 'meteor/aldeed:collection2/static'
-import Cursor = Mongo.Cursor;
 import * as MongoNpmModule from 'mongodb';
 import { LocalCollection } from 'meteor/minimongo'
 import SimpleSchema from 'simpl-schema'
@@ -133,30 +132,22 @@ const UsersDataPubName = 'users.data'
 // Administrators get all users and names
 // All users get told whether they are an administrator themselves or not
 if (Meteor.isServer) {
-    import('/imports/lib/map-cursor').then(/* Fiber'd */ function({ MapCursor }) {
-        Meteor.publish(UsersDataPubName, async function() {
-            const user = await Meteor.userAsync(),
-                  userId = this.userId
-            if (! (user && userId)) return
-            const isAdmin = user.isAdmin
-            const isUberProgramAssistant = user.isUberProgramAssistant
+  Meteor.publish(UsersDataPubName, async function() {
+    const user = await Meteor.userAsync(),
+      userId = this.userId
+    if (! (user && userId)) return
+    const isAdmin = user.isAdmin
+    const isUberProgramAssistant = user.isUberProgramAssistant
 
-            debug(`Disclosing %s to ${userId}`,
-                  isAdmin ? "all users' personal data" : "their own personal data")
-            return new MapCursor(
-                Meteor.users.find({_id: userId}),
-                (changes: any, id: string) => {
-                    if (id === userId) {
-                        changes.isAdmin = isAdmin
-                        changes.isUberProgramAssistant = isUberProgramAssistant
-                        return changes
-                    } else {
-                        return _.pick(changes, ['_id', 'tequila'])  // disclosed
-                    }
-                },
-                MeteorUsersCollectionName) as Cursor<User>
-        })
-    })
+    this.added(
+      MeteorUsersCollectionName,
+      userId,
+      { isAdmin, isUberProgramAssistant, tequila: user.tequila }
+    )
+
+    debug(`Disclosing %s to ${userId}`,
+      isAdmin ? "all users' personal data" : "their own personal data")
+  })
 } else {
-    Meteor.subscribe(UsersDataPubName)
+  Meteor.subscribe(UsersDataPubName)
 }
