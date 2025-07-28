@@ -263,6 +263,7 @@ export default {
           fromElementId: encrypt(job.elementId),
           pdfType: job.customHeaders.pdfType ? encrypt(job.customHeaders.pdfType) : undefined,
           pdfName: job.customHeaders.pdfName ? encrypt(job.customHeaders.pdfName) : undefined,
+          pdfAnnexPath: encrypt(job.variables.pdfAnnexPath),
           type: encrypt('awaitingForm')
         } as NotificationStartMessage
       }).then( () => { debug(`Notification receipt sent for Job ${job.key}.`) } )

@@ -83,6 +83,7 @@ Meteor.methods({
         fromElementId: encrypt(`${task.elementId}`),
         pdfType: task.customHeaders.pdfType ? encrypt(task.customHeaders.pdfType) : undefined,
         pdfName: task.customHeaders.pdfName ? encrypt(task.customHeaders.pdfName) : undefined,
+        pdfAnnexPath: encrypt(task.variables.pdfAnnexPath),
         type: encrypt('reminder'),
       } as NotificationStartMessage
     })
