@@ -17,7 +17,8 @@
   "//_dependencies": [
     "The formiojs lib version is fixed for a reason: the calendar widget behave differently with the input provided to the custom validate function, ",
     "mainly because of this line: https://github.com/formio/formio.js/pull/4839/files",
-    "If you want to update it, be sure to check correctly the behavior of the calendar widget."
+    "If you want to update it, be sure to check correctly the behavior of the calendar widget.",
+    "Updating crypto-js to 4.2.0 may trigger some decrypt problem, be aware."
   ],
   "dependencies": {
     "@dagrejs/graphlib": "^2",
@@ -32,7 +33,7 @@
     "@popperjs/core": "^2",
     "@tinymce/tinymce-react": "^6",
     "abort-controller": "^3",
-    "crypto-js": "^4",
+    "crypto-js": "4.1.1",
     "csstype": "^3",
     "dayjs": "^1",
     "debug": "^4",
