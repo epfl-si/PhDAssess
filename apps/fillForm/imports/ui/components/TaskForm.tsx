@@ -271,11 +271,7 @@ export const TaskForm = ({ _id }: { _id: string }) => {
   useEffect(() => {
     const getTaskForm = async () => {
       try {
-        const result = await Meteor.applyAsync(
-          'getTaskForm',
-          [_id],
-          { wait: true }
-        )
+        const result = await Meteor.callAsync('getTaskForm', _id)
         setTask(result as Task)
         setTaskFormLoading(false)
       } catch (error: any) {

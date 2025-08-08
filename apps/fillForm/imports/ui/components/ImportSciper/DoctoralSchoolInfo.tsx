@@ -15,10 +15,9 @@ export const DoctoralSchoolInfo = ({doctoralSchool}: {doctoralSchool: DoctoralSc
     const refreshDS = async () => {
       try {
         setIsFetchingProgramSciperName(true)
-        await Meteor.applyAsync(
+        await Meteor.callAsync(
           "refreshDoctoralSchoolsProgramNameFromSciper",
-          [ doctoralSchool.acronym ],
-          { wait: false, noRetry: false }
+          doctoralSchool.acronym
         )
         setIsFetchingProgramSciperName(false)
       } catch (error) {
