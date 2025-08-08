@@ -44,7 +44,7 @@ const TaskAdminInfo = ({ taskId }: { taskId: string }) => {
 
   const task = useTracker(() => Tasks.findOne({ '_id': taskId}), [taskId])
 
-  if (taskSubscriptionLoading) return <Loader>Loading task admin info</Loader>
+  if (taskSubscriptionLoading) return <Loader message={"Loading task admin info"} />
 
   if (!task) return <></>
 
