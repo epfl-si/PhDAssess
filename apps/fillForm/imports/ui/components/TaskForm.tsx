@@ -8,7 +8,7 @@ import _ from "lodash"
 import {Button, Loader} from "epfl-elements-react"
 import toast from 'react-hot-toast';
 
-import {toastErrorClosable} from "/imports/ui/components/Toasters";
+import {toastErrorClosable, toastExceptionClosable} from "/imports/ui/components/Toasters";
 import {customEvent} from '/imports/ui/model/formIo'
 import {Task, Tasks} from "/imports/model/tasks";
 
@@ -234,7 +234,7 @@ const TaskFormEdit = ({ task, onSubmitted }: { task: Task, onSubmitted: () => vo
           wait: true,
           onResultReceived: (error: global_Error | Meteor.Error | undefined) => {
             if (error) {
-              toastErrorClosable(toastId, `${error}`)
+              toastExceptionClosable(toastId, error)
               next(error.message)
             } else {
               toast.dismiss(toastId)
