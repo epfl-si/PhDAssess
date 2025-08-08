@@ -129,11 +129,7 @@ export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralS
   useEffect(() => {
     const getISAScipers = async () => {
       try {
-        await Meteor.applyAsync(
-          "getISAScipers",
-          [ doctoralSchool.acronym ],
-          { wait: true, noRetry: true }
-        )
+        await Meteor.callAsync("getISAScipers", doctoralSchool.acronym)
       } catch (error: any) {
         setIsErroneous(error)
       }
