@@ -214,7 +214,7 @@ const ReminderForm = ({ task }: { task: Task }) => {
             } }
             initialValue={ messageRendered }
             value={ message }
-            onEditorChange={ (e) => setMessage(e) }
+            onEditorChange={ (v: string) => setMessage(v) }
             disabled={ isSubmitting }
           />
         </div>
