@@ -127,30 +127,29 @@ Meteor.methods({
 
     let isaReturn = null as isaResponse | null
 
-    try {
-
-      if (process.env.ISA_LOCAL_DATA && process.env.ISA_LOCAL_DATA === 'true') {
-        isaReturn = require("../fixtures/sampleISAData.json")[0]
-      } else {
+    if (process.env.ISA_LOCAL_DATA && process.env.ISA_LOCAL_DATA === 'true') {
+      isaReturn = require("../fixtures/sampleISAData.json")[0]
+    } else {
+      try {
         isaReturn = (await fetchISA(doctoralSchoolAcronym))[0]
+      } catch (e: any) {
+        throw new Meteor.Error('ISA fetching',
+          `Unable to fetch ISA data. ${e.message ?? ''}`)
       }
-
-      let doctorants = _.cloneDeep((isaReturn!.doctorants as DoctorantInfoSelectable[]))
-      await enhanceThesisCoDirectors(doctorants)
-      await setAlreadyStarted(doctorants)
-
-      ImportScipersList.insert({
-        _id: doctoralSchoolAcronym,  // import for the ImportScipers hooks
-        doctoralSchoolAcronym: doctoralSchoolAcronym,
-        doctorants: doctorants,
-        createdAt: new Date(),
-        createdBy: user._id ?? '',
-        isAllSelected: false,
-      })
-    } catch (e: any) {
-      throw new Meteor.Error('ISA fetching',
-        `Unable to fetch ISA data. ${e.message ?? ''}`)
     }
+
+    let doctorants = _.cloneDeep((isaReturn!.doctorants as DoctorantInfoSelectable[]))
+    await enhanceThesisCoDirectors(doctorants)
+    await setAlreadyStarted(doctorants)
+
+    await ImportScipersList.insertAsync({
+      _id: doctoralSchoolAcronym,  // import for the ImportScipers hooks
+      doctoralSchoolAcronym: doctoralSchoolAcronym,
+      doctorants: doctorants,
+      createdAt: new Date(),
+      createdBy: user._id ?? '',
+      isAllSelected: false,
+    })
   },
 
   async toggleDoctorantCheck(doctoralSchoolAcronym, sciper, checked: boolean) {
@@ -429,8 +428,6 @@ Meteor.methods({
 
     try {
       await Promise.all(ProcessInstanceCreationPromises)
-    } catch (error) {
-      throw new Meteor.Error('Zeebe error', 'Unable to start imports. Please contact 1234@epfl.ch.')
     } finally {
       // set the loading status
       const query = { doctoralSchoolAcronym: doctoralSchoolAcronym, }
