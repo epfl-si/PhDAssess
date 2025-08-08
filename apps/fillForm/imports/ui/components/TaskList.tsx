@@ -14,7 +14,7 @@ import {
   canEditProcessInstance,
   canRefreshProcessInstance
 } from "/imports/policy/processInstance";
-import {toastErrorClosable} from "/imports/ui/components/Toasters";
+import {toastExceptionClosable} from "/imports/ui/components/Toasters";
 import {ITaskList} from "/imports/policy/tasksList/type";
 import {useAccountContext} from "/imports/ui/contexts/Account";
 import {TaskInfo} from "/imports/ui/components/Task/Info";
@@ -179,7 +179,7 @@ const refreshProcessInstance = (eventKey: any) => {
     "refreshProcessInstance", [eventKey], { wait: true, noRetry: true },
     (error: global_Error | Meteor.Error | undefined) => {
       if (error) {
-        toastErrorClosable(eventKey, `${error}`)
+        toastExceptionClosable(eventKey, error)
       } else {
         toast.success(`Successfully refreshed the process instance. Please wait some time while the new tasks are being created`)
       }
@@ -194,7 +194,7 @@ const cancelProcessInstance = (eventKey: any) => {
     "deleteProcessInstance", [eventKey], { wait: true, noRetry: true },
     (error: global_Error | Meteor.Error | undefined) => {
       if (error) {
-        toastErrorClosable(eventKey, `${error}`)
+        toastExceptionClosable(eventKey, error)
       } else {
         toast.success(`Successfully removed the process instance`)
       }

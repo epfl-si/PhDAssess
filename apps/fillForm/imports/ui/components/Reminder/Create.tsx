@@ -15,7 +15,7 @@ import {useTracker} from "meteor/react-meteor-data";
 import {useAccountContext} from "/imports/ui/contexts/Account";
 
 import {Button, Loader} from "epfl-elements-react";
-import {toastErrorClosable} from "/imports/ui/components/Toasters";
+import {toastExceptionClosable} from "/imports/ui/components/Toasters";
 
 import { Editor } from "@tinymce/tinymce-react";
 import Mustache from "mustache"
@@ -111,7 +111,7 @@ const ReminderForm = ({ task }: { task: Task }) => {
         { wait: true, noRetry: true },
         (error: global_Error | Meteor.Error | undefined) => {
           if (error) {
-            toastErrorClosable(task._id!, `${ error }`)
+            toastExceptionClosable(task._id!, error)
             setIsSubmitting(false )
           } else {
             setIsSubmitted(true)
