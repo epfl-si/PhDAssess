@@ -7,10 +7,10 @@
  * that take the priority on the preceding rule.
  */
 
-import React, {useState} from "react";
+import React, {Suspense, useState} from "react";
 import {Link, useParams} from "react-router";
 import {global_Error, Meteor} from "meteor/meteor";
-import {useTracker} from "meteor/react-meteor-data";
+import { useTracker, useSubscribe } from 'meteor/react-meteor-data/suspense'
 
 import {useAccountContext} from "/imports/ui/contexts/Account";
 
@@ -44,19 +44,32 @@ const fromZeebeCustomHeadersEmailsToEmailInput = (field: string | undefined, tas
 }
 
 export function TaskReminderForm() {
+  return (
+    <Suspense fallback={<Loader message={'Fetching the task info...'}/>}>
+      <TaskReminderFormLoader/>
+    </Suspense>
+  )
+}
+
+export function TaskReminderFormLoader() {
   const {_id} = useParams<{ _id: string }>()
-
   const account = useAccountContext()
+  useSubscribe('taskReminder', [_id])
 
-  const taskLoading = useTracker(() => {
-    const handle = Meteor.subscribe('taskReminder', [_id]);
-    return !handle.ready();
-  }, [_id]);
+  const tasks: Task[] = useTracker('reminderTaskByUser',
+    async () => {
+      const tasks = getUserPermittedTaskReminder(account?.user, _id)
+      if (tasks) {
+        return (await tasks)!.fetchAsync()
+      } else {
+        return []
+      }
+    }
+  )
 
-  const task = useTracker(() => getUserPermittedTaskReminder(account?.user, _id)?.fetch()[0])
+  const task = tasks[0]
 
   if (!account?.isLoggedIn) return <Loader message={'Loading your data...'}/>
-  if (taskLoading) return <Loader message={'Fetching the task info...'}/>
   if (!task) return <div>There is currently no task with this ID, you may not have enough permission or it may have been completed.</div>
   if (!task.variables.uuid)  return <div>This task is part of an old workflow and reminders can not be used.</div>
 
