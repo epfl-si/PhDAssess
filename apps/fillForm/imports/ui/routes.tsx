@@ -12,7 +12,6 @@ import {ImportScipersForSchool, ImportScipersSchoolSelector} from "/imports/ui/c
 import TaskList from "/imports/ui/components/TaskList";
 import {TaskForm} from "/imports/ui/components/TaskForm";
 import {Dashboard} from "/imports/ui/components/Dashboard/Dashboard";
-import {DashboardOld} from "/imports/ui/components/DashboardOld/DashboardOld";
 import ViewWorkflow from "/imports/ui/components/ProcessInstance/Show";
 import Main from "/imports/ui/Main";
 import {TaskReminderForm} from "/imports/ui/components/Reminder/Create";
@@ -32,7 +31,6 @@ export const router = createBrowserRouter(
     >
       <Route index element={<TaskList />} />
       <Route path="/dashboard" element={<Dashboard/>}/>
-      <Route path="/dashboard/old" element={<DashboardOld/>}/>
       <Route
         path="/workflows/:processInstanceKey"
         element={<ViewWorkflow/>}
