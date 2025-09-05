@@ -6,7 +6,7 @@ import {Link} from "react-router-dom";
 import {ITaskDashboard} from "/imports/policy/dashboard/type";
 import {ParticipantDetail} from "/imports/model/participants";
 
-import {stepsDefinitionDefault} from "/imports/ui/components/DashboardOld/DefaultDefinition";
+import {stepsDefinitionDefault} from "/imports/ui/components/Dashboard/DefaultDefinition";
 import {Step} from "phd-assess-meta/types/dashboards";
 import {DashboardGraph as Graph, fixStepKnownAsTypo} from "/imports/ui/components/Dashboard/DefinitionGraphed";
 

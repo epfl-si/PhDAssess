@@ -14,7 +14,7 @@ import {
 } from "/imports/ui/components/Dashboard/DefinitionGraphed";
 import {Step} from "phd-assess-meta/types/dashboards";
 import {DashboardRenderedStep} from "/imports/ui/components/Dashboard/Steps";
-import {stepsDefinitionDefault} from "/imports/ui/components/DashboardOld/DefaultDefinition";
+import {stepsDefinitionDefault} from "/imports/ui/components/Dashboard/DefaultDefinition";
 import {canEditProcessInstance} from "/imports/policy/processInstance";
 
 import {ParticipantsAsTable} from "/imports/ui/components/Participant/List";
