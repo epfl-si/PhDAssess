@@ -9,7 +9,7 @@ import {ITaskDashboard} from "../../../policy/dashboard/type";
 import {useAccountContext} from "../../contexts/Account";
 import {
   stepsDefinitionDefault,
-} from "../DashboardOld/DefaultDefinition";
+} from "./DefaultDefinition";
 import {
   convertDefinitionToGraph,
   DashboardGraph,

@@ -11,7 +11,6 @@ import {
   getUserPermittedTasksForDashboard
 } from "/imports/policy/dashboard/tasks";
 
-
 Meteor.publish('tasksDashboard', async function () {
   if (!this.userId) return this.ready()
 
