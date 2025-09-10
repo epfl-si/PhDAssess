@@ -411,13 +411,19 @@ Meteor.methods({
       }
 
       ProcessInstanceCreationPromises.push(
-        zBClient!.createProcessInstance('phdAssessProcess', _.merge(dataToPush, {
-          created_at: encrypt(new Date().toJSON()),
-          created_by: encrypt(user!._id),
-          updated_at: encrypt(new Date().toJSON()),
-          uuid: crypto.randomUUID(),
+        zBClient!.createProcessInstance({
+          bpmnProcessId: 'phdAssessProcess',
+          variables: _.merge(
+            dataToPush,
+            {
+              created_at: encrypt(new Date().toJSON()),
+              created_by: encrypt(user!._id),
+              updated_at: encrypt(new Date().toJSON()),
+              uuid: crypto.randomUUID(),
+            }
+          )
         })
-      ))
+      )
     })
 
     try {
