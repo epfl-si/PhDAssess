@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=quay-its.epfl.ch/svc1394/ubuntu-node-14:latest
+ARG BASE_IMAGE=quay-its.epfl.ch/svc1394/node:22-trixie
 
 # Stage 1: Base Environment
 FROM $BASE_IMAGE AS base-stage
