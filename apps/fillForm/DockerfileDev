@@ -1,0 +1,22 @@
+ARG BASE_IMAGE=quay-its.epfl.ch/svc1394/node:22-trixie
+
+FROM $BASE_IMAGE
+
+RUN groupadd -g 1001 meteoruser && \
+    useradd -u 1001 -g meteoruser -m -s /bin/bash meteoruser && \
+    mkdir -p /app/.meteor/local /app/output && \
+    chown -R meteoruser:meteoruser /app
+
+USER meteoruser
+# Install meteor
+RUN npx meteor
+
+# to ignore caniuse-lite outdated warning
+ENV BROWSERSLIST_IGNORE_OLD_DATA=1
+## Update PATH for the `meteoruser` user to be able to user the command 'meteor'
+ENV PATH=$PATH:/home/meteoruser/.meteor/
+
+WORKDIR /app
+
+COPY --chown=meteoruser:meteoruser . .
+RUN meteor npm install
