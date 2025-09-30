@@ -31,7 +31,7 @@ Meteor.startup(async () => {
 
   ZeebeClient.start()
 
-  initAuth()
+  await initAuth()
 
   PrometheusSource.start()
 })

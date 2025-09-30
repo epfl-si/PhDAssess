@@ -1,7 +1,7 @@
 import {ServiceConfiguration} from "meteor/service-configuration";
 
 
-export const setEntraAuthConfig = () => {
+export const setEntraAuthConfig = async () => {
   // Validate the env values
   const clientId = process.env.AUTH_ENTRA_CLIENT_ID
   const secret = process.env.AUTH_ENTRA_SECRET
@@ -11,7 +11,7 @@ export const setEntraAuthConfig = () => {
     clientId && secret && tenantId
   )) {
     throw Error(`
-      Missing env vars: 
+      Missing env vars:
         AUTH_ENTRA_CLIENT_ID or
         AUTH_ENTRA_SECRET or
         AUTH_ENTRA_TENANT_ID
@@ -19,7 +19,7 @@ export const setEntraAuthConfig = () => {
   }
 
   // set the entra config
-  ServiceConfiguration.configurations.upsert(
+  await ServiceConfiguration.configurations.upsertAsync(
     { service: "entra" },
     {
       $set: {

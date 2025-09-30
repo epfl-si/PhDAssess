@@ -3,8 +3,8 @@ import "./hooks";
 
 const debug = require('debug')('server/auth')
 
-export const initAuth = () => {
+export const initAuth = async () => {
   debug(`Init auth config`)
 
-  setEntraAuthConfig()
+  await setEntraAuthConfig()
 }
