@@ -102,17 +102,6 @@ export class User {
             optional: true,
             blackbox: true
         },
-
-        // `profile` is a feature of Meteor.User; it is "self-service" in
-        // the sense that the field is autopublished, and writes to one's
-        // own profile are accepted (provided they match the `deny` rules,
-        // i.e. in our case, the schema). See
-        // https://docs.meteor.com/api/accounts.html#Meteor-user
-        profile: <any>Object,   // Just `Object,` makes TypeScript cry for no good reason :(
-        'profile.language': {
-            type: String,
-            allowedValues: ["en", "fr"]
-        }
     })
 
     public static transform = new Transform(MeteorUsers)
@@ -133,16 +122,22 @@ const UsersDataPubName = 'users.data'
 // All users get told whether they are an administrator themselves or not
 if (Meteor.isServer) {
   Meteor.publish(UsersDataPubName, async function() {
-    const user = await Meteor.userAsync(),
-      userId = this.userId
+    const user = await Meteor.userAsync()
+    const userId = this.userId
+
     if (! (user && userId)) return
+
     const isAdmin = user.isAdmin
     const isUberProgramAssistant = user.isUberProgramAssistant
 
     this.added(
       MeteorUsersCollectionName,
       userId,
-      { isAdmin, isUberProgramAssistant, tequila: user.tequila }
+      {
+        ...user,
+        isAdmin,
+        isUberProgramAssistant,
+      }
     )
 
     debug(`Disclosing %s to ${userId}`,

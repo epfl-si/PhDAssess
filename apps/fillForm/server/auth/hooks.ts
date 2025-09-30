@@ -10,7 +10,7 @@ Accounts.beforeExternalLogin((serviceName: string, serviceData: any, user: any) 
     ${JSON.stringify(user)}
   `);
 
-  return true; // allow to connect
+  return true; // allow connecting
 });
 
 Accounts.onExternalLogin((options:any, user: any) => {
@@ -18,6 +18,13 @@ Accounts.onExternalLogin((options:any, user: any) => {
     ${JSON.stringify(options)},
     ${JSON.stringify(user)}`
   );
+});
+
+/**
+ * Use sciper as Mongo _id
+ */
+Accounts.onLogin((loginDetails: any) => {
+  debug(`onLogin called: ${JSON.stringify(loginDetails)}`);
 });
 
 /**
