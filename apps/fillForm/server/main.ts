@@ -9,11 +9,10 @@ import './methods'
 import './publish'
 import '/imports/policy'
 
-import {setEntraAuthConfig} from "/server/entraAuth";
-
 import ZeebeClient from './zeebe/connector'
 import {validateEnv} from "/server/validateEnv";
 
+import {initAuth} from "/server/auth";
 
 Meteor.startup(async () => {
   console.log("dotenv: loading...")
@@ -32,7 +31,7 @@ Meteor.startup(async () => {
 
   ZeebeClient.start()
 
-  setEntraAuthConfig()
+  initAuth()
 
   PrometheusSource.start()
 })

@@ -1,7 +1,7 @@
 import {Meteor} from "meteor/meteor";
 import React, {CSSProperties, useEffect} from "react";
 import {Outlet, useRouteError} from "react-router";
-import {FooterLight} from "epfl-elements-react"
+import {FooterLight, Loader} from "epfl-elements-react"
 
 import {ToasterConfig} from "/imports/ui/components/Toasters";
 import {PhDHeader} from "/imports/ui/components/PhDHeader";
