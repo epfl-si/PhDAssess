@@ -1,4 +1,3 @@
-import {Meteor} from "meteor/meteor";
 import React, { useState, useRef } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser, faUserGear } from '@fortawesome/free-solid-svg-icons'
@@ -61,12 +60,6 @@ export const UserAuthInfo = () => {
           { packageJson.version }
         </div>
         }
-        <a href={ '' } onClick={
-          (e) => {
-            e.preventDefault();
-            Meteor.logout()
-          }
-        }>Logout</a>
       </div>
     </div>
     </Popper>
