@@ -20,7 +20,7 @@ export const UserAuthInfo = () => {
         {
           name: 'offset',
           options: {
-            offset: [-25, 25],
+            offset: [-20, 5],
           },
         }
       ]

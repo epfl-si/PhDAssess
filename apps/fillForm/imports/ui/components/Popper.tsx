@@ -16,7 +16,8 @@ export function Popper(props: React.PropsWithChildren<{
   const { styles, attributes } = usePopper(
     props.relativeTo,
     popperRef.current,
-    props.options)
+    props.options
+  )
 
   useEffect(() => {
     if (! props.onClickElsewhere) return
