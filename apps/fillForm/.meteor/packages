@@ -23,6 +23,8 @@ tracker@1.3.4
 aldeed:collection2
 dev-error-overlay@0.1.3
 service-configuration
+epfl:entra-oauth
+epfl:accounts-entra
 mdg:validated-method
 aldeed:schema-index
 meteortesting:mocha
@@ -31,5 +33,3 @@ adriancbo:chalk
 dburles:factory
 johanbrook:publication-collector
 zodern:types
-epfl-si:entra-oauth
-epfl-si:accounts-entra
