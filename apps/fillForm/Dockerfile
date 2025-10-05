@@ -1,4 +1,6 @@
-ARG BASE_IMAGE=quay-its.epfl.ch/svc1394/node:22-trixie
+## Setup a meteor image in production mode
+#
+ARG BASE_IMAGE=node:22-trixie
 
 # Stage 1: Base Environment
 FROM $BASE_IMAGE AS base-stage

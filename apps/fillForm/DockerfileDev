@@ -1,4 +1,6 @@
-ARG BASE_IMAGE=quay-its.epfl.ch/svc1394/node:22-trixie
+## Setup a meteor image in dev mode
+#
+ARG BASE_IMAGE=node:22-trixie
 
 FROM $BASE_IMAGE
 
@@ -20,3 +22,5 @@ WORKDIR /app
 
 COPY --chown=meteoruser:meteoruser . .
 RUN meteor npm install
+
+CMD /home/meteoruser/.meteor/meteor --settings=settings.json
