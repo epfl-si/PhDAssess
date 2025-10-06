@@ -17,6 +17,9 @@ ENV METEOR_ALLOW_SUPERUSER=1
 WORKDIR /app
 
 COPY package.json package-lock.json ./
+RUN mkdir patches
+# The other patches are dev-only (pending a released fix to meteor/meteor#13504):
+COPY patches/@grpc* patches/
 RUN meteor npm install --omit=dev
 
 COPY . .
