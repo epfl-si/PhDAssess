@@ -15,9 +15,6 @@ WORKDIR /app
 # Copy source as root to preserve permissions
 COPY . .
 
-# Switch to non-root user (node is UID 1000)
-USER node
-
 # Install Meteor in user space and set permissions about it
 RUN HOME=/home/node npx meteor && \
     chmod -R a+rx /home/node/.meteor
@@ -26,11 +23,9 @@ RUN HOME=/home/node npx meteor && \
 RUN meteor npm install
 
 # Change ownership and permissions for OpenShift compatibility
-USER 0
 RUN set -e -x; \
     mkdir -p $HOME ; \
     chgrp -R 0 $HOME /app ; \
     chmod -R g+w,a+rX $HOME /app
-USER node
 
 CMD meteor --settings=settings.json
