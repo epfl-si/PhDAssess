@@ -16,15 +16,17 @@ WORKDIR /app
 COPY . .
 
 # Change ownership and permissions for OpenShift compatibility
-RUN chown -R node:node /app && \
-    mkdir -p $HOME && \
-    chown -R node:node $HOME
+RUN mkdir -p $HOME && \
+    chown -R node:node $HOME && \
+    chown -R node:node /app && \
+    chmod -R 775 $HOME /app
 
 # Switch to non-root user (node is UID 1000)
 USER node
 
-# Install Meteor in user space
-RUN HOME=/home/node npx meteor
+# Install Meteor in user space and set permissions about it
+RUN HOME=/home/node npx meteor && \
+    chmod -R a+rx /home/node/.meteor
 
 # Install app
 RUN meteor npm install
