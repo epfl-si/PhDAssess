@@ -1,6 +1,6 @@
 import React from "react";
 import toast, {Toaster} from "react-hot-toast";
-import {ErrorIcon} from "react-hot-toast/src/components/error";
+import {ErrorIcon} from "react-hot-toast";
 import {isNonspecificDdpError} from "/imports/api/errors";
 
 export const ToasterConfig = () => {
