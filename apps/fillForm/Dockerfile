@@ -24,6 +24,7 @@ RUN meteor npm install --omit=dev
 
 COPY . .
 RUN meteor build --directory /built-app
+RUN cd /built-app/bundle/programs/server && meteor npm i
 
 FROM $BASE_IMAGE
 
