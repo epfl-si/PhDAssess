@@ -31,4 +31,8 @@ FROM $BASE_IMAGE
 COPY --from=build /built-app/bundle /app
 WORKDIR /app
 
+# Provide bundled protobufs for zeebe-node... Kind of
+RUN mkdir /proto
+RUN ln -s /app/programs/server/npm/node_modules/zeebe-node/proto/*.proto /proto/
+
 CMD ["node", "main.js"]
