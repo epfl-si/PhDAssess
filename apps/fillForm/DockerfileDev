@@ -23,4 +23,4 @@ WORKDIR /app
 COPY --chown=meteoruser:meteoruser . .
 RUN meteor npm install
 
-CMD /home/meteoruser/.meteor/meteor --settings=settings.json
+CMD meteor --settings=settings.json
