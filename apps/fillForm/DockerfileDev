@@ -16,10 +16,10 @@ WORKDIR /app
 COPY . .
 
 # Change ownership and permissions for OpenShift compatibility
-RUN mkdir -p $HOME && \
-    chown -R node:node $HOME && \
-    chown -R node:node /app && \
-    chmod -R 775 $HOME /app
+RUN set -e -x; \
+    mkdir -p $HOME ; \
+    chgrp -R 0 $HOME /app ; \
+    chmod -R g+w,a+rX $HOME /app
 
 # Switch to non-root user (node is UID 1000)
 USER node
