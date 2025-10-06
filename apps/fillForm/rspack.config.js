@@ -22,7 +22,6 @@ function typescriptRule () {
   // https://rspack.rs/guide/tech/typescript
   return {
     test: /\.ts$/,
-    exclude: [/node_modules/],
     loader: 'builtin:swc-loader',
     options: {
       jsc: {
