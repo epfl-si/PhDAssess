@@ -404,10 +404,10 @@ Meteor.methods({
         thesisCoDirectorEmail: encrypt(doctorant.thesis.coDirecteur?.email ?? '') ?? undefined,
 
         programAssistantSciper: encrypt(user!._id) ?? undefined,
-        programAssistantName: encrypt(user?.tequila?.displayname ?? '') ?? undefined,
-        programAssistantFirstNameUsage: encrypt(user?.tequila?.firstname ?? '') ?? undefined,
-        programAssistantLastNameUsage: encrypt(user?.tequila?.name ?? '') ?? undefined,
-        programAssistantEmail: encrypt(user?.tequila.email ?? '') ?? undefined,
+        programAssistantName: encrypt(user?.displayName ?? '') ?? undefined,
+        programAssistantFirstNameUsage: encrypt(user?.services.entra.given_name ?? '') ?? undefined,
+        programAssistantLastNameUsage: encrypt(user?.services.entra.family_name ?? '') ?? undefined,
+        programAssistantEmail: encrypt(user?.services.entra.mail ?? '') ?? undefined,
       }
 
       ProcessInstanceCreationPromises.push(

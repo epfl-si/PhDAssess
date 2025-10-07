@@ -44,7 +44,7 @@ export const UserAuthInfo = () => {
     <div className="dropdown-menu-popper mt-3">
       <div className={'mx-3 my-3'}>
         <div id={'user-info'}>
-          <div id={'user-info-displayname'}>{ account.user.services?.entra?.displayName }</div>
+          <div id={'user-info-displayname'}>{ account.user.displayName }</div>
           <div id={'user-info-mail'}>{ account.user.services?.entra?.mail }</div>
           {
             ( account.user.isAdmin || account.user.isUberProgramAssistant ) &&

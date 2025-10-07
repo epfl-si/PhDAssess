@@ -28,10 +28,18 @@ Accounts.onLogin((loginDetails: any) => {
 });
 
 /**
- * Use sciper as Mongo _id
+ * Fix some Entra specific cases that are not compatible with our usage
  */
 Accounts.onCreateUser((options, user) => {
   debug(`onCreateUser called: ${JSON.stringify(options)}, ${JSON.stringify(user)}`);
-  user._id = user.services.entra.employeeId;
+
+  // Use sciper as Mongo _id
+  user._id = user.services.entra.uniqueid;
+
+  // When setting groups, remove ending suffix in Entra groups that were added by entra
+  user.groupList = user.services.entra.groups?.map(
+    ( groupName: string ) => groupName.replace(/_AppGrpU$/, '')
+  )
+
   return user;
 });

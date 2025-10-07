@@ -12,11 +12,18 @@ import {useAccountContext} from "/imports/ui/contexts/Account";
 
 
 /**
- * This component oblige user to be connected to continue
+ * This component obliges the user to be connected
  */
 const AutoLoginComponent = () => {
   useEffect(() => {
-    Meteor.entraSignIn();
+    Meteor.entraSignIn(
+      {
+        // This set the scope parameter when doing Entra calls.
+        // Using something else will remove you the login capacity
+        // or, worse, disallows you to get the idToken with id data in it
+        requestPermissions: ['openid'],
+      },
+    );
   });
   return <></>
 }

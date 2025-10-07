@@ -68,16 +68,22 @@ export class User {
     public _id : string | null = null
     public isAdmin: boolean = false
     public isUberProgramAssistant: boolean = false
-    public tequila?: {
-      provider: string | ""
-      email: string
-      displayname: string
-      firstname: string
-      name: string
-      personaltitle: string
-      group: string | ""
-      user: string
-      org: string
+    public groupList: string[] = []
+    public displayName: string | null = null
+    public services?: {
+      entra?: {
+        id: string  // sciper
+        groups: string[]
+        uniqueid: string  // sciper
+        gaspar: string
+        given_name: string  // lookalike a firstname
+        family_name: string  // lookalike a lastname
+        mail: string
+        idToken: string  // jwt token info about the id
+        accessToken: string  // jwt token info about the access
+        scope: string[]
+        expiresAt: number
+      }
     }
 
     static null() : User {

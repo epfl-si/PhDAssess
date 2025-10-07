@@ -18,7 +18,6 @@ Technically, the application consists on a Meteor server, defined as a [Zeebe](h
   cp .env.sample .env
   ```
 - Edit the `.env` to suit your needs
-- (Optional) Edit `settings.json` to put your own identity into the fake Tequila server.
 
 ### Start the support infrastructure
 

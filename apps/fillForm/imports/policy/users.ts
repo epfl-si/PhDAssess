@@ -2,7 +2,11 @@ import {Meteor} from "meteor/meteor";
 import { User } from '/imports/model/user'
 
 User.transform.addComputedField('groupList', (user) => {
-  return user.tequila?.group?.split(',') || [];
+  return user.services?.entra?.groups || [];
+})
+
+User.transform.addComputedField('displayName', (user) => {
+  return `${ user.services?.entra?.given_name } ${user.services?.entra?.family_name}`
 })
 
 User.transform.addComputedField('isAdmin', (user) => {
@@ -11,7 +15,7 @@ User.transform.addComputedField('isAdmin', (user) => {
       console.warn('Unable to read the admins group. Nobody will have the admin right')
       return false
     } else {
-      return user.tequila?.group?.split(',').includes(adminsGroup)
+      return user.services?.entra?.groups?.includes(adminsGroup)
     }
   }
 )
@@ -22,7 +26,7 @@ User.transform.addComputedField('isUberProgramAssistant', (user) => {
       console.warn('Unable to read the program assistants group. Nobody will have this right')
       return false
     } else {
-      return user.tequila?.group?.split(',').includes(programAssistantsGroup)
+      return user.services?.entra?.groups?.includes(programAssistantsGroup)
     }
   }
 )

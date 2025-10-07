@@ -5,7 +5,12 @@
  */
 declare module "meteor/meteor" {
   module Meteor {
-    function entraSignIn(): void
+    function entraSignIn(
+      options?: {
+        requestPermissions: string[];
+      },
+      callBack?: (error: any) => void
+    ): void
   }
 }
 
