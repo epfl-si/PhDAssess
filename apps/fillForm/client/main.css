@@ -32,7 +32,7 @@ body .breadcrumb-container::before {
 /* .dropdown-menu is all wrong position-wise. */
 .dropdown-menu-popper {
   min-width: 10rem;
-  font-size: 1rem;
+  font-size: 0.920rem;
   color: #212121;
   text-align: left;
   list-style: none;

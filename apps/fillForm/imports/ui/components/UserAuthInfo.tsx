@@ -42,7 +42,7 @@ export const UserAuthInfo = () => {
     <Popper relativeTo={buttonRef.current} options={popperOptions} visible={visible}
             onClickElsewhere={() => setVisibility(false)}>
     <div className="dropdown-menu-popper mt-3">
-      <div className={'mx-3 my-3'}>
+      <div className={'mx2 my-2 text-center'}>
         <div id={'user-info'}>
           <div id={'user-info-displayname'}>{ account.user.displayName }</div>
           <div id={'user-info-mail'}>{ account.user.services?.entra?.mail }</div>
