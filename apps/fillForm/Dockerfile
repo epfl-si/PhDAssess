@@ -28,6 +28,7 @@ RUN cd /built-app/bundle/programs/server && meteor npm i
 
 FROM $BASE_IMAGE
 
+ENV NODE_ENV=production
 COPY --from=build /built-app/bundle /app
 WORKDIR /app
 
