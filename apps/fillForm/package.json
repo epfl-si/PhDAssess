@@ -1,6 +1,6 @@
 {
   "name": "phd-assess",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "private": true,
   "scripts": {
     "start": "meteor --settings settings.json",
