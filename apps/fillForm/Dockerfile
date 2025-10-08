@@ -23,6 +23,21 @@ COPY patches/@grpc* patches/
 RUN meteor npm install --omit=dev
 
 COPY . .
+
+RUN mkdir packages
+WORKDIR /app/packages
+ARG EPFL_ACCOUNTS_ENTRA_BUILD_BRANCH=
+ARG EPFL_ENTRA_OAUTH_BUILD_BRANCH=
+ENV EPFL_ACCOUNTS_ENTRA_BUILD_BRANCH=$EPFL_ACCOUNTS_ENTRA_BUILD_BRANCH
+ENV EPFL_ENTRA_OAUTH_BUILD_BRANCH=$EPFL_ENTRA_OAUTH_BUILD_BRANCH
+RUN set -e -x; if [ -n "$EPFL_ACCOUNTS_ENTRA_BUILD_BRANCH" ]; then \
+      git clone --branch "$EPFL_ACCOUNTS_ENTRA_BUILD_BRANCH" https://github.com/epfl-si/meteor-account-entra accounts-entra ; \
+    fi
+RUN set -e -x; if [ -n "$EPFL_ENTRA_OAUTH_BUILD_BRANCH" ]; then \
+      git clone --branch "$EPFL_ENTRA_OAUTH_BUILD_BRANCH" https://github.com/epfl-si/meteor-entra-auth entra-oauth ; \
+    fi
+WORKDIR /app
+
 RUN meteor build --directory /built-app
 RUN cd /built-app/bundle/programs/server && meteor npm i
 
