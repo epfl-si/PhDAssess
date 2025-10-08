@@ -20,7 +20,7 @@ COPY package.json package-lock.json ./
 RUN mkdir patches
 # The other patches are dev-only (pending a released fix to meteor/meteor#13504):
 COPY patches/@grpc* patches/
-RUN meteor npm install --omit=dev
+RUN meteor npm install --production
 
 COPY . .
 
@@ -41,7 +41,7 @@ RUN set -e -x; if [ -n "$EPFL_ENTRA_OAUTH_BUILD_BRANCH" ]; then \
 WORKDIR /app
 
 RUN meteor build --directory /built-app
-RUN cd /built-app/bundle/programs/server && meteor npm i
+RUN cd /built-app/bundle/programs/server && meteor npm install --production
 
 FROM $BASE_IMAGE
 
