@@ -3,7 +3,7 @@
   "version": "2.0.3",
   "private": true,
   "scripts": {
-    "start": "meteor --settings settings.json",
+    "start": "export $(grep -v '^#' .node-env | xargs) && meteor --settings settings.json",
     "test": "meteor test --once --driver-package meteortesting:mocha",
     "test-bpmn": "bpmnlint --config bpmn-model/bpmn-lint-rules.json bpmn-model/phdAssessProcess.bpmn",
     "test-app": "TEST_WATCH=1 meteor test --full-app --driver-package meteortesting:mocha",

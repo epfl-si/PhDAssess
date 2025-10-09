@@ -1,6 +1,7 @@
 /ansible/ansible-deps-cache
 /apps/fillForm/node_modules/
 /apps/fillForm/.env
+/apps/fillForm/.node-env
 /apps/fillForm/packages
 /doc/API-clients/websrv/.env
 /doc/API-clients/isa/.env
