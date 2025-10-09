@@ -2,7 +2,9 @@ import {Meteor} from "meteor/meteor";
 import { User } from '/imports/model/user'
 
 User.transform.addComputedField('groupList', (user) => {
-  return user.services?.entra?.groups || [];
+  return user.services?.entra?.groups?.map(
+    ( groupName: string ) => groupName.replace(/_AppGrpU$/, '')
+  ) || [];
 })
 
 User.transform.addComputedField('displayName', (user) => {
