@@ -17,7 +17,7 @@ User.transform.addComputedField('isAdmin', (user) => {
       console.warn('Unable to read the admins group. Nobody will have the admin right')
       return false
     } else {
-      return user.services?.entra?.groups?.includes(adminsGroup)
+      return user.groupList.includes(adminsGroup)
     }
   }
 )
@@ -28,7 +28,7 @@ User.transform.addComputedField('isUberProgramAssistant', (user) => {
       console.warn('Unable to read the program assistants group. Nobody will have this right')
       return false
     } else {
-      return user.services?.entra?.groups?.includes(programAssistantsGroup)
+      return user.groupList.includes(programAssistantsGroup)
     }
   }
 )
