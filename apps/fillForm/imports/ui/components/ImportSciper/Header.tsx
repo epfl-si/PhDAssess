@@ -55,7 +55,7 @@ export const HeaderRow = (
   const [ sortedByOrder, setSortedByOrder ] = useState<sortedByOrderPossibilities>('asc')
 
   const defaultColClasses = "align-self-end"
-  const backgroundColor: CSSProperties = Meteor.settings.public.isTest && !Meteor.settings.public.ignoreTestBackgroundColor ? { backgroundColor: 'Cornsilk' } : { backgroundColor: 'white' }
+  const backgroundColor: CSSProperties = Meteor.settings?.public?.setYellowBackgroundColor ? { backgroundColor: 'Cornsilk' } : { backgroundColor: 'white' }
 
   const setAllCheck = async (state: boolean) => {
     try {

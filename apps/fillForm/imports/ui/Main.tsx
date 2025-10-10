@@ -32,7 +32,7 @@ const AutoLoginComponent = () => {
  * The base UI for all pages, where other pages are rendered into
  */
 export default function Main() {
-  const mainPanelBackgroundColor: CSSProperties = Meteor.settings.public.isTest && !Meteor.settings.public.ignoreTestBackgroundColor ? {backgroundColor: 'Cornsilk'} : {}
+  const mainPanelBackgroundColor: CSSProperties = Meteor.settings?.public?.setYellowBackgroundColor ? {backgroundColor: 'Cornsilk'} : {}
 
   const account = useAccountContext()
   const error:any = useRouteError();
