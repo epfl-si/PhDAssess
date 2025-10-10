@@ -3,7 +3,6 @@ import dayjs from "dayjs";
 import crypto from "node:crypto";
 import path from 'path'
 import _ from "lodash";
-import AbortController from "abort-controller";
 
 import {zBClient} from "/server/zeebe/connector";
 import {auditLogConsoleOut} from "/imports/lib/logging";

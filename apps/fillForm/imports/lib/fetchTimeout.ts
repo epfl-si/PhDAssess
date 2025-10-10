@@ -1,5 +1,5 @@
 import { fetch } from 'meteor/fetch'
-import { AbortController, AbortSignal } from 'abort-controller'
+
 
 export const fetchTimeout = (url: string, ms: number, signal: AbortSignal, options = {}) => {
   const controller = new AbortController();

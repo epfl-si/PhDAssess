@@ -1,6 +1,6 @@
 {
   "name": "phd-assess",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "private": true,
   "scripts": {
     "start": "export $(grep -v '^#' .node-env | xargs) && meteor --settings settings.json",
@@ -34,7 +34,6 @@
     "@popperjs/core": "^2",
     "@swc/helpers": "^0.5.17",
     "@tinymce/tinymce-react": "^6",
-    "abort-controller": "^3",
     "crypto-js": "4.1.1",
     "csstype": "^3",
     "dayjs": "^1",

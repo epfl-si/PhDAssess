@@ -1,5 +1,4 @@
 import { Headers } from 'meteor/fetch'
-import AbortController from 'abort-controller'
 import memoize from 'timed-memoize'
 import {PhDInputVariables} from "/imports/model/tasksTypes";
 import {ParticipantRoles} from "/imports/model/participants";
