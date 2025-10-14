@@ -131,6 +131,9 @@ div[id^=error-list].alert-success {
 .formio-component-file .visually-hidden {
   display:none;
 }
+.formio-component-file .fileSelector .browse i {
+  padding-right: 0.2em;
+}
 .formio-component-file .fileSelector .loader-wrapper {
     display:none;
     width:100%;
