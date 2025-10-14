@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor'
 
 import React from 'react';
 import {createRoot} from "react-dom/client";
+import 'bootstrap-icons/font/bootstrap-icons.css';
 
 import '/imports/policy'
 import { App } from '/imports/ui/App'
