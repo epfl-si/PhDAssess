@@ -11,6 +11,11 @@ declare module "meteor/meteor" {
             isAdmin: boolean
             isUberProgramAssistant: boolean
             groupList: string[]
+            // this one is kept as a generated field
+            // as some formio fields use them
+            tequila: {
+              displayname: string
+            }
         }
     }
 }

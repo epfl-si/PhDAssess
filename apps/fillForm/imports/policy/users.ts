@@ -11,6 +11,12 @@ User.transform.addComputedField('displayName', (user) => {
   return `${ user.services?.entra?.given_name } ${user.services?.entra?.family_name}`
 })
 
+// this one is kept as a generated field
+// as some formio fields use them
+User.transform.addComputedField('tequila.displayname', (user) => {
+  return user.displayName
+})
+
 User.transform.addComputedField('isAdmin', (user) => {
     const adminsGroup = Meteor.settings.public.phdAssessRoleAdmin
     if (!adminsGroup) {

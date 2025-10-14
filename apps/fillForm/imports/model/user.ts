@@ -70,6 +70,11 @@ export class User {
     public isUberProgramAssistant: boolean = false
     public groupList: string[] = []
     public displayName: string | null = null
+    // this one is kept as a generated field
+    // as some formio fields use them
+    public tequila?: {
+      displayname: string
+    }
     public services?: {
       entra?: {
         id: string  // sciper
