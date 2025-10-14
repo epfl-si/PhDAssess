@@ -14,7 +14,7 @@ User.transform.addComputedField('displayName', (user) => {
 // this one is kept as a generated field
 // as some formio fields use them
 User.transform.addComputedField('tequila.displayname', (user) => {
-  return user.displayName
+  return user.displayName?.trim() ? user.displayName : ''
 })
 
 User.transform.addComputedField('isAdmin', (user) => {
