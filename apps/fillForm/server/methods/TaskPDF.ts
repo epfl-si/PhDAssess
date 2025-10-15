@@ -82,12 +82,12 @@ Meteor.methods({
   async fetchPdfAnnex(taskId) {
     let user: Meteor.User | null = null
     if (this.userId) {
-      user = Meteor.users.findOne({_id: this.userId}) ?? null
+      user = await Meteor.users.findOneAsync({_id: this.userId}) ?? null
     }
 
     if (!user) return
 
-    const tasks = getUserPermittedTaskDetailed(user, taskId)?.fetch()
+    const tasks = await getUserPermittedTaskDetailed(user, taskId)?.fetchAsync()
 
     if (!tasks) throw new Meteor.Error(
       403,
