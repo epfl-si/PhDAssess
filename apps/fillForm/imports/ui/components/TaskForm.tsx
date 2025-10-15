@@ -2,20 +2,22 @@ import React, {useEffect, useState, useRef} from 'react'
 import {global_Error, Meteor} from 'meteor/meteor'
 import {useTracker} from "meteor/react-meteor-data";
 import {Errors, Form} from '@formio/react'
-import {Link, useNavigate} from "react-router"
+import {Link, useNavigate} from "react-router-dom"
 import _ from "lodash"
 
 import {Button, Loader} from "epfl-elements-react"
 import toast from 'react-hot-toast';
 
-import {toastErrorClosable, toastExceptionClosable} from "/imports/ui/components/Toasters";
+import {toastErrorClosable} from "/imports/ui/components/Toasters";
 import {customEvent} from '/imports/ui/model/formIo'
 import {Task, Tasks} from "/imports/model/tasks";
+import {openAnnexPdf} from './Task/PdfAnnex';
+import {applyFormIOFixes} from "/imports/ui/components/Task/FormIOFixes";
 
 
 /**
  * Monitor the task, to reflect to the UI when the task was loaded but is not anymore later.
- * It can happen when multiple assignee are working on the same time on a task
+ * It can happen when multiple assignees are working at the same time on a task
  */
 const TaskMonitor = ({ task }: { task: Task }) => {
   const taskSubscriptionLoading = useTracker(() => {
@@ -44,7 +46,7 @@ const TaskAdminInfo = ({ taskId }: { taskId: string }) => {
 
   const task = useTracker(() => Tasks.findOne({ '_id': taskId}), [taskId])
 
-  if (taskSubscriptionLoading) return <Loader message={"Loading task admin info"} />
+  if (taskSubscriptionLoading) return <Loader message={'Loading task admin info'}/>
 
   if (!task) return <></>
 
@@ -55,45 +57,11 @@ const TaskAdminInfo = ({ taskId }: { taskId: string }) => {
   )
 }
 
-/**
- * FormIO had a fix that changed the way it uses local on the calendar widget.
- * This fix should validate the update of FormIO from 4.14.8 to ^4.15.0,
- * for the old BPMNs still running.
- * Fix that triggered this workaround:
- * https://github.com/formio/formio.js/pull/4839/files
- */
-const fixFormIOCustomValidations = (
-  parsedFormIO: { components: any}
-) => {
-  const walkComponents = (
-    formio: { components: any},
-    cb : (formioNode: any) => any
-  ) =>  {
-    for (const c of formio.components) {
-      cb(c)
-      if (c.components) walkComponents(c, cb);
-    }
-  }
-
-  // Find all calendars and rewrite their format valid only for
-  // formIO <=4.14.8
-  walkComponents(
-    parsedFormIO,
-    (component) => {
-      if (
-        component.widget?.type === "calendar" &&
-        component.widget?.dateFormat === "yyyy-MM-dd"
-      )
-        component.widget.dateFormat = "dd.MM.yyyy";
-    }
-  )
-}
-
 /*
- * Here is the React component that manage the form. It can
+ * Here is the React component that manages the form. It can
  *  - show and submit the form
- *  - automatically save an unfinished form. Unfinished form are created as blur event on inputs.
- *  - retrieve unfinished form on load.
+ *  - automatically save an unfinished form. Unfinished forms are created as blur event on inputs.
+ *  - retrieve unfinished form on load event.
  */
 const TaskFormEdit = ({ task, onSubmitted }: { task: Task, onSubmitted: () => void }) => {
   const [isSubmitted, setIsSubmitted] = useState(false)
@@ -129,10 +97,10 @@ const TaskFormEdit = ({ task, onSubmitted }: { task: Task, onSubmitted: () => vo
   }
 
   const onChange = async (event: any) => {
-    // keep only changed event, not all others changes
+    // keep only changed event, not all other changes
     if (!event.changed ) return
 
-    // filter out the changes coming from TextAreaComponent.
+    // Filter out the changes coming from TextAreaComponent.
     // The onBlur is better at it, as it does not trigger on every keyboard input.
     if (event.changed.component?.inputType === 'text') return
 
@@ -141,15 +109,16 @@ const TaskFormEdit = ({ task, onSubmitted }: { task: Task, onSubmitted: () => vo
   }
 
   const saveAsUnfinishedTask = async (data: any) => {
-    // filter out well known uninteresting data
+    // filter out well-known uninteresting data
     const eventDataChanged = _.omit(data, [
-      ...findDisabledFields(JSON.parse(task.customHeaders.formIO!)),
-      'assigneeSciper',
-      'submit',
-      'cancel',
-      'created_by',
-      'created_at',
-      'updated_at',
+        ...findDisabledFields(JSON.parse(task.customHeaders.formIO!)),
+        'assigneeSciper',
+        'submit',
+        'cancel',
+        'created_by',
+        'created_at',
+        'updated_at',
+        'pdfAnnexFile',
       ]
     )
 
@@ -184,7 +153,7 @@ const TaskFormEdit = ({ task, onSubmitted }: { task: Task, onSubmitted: () => vo
 
   const tweakedFormIO = JSON.parse(task.customHeaders.formIO)
 
-  fixFormIOCustomValidations(tweakedFormIO)
+  applyFormIOFixes(tweakedFormIO)
 
   return (
     <>
@@ -200,7 +169,24 @@ const TaskFormEdit = ({ task, onSubmitted }: { task: Task, onSubmitted: () => vo
         }
         onBlur={ onBlur }
         onChange={ onChange }
-        onCustomEvent={ (event: customEvent) => event.type == 'cancelClicked' && navigate('/') }
+        onCustomEvent={
+          async (event: customEvent) => {
+
+            if (event.type == 'cancelClicked') navigate('/');
+
+            if (event.component.key == 'openAnnexPdf') {
+              await toast.promise(
+                openAnnexPdf(task),
+                {
+                  loading: 'Loading the PDF appendix...',
+                  error: 'Something went wrong while trying to get the PDF appendix. ' +
+                    ' Please try again later or contact 1234@epfl.ch',
+                }
+              )
+            }
+          }
+
+        }
         options={ { hooks: { beforeSubmit: beforeSubmitHook,} } }
       />
     </>
@@ -215,12 +201,12 @@ const TaskFormEdit = ({ task, onSubmitted }: { task: Task, onSubmitted: () => vo
       toast.loading("Submitting...",
         {
           id: toastId,
-          duration: 10000,
+          duration: 18000,
         })
 
-      // As formio sent all the form fields (disabled included)
+      // As formio sent all the form fields (disabled included),
       // we remove the "disabled" one, so we can control
-      // the workflow variables with only the needed values
+      // the workflow variables with only the necessary values
       const formDataPicked = _.omit(formData.data, findDisabledFields(this))
 
       Meteor.apply(
@@ -234,12 +220,12 @@ const TaskFormEdit = ({ task, onSubmitted }: { task: Task, onSubmitted: () => vo
           wait: true,
           onResultReceived: (error: global_Error | Meteor.Error | undefined) => {
             if (error) {
-              toastExceptionClosable(toastId, error)
+              toastErrorClosable(toastId, `${error}`)
               next(error.message)
             } else {
               toast.dismiss(toastId)
               setIsSubmitted(true)
-              onSubmitted()  // call the event after the submit process has been done successfully
+              onSubmitted()  // call the event after the 'submit' process has been done successfully
               next()
             }
           }
@@ -269,18 +255,23 @@ export const TaskForm = ({ _id }: { _id: string }) => {
   }
 
   useEffect(() => {
-    const getTaskForm = async () => {
-      try {
-        const result = await Meteor.callAsync('getTaskForm', _id)
-        setTask(result as Task)
-        setTaskFormLoading(false)
-      } catch (error: any) {
-        setTask(undefined)
-        setTaskFormLoading(false)
-        setTaskLoadingError(error)
-      }
-    }
-    getTaskForm().then().catch(console.error);
+    Meteor.apply(
+      'getTaskForm',
+      [_id],
+      {
+        wait: true,
+        onResultReceived: (error: Error | Meteor.Error | undefined, result) => {
+          if (error) {
+            setTask(undefined)
+            setTaskFormLoading(false) // to remove
+            setTaskLoadingError(error)
+          } else {
+            setTask(result as Task)
+            setTaskFormLoading(false)  // to remove
+          }
+        }
+      },
+    )
   }, [_id])
 
   if (!user) return (<Loader message={'Loading your data...'}/>)
@@ -293,30 +284,30 @@ export const TaskForm = ({ _id }: { _id: string }) => {
         <div>{taskLoadingError.reason}</div> :
         <div>{taskLoadingError.message}</div>
       }
-        <br/>
-        <div>Please try again or go <Link to={`/`}>back to the task list</Link></div>
+      <br/>
+      <div>Please try again or go <Link to={`/`}>back to the task list</Link></div>
     </div>
   )
 
   return (<>
     { task ? (
+      <div>
+        { !taskSubmitted &&
+          <TaskMonitor task={task}/>
+        }
+        { user?.isAdmin &&
+          <TaskAdminInfo taskId={ task._id! }/>
+        }
+        <TaskFormEdit task={ task } onSubmitted={ onSubmit } />
+      </div>
+    ) : (
+      <>
         <div>
-          { !taskSubmitted &&
-            <TaskMonitor task={task}/>
-          }
-          { user?.isAdmin &&
-            <TaskAdminInfo taskId={ task._id! }/>
-          }
-          <TaskFormEdit task={ task } onSubmitted={ onSubmit } />
+          Unable to find the task no {_id}.<br/>
+          Please try again or go <Link to={`/`}>back to the task list</Link>
         </div>
-      ) : (
-        <>
-          <div>
-            Unable to find the task no {_id}.<br/>
-            Please try again or go <Link to={`/`}>back to the task list</Link>
-          </div>
-        </>
-      )
+      </>
+    )
     }
   </>)
 }
