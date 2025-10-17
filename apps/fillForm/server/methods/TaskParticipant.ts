@@ -114,10 +114,10 @@ Meteor.methods({
     } as PublishMessageRequest)
 
     // all jobs have to be reset
-    const concernedTasks = Tasks.find({
+    const concernedTasks = await Tasks.find({
       processInstanceKey: task.processInstanceKey
       }
-    )
+    ).fetchAsync()
 
     for (const taskForThisProcess of concernedTasks) {
       await WorkersClient.refreshTask(taskForThisProcess)
