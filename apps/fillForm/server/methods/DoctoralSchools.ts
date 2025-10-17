@@ -6,6 +6,8 @@ import {DoctoralSchools} from "/imports/api/doctoralSchools/schema";
 
 Meteor.methods({
   async refreshDoctoralSchoolsProgramNameFromSciper(doctoralSchoolAcronym: string) {
+    if (Meteor.isDevelopment && Meteor.settings?.skipUsersUpdateOnFail) return
+
     let user: Meteor.User | null = null
     if (this.userId) {
       user = await Meteor.users.findOneAsync( { _id: this.userId } ) ?? null

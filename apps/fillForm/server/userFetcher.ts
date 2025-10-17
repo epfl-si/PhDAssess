@@ -8,7 +8,7 @@ const debug = require('debug')('server/userFetcher')
 
 // see https://api.epfl.ch/docs/persons-api/index.html#/persons/get_v1_persons__id_ for detail definition
 // see ./doc/API-clients/api.epfl.ch/Persons API to explore the API
-interface APIPersonInfo {
+export interface APIPersonInfo {
   id: number | string
   firstname: string
   lastname: string

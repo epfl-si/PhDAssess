@@ -8,7 +8,7 @@ import {zBClient} from "/server/zeebe/connector";
 import {auditLogConsoleOut} from "/imports/lib/logging";
 import {fetchTimeout} from "/imports/lib/fetchTimeout";
 import {encrypt} from "/server/encryption";
-import {getUserInfoMemoized} from "/server/userFetcher";
+import {APIPersonInfo, getUserInfoMemoized} from "/server/userFetcher";
 import {
   PhDAssessEditableVariables,
 } from "phd-assess-meta/types/variables";
@@ -329,12 +329,29 @@ Meteor.methods({
       `The doctoral school does not exist anymore`
     )
 
-    const programDirector = await getUserInfoMemoized(doctoralSchool.programDirectorSciper)
-    // check the user api is working as intended
-    if (!programDirector) throw new Meteor.Error(
-      500,
-      `Unable to fetch user information for the program director ( ${ doctoralSchool.programDirectorSciper } )`
-    )
+    let programDirector
+    programDirector = await getUserInfoMemoized(doctoralSchool.programDirectorSciper)
+
+    // check if the user api is working as intended
+    if (!programDirector) {
+      if (Meteor.isDevelopment && Meteor.settings?.skipUsersUpdateOnFail) {
+        // todo: move this dev step into his own scope
+        programDirector = {
+          id: 0,
+          firstname: 'Program Director FirstName',
+          lastname: 'Program Director LastName',
+          firstnameofficial: 'Program Director FirstNameofficial',
+          lastnameofficial: 'Program Director LastNameofficial',
+          email: 'programdirector@nowhere.com',
+          sciper: "0",
+        } as APIPersonInfo
+      } else {
+        throw new Meteor.Error(
+          500,
+          `Unable to fetch user information for the program director ( ${ doctoralSchool.programDirectorSciper } )`
+        )
+      }
+    }
 
     // set the loading status
     const query = { doctoralSchoolAcronym: doctoralSchoolAcronym, }
@@ -356,10 +373,12 @@ Meteor.methods({
 
     const doctorantsToLoad = imports!.doctorants?.filter(
       (doctorant) => doctorant.isSelected
-    )
+    ) ?? []
 
     const ProcessInstanceCreationPromises: any = []
-    doctorantsToLoad?.forEach((doctorant) => {
+
+    for (const doctorant of doctorantsToLoad) {
+
       const dataToPush: Partial<PhDAssessEditableVariables> = {
         doctoralProgramName: encrypt(doctoralSchool.acronym) ?? undefined,
         doctoralProgramEmail: encrypt(`${doctoralSchool.acronym}@epfl.ch`) ?? undefined,
@@ -409,6 +428,18 @@ Meteor.methods({
         programAssistantEmail: encrypt(user?.services.entra.mail ?? '') ?? undefined,
       }
 
+      // Extends the PhD student info, as it is necessary for building the path on GED operations
+      try {
+        const participantInfo = await getUserInfoMemoized(doctorant.doctorant.sciper)
+        dataToPush.phdStudentFirstName = encrypt(participantInfo?.firstnameofficial ?? '') ?? undefined
+        dataToPush.phdStudentLastName = encrypt(participantInfo?.lastnameofficial ?? '') ?? undefined
+      } catch (e) {
+        // allow raising the error on non-dev envs.
+        if (!(Meteor.isDevelopment && Meteor.settings?.skipUsersUpdateOnFail)) {
+          throw e
+        }
+      }
+
       ProcessInstanceCreationPromises.push(
         zBClient!.createProcessInstance({
           bpmnProcessId: 'phdAssessProcess',
@@ -423,7 +454,7 @@ Meteor.methods({
           )
         })
       )
-    })
+    }
 
     try {
       await Promise.all(ProcessInstanceCreationPromises)
