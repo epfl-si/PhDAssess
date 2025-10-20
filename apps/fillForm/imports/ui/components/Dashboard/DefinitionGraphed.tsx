@@ -112,7 +112,7 @@ export class DashboardGraph extends GraphLib {
 
   /**
    * Get the direct parents in the tree
-   * @param the step id starting point
+   * @param stepId the step id starting point
    */
   getParents(stepId: string): string[] {
     const parents =
@@ -122,7 +122,7 @@ export class DashboardGraph extends GraphLib {
 
   /**
    * Get all parents in the tree
-   * @param the step id starting point
+   * @param stepId the step id starting point
    */
   getAllParents(stepId: string): string[] {
     return _.uniq(_getAllParents(stepId, this))
@@ -130,7 +130,7 @@ export class DashboardGraph extends GraphLib {
 
   /**
    * Get the direct children in the tree
-   * @param the step id starting point
+   * @param stepId the step id starting point
    */
   getChildren(stepId: string): string[] {
     const children =
@@ -140,7 +140,7 @@ export class DashboardGraph extends GraphLib {
 
   /**
    * Get all children in the tree
-   * @param the step id starting point
+   * @param stepId the step id starting point
    */
   getAllChildren(stepId: string): string[] {
     return _.uniq(_getAllChildren(stepId, this))
