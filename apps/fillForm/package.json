@@ -1,6 +1,6 @@
 {
   "name": "phd-assess",
-  "version": "2.0.14",
+  "version": "2.0.15",
   "private": true,
   "scripts": {
     "start": "export $(grep -v '^#' .node-env | xargs) && meteor --settings settings.json",
@@ -47,7 +47,7 @@
     "meteor-node-stubs": "^1",
     "mustache": "^4",
     "patch-package": "^8",
-    "phdassess-ged-connector": "github:epfl-si/PhDAssess-GED-connector#feature/fetch-from-native-node",
+    "phdassess-ged-connector": "github:epfl-si/PhDAssess-GED-connector",
     "prom-client": "^15",
     "react": "^18",
     "react-bootstrap": "^1",
