@@ -61,8 +61,8 @@ const doctorantSchema = new SimpleSchema({
 ImportScipersList.schema = new SimpleSchema({
   _id: { type: String, optional: true },
   doctoralSchoolAcronym: { type: String },
-  // next one is blackboxed because they come from external API, we provide data "as-is"
-  // and simplschema is annoying with Mongo embedded-arrays updates
+  // the next one is blackboxed because they come from external API, we provide data "as-is"
+  // and simpl-schema is annoying with Mongo embedded-arrays updates
   doctorants: {type: Array, optional: true, blackbox: true },
   "doctorants.$": { type: doctorantSchema},
   createdAt: { type: Date, optional: true, autoValue: function () { !this.isSet && new Date() } },
