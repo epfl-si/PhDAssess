@@ -102,7 +102,7 @@ export function Dashboard() {
 
   let definition = allTasks[0].variables.dashboardDefinition
 
-  // fix the definition without changing the bpmn..
+  // fix the definition without changing the bpmn...
   definition = inverseCoDirAndDirInDefinition(definition)
   definition = setNewHeadersName(definition)
 

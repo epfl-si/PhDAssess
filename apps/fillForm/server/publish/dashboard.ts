@@ -75,7 +75,7 @@ Meteor.publish('tasksDashboard', async function () {
 
 /**
  * We may have some dates in a string format.
- * Clone them  in a date object column, so the sorting can be seamless
+ * Clone them in a date object column, so the sorting can be seamless
  */
 const transformDateStringToDateObject = (taskVariables: PhDInputVariables | undefined) => {
   if (!taskVariables) return

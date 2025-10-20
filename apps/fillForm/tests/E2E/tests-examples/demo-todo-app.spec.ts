@@ -56,7 +56,7 @@ test.describe('New Todo', () => {
 
     // create a todo count locator
     const todoCount = page.getByTestId('todo-count')
-  
+
     // Check test using different methods.
     await expect(page.getByText('3 items left')).toBeVisible();
     await expect(todoCount).toHaveText('3 items left');
@@ -108,7 +108,7 @@ test.describe('Mark all as completed', () => {
     const firstTodo = page.getByTestId('todo-item').nth(0);
     await firstTodo.getByRole('checkbox').uncheck();
 
-    // Reuse toggleAll locator and make sure its not checked.
+    // Reuse the toggleAll locator and make sure it is not checked.
     await expect(toggleAll).not.toBeChecked();
 
     await firstTodo.getByRole('checkbox').check();
@@ -260,7 +260,7 @@ test.describe('Counter', () => {
   test('should display the current number of todo items', async ({ page }) => {
     // create a new todo locator
     const newTodo = page.getByPlaceholder('What needs to be done?');
-    
+
     // create a todo count locator
     const todoCount = page.getByTestId('todo-count')
 
@@ -350,7 +350,7 @@ test.describe('Routing', () => {
   });
 
   test('should respect the back button', async ({ page }) => {
-    const todoItem = page.getByTestId('todo-item'); 
+    const todoItem = page.getByTestId('todo-item');
     await page.getByTestId('todo-item').nth(1).getByRole('checkbox').check();
 
     await checkNumberOfCompletedTodosInLocalStorage(page, 1);
@@ -393,7 +393,7 @@ test.describe('Routing', () => {
 
   test('should highlight the currently applied filter', async ({ page }) => {
     await expect(page.getByRole('link', { name: 'All' })).toHaveClass('selected');
-    
+
     //create locators for active and completed links
     const activeLink = page.getByRole('link', { name: 'Active' });
     const completedLink = page.getByRole('link', { name: 'Completed' });

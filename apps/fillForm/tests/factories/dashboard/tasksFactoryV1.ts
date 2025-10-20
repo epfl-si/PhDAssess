@@ -1,5 +1,5 @@
 /**
- * Define tasks to expose explicitly steps in the dashboard
+ * Define tasks to expose explicit steps in the dashboard
  */
 import {faker} from "../../factories/faker";
 const Factory = require("meteor/dburles:factory").Factory
@@ -186,7 +186,7 @@ export const createTasksForDashboardFixtures = () => {
   Factory.create('task', setCoDirectorFillsAttributes());
   Factory.create('task', setDirectorFillsAttributes());
 
-  // as we can have multiple task for the same workflow instance (processInstanceKey)
+  // as we can have multiple tasks for the same workflow instance (processInstanceKey),
   // let's build some
   const oneInstance= generateAGenericTaskAttributes()
   Factory.create('task', setCoDirectorFillsAttributes(oneInstance));

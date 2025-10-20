@@ -1,5 +1,5 @@
 /**
- * Additional fields in the Meteor.User objects
+ * Additional fields in the 'Meteor.User' objects
  *
  * @see imports/model/user
  */

@@ -1,10 +1,10 @@
 # PhD Assess
 
-Provide form tasks to users, so they can fulfil their the PhD assessment process.
+Provide form tasks to users, so they can fulfil their PhD assessment process.
 
 You can take a look at the process by installing the [BPMN Modeler](https://camunda.com/download/modeler/) and by opening [the process definition](https://github.com/epfl-si/PhDAssess-meta/blob/main/bpmn/phdAssessProcess.bpmn).
 
-Technically, the application consists on a Meteor server, defined as a [Zeebe](https://zeebe.io) worker. It shows all jobs of type `phdAssessFillForm` as a task/todo-list. A user can complete his/her form tasks through FormIO forms.
+Technically, the application consists of a Meteor server, defined as a [Zeebe](https://zeebe.io) worker. It shows all jobs of type `phdAssessFillForm` as a task/todo-list. A user can complete his/her form tasks through FormIO forms.
 
 ## Run
 
@@ -25,8 +25,8 @@ Technically, the application consists on a Meteor server, defined as a [Zeebe](h
 
 ### Start the support infrastructure
 
-The support infrastructure is required for the Meteor app to function (in addition to Meteor's usual, internally-managed requirement of a MongoDB database). It consists of Zeebe (the persistent store for workflow data and metadata).
-This command run them through a docker-compose setup:
+The support infrastructure is required for the Meteor app to function (in addition to Meteor's usual, internally managed requirement of a MongoDB database). It consists of Zeebe (the persistent store for workflow data and metadata).
+This command runs them through a docker-compose setup:
 ```
 ./phd.mjs start
 ```
@@ -75,7 +75,7 @@ If you get an error about not having a proto file in `/proto/`, use this trick a
 
 # Advanced Tasks
 
-## Observe latest MongoDB activity
+## Observe the latest MongoDB activities
 
 Whenever Zeebe sends work to Meteor, the `tasks_journal` collection gets updated. To retrieve the latest status thereof:
 

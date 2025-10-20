@@ -39,7 +39,7 @@ beforeEach(async function () {
 describe('Dashboard Steps render V2 steps', function (){
 
   it('should render custom content (content case)', async function (){
-    // for the test to do well, the step need an empty parent
+    // for the test to do well, the step needs an empty parent
     assert.isDefined(stepsDefinitionV2.filter(
       s => s.id === activityShort.coDirSigns
     )[0].customContent)
@@ -374,7 +374,7 @@ describe('Dashboard Steps render V2 steps', function (){
 
     it( 'should render the mentor as done when PhDFills is done and the mentor does not exist', async function () {
       const oneInstance = generateAGenericTaskAttributes()
-      Factory.create('task', V2Factory.setPHDSignsAttributes(oneInstance));  // using a child task of phd makes phd task done
+      Factory.create('task', V2Factory.setPHDSignsAttributes(oneInstance));  // using a child task of PhD makes PhD task done
 
       const container = await getContainerV2()
 
@@ -397,7 +397,7 @@ describe('Dashboard Steps render V2 steps', function (){
     it( 'should render the mentor as pending when PhDFills is done and the dir fill is awaiting', async function () {
 
       const oneInstance = generateAGenericTaskAttributes()
-      Factory.create('task', V2Factory.setDirectorFillsAttributes(oneInstance));  // using a child task of phd makes phd task done
+      Factory.create('task', V2Factory.setDirectorFillsAttributes(oneInstance));  // using a child task of PhD makes PhD task done
       Factory.create('task', V2Factory.setMentorSignsAttributes(oneInstance));
 
       const container = await getContainerV2()
@@ -427,7 +427,7 @@ describe('Dashboard Steps render V2 steps', function (){
     it( 'should render the mentor as pending when PhDFills is done and the phd signs is awaiting', async function () {
       // make the mentor task exists for that
       const oneInstance = generateAGenericTaskAttributes()
-      Factory.create('task', V2Factory.setPHDSignsAttributes(oneInstance));  // using a child task of phd makes phd task done
+      Factory.create('task', V2Factory.setPHDSignsAttributes(oneInstance));  // using a child task of PhD makes PhD task done
       Factory.create('task', V2Factory.setMentorSignsAttributes(oneInstance));
 
       const container = await getContainerV2()
@@ -458,7 +458,7 @@ describe('Dashboard Steps render V2 steps', function (){
   describe('Special case : the Program director task. I can be one of a choice.', function () {
 
     it('should render the corresponding prog. dir. task as pending 1/4', async function () {
-      Factory.create('task', V2Factory.setProgramDirectorSignsExceedAndDisagreeAttributes());  // using a child task of phd makes phd task done
+      Factory.create('task', V2Factory.setProgramDirectorSignsExceedAndDisagreeAttributes());  // using a child task of PhD makes PhD task done
 
       const container = await getContainerV2()
 
@@ -478,7 +478,7 @@ describe('Dashboard Steps render V2 steps', function (){
     });
 
     it('should render the corresponding prog. dir. task as pending 2/4', async function () {
-      Factory.create('task', V2Factory.setProgramDirectorSignsUnsatisfactoryAndDisagreesAttributes());  // using a child task of phd makes phd task done
+      Factory.create('task', V2Factory.setProgramDirectorSignsUnsatisfactoryAndDisagreesAttributes());  // using a child task of PhD makes PhD task done
 
       const container = await getContainerV2()
 
@@ -498,7 +498,7 @@ describe('Dashboard Steps render V2 steps', function (){
     });
 
     it('should render the corresponding prog. dir. task as pending 3/4', async function () {
-      Factory.create('task', V2Factory.setProgramDirectorSignsNeedsImprovementsAndDisagreeAttributes());  // using a child task of phd makes phd task done
+      Factory.create('task', V2Factory.setProgramDirectorSignsNeedsImprovementsAndDisagreeAttributes());  // using a child task of PhD makes PhD task done
 
       const container = await getContainerV2()
 
@@ -518,7 +518,7 @@ describe('Dashboard Steps render V2 steps', function (){
     });
 
     it('should render the corresponding prog. dir. task as pending 4/4', async function () {
-      Factory.create('task', V2Factory.setProgramDirectorSignsNeedsImprovementsOrUnsatisfactoryAndAgreeAttributes());  // using a child task of phd makes phd task done
+      Factory.create('task', V2Factory.setProgramDirectorSignsNeedsImprovementsOrUnsatisfactoryAndAgreeAttributes());  // using a child task of PhD makes PhD task done
 
       const container = await getContainerV2()
 
@@ -566,7 +566,7 @@ describe('Dashboard Steps render V2 steps', function (){
     });
 
     it('should render the corresponding prog. dir. task as pending with the "Improvment" typo', async function () {
-      Factory.create('task', V2Factory.setProgramDirectorSignsNeedsImprovementsOrUnsatisfactoryAndAgreeAttributesWithImprovmentTypo());  // using a child task of phd makes phd task done
+      Factory.create('task', V2Factory.setProgramDirectorSignsNeedsImprovementsOrUnsatisfactoryAndAgreeAttributesWithImprovmentTypo());  // using a child task of PhD makes PhD task done
 
       const container = await getContainerV2()
 

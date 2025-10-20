@@ -29,7 +29,7 @@ describe('Unit tests Tasks', function () {
     // })
   });
 
-  // testing the test engine about dates, and how we are able to filter it with Mongo
+  // testing the test engine about dates and how we are able to filter it with Mongo
   it('should be able to read and write dates', async function () {
     Factory.create("task", {
         "journal.lastSeen": dayjs().subtract(15, 'days').toDate(),
@@ -45,7 +45,7 @@ describe('Unit tests Tasks', function () {
       assert.beforeOrEqualDate(lastSeen, new Date())
     })
 
-    // can we find the obsolete one ?
+    // can we find the obsolete one?
     const obsoleteTasks = await Tasks.find({
       "journal.lastSeen": { $lte: dayjs().subtract(1, 'day').toDate() },
     }).fetchAsync()
@@ -83,7 +83,7 @@ describe('Unit tests Tasks dashboard definition', async function () {
     tasksWithDefinition.forEach(
       (task) => {
         assert.isDefined(task.variables.dashboardDefinition)
-        assert(task.variables.dashboardDefinition)  // test that it is some valid json
+        assert(task.variables.dashboardDefinition)  // test that it is some valid JSON
       }
     )
   });

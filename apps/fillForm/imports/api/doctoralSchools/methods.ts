@@ -1,5 +1,5 @@
 /// <reference path="../../../node_modules/@types/meteor-mdg-validated-method/index.d.ts" />
-// have to reference the type file because the ':' in the package name. See :
+// have to reference the type file because the ':' in the package name. See:
 // https://forums.meteor.com/t/typescript-trouble-importing-types-for-meteor-packages-in-vscode/54756
 import {Meteor} from 'meteor/meteor'
 import { ValidatedMethod } from 'meteor/mdg:validated-method'

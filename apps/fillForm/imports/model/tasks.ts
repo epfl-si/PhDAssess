@@ -102,7 +102,7 @@ export const isObsolete = (lastSeen:  Date | undefined) => {
 class TasksCollection extends Mongo.Collection<Task> {
   /**
    * Once a task is finished, instead of removing it completely,
-   * journalize the submit operation, then remove the others fields (to free spaces, like a remove would do),
+   * journalize the submit operation. Then remove the other fields (to free spaces, like a remove would do),
    * and keep it as it is, so we can set check status from incoming zeebe jobs
    */
     async markAsSubmitted(_id: string) {
@@ -137,8 +137,8 @@ export interface UnfinishedTask {
   taskId: string,
   updatedAt: Date,
   inputJSON: string,
-  // The taskId can change on refresh. This two values help to
-  // recover this cases
+  // The taskId can change on refresh. These two values help to
+  // recover these cases
   processInstanceKey?: string,
   stepId?: string,
 }

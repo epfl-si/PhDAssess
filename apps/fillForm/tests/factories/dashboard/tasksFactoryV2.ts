@@ -1,5 +1,5 @@
 /**
- * Define tasks to expose explicitly steps in the dashboard
+ * Define tasks to expose explicit steps in the dashboard
  */
 import {faker} from "../../factories/faker";
 const Factory = require("meteor/dburles:factory").Factory
@@ -52,7 +52,7 @@ export const setMentorSignsAttributesWithoutTheNeedOfTheProgramDirector = (taskA
     'assigneeSciper': taskAttributes.variables.mentorSciper,
     'dashboardDefinition': stepsDefinitionV2,
     'doctoralProgramName': 'V2',
-    'notifProgramDirector': '1',  // this make the program director optional
+    'notifProgramDirector': '1',  // this makes the program director optional
   },
   'elementId': faker.helpers.arrayElement([
     'Activity_Post_Mentor_Meeting_Mentor_Signs',
@@ -220,14 +220,14 @@ export const createTasksForDashboardV2Fixtures = () => {
 
   ////
   // Seconds steps are tricky, can have multiple configuration
-  // as we can have multiple task for the same workflow instance (processInstanceKey)
+  // as we can have multiple tasks for the same workflow instance (processInstanceKey)
   // let's build some
   oneInstance = generateAGenericTaskAttributes()
   Factory.create('task', setCoDirectorFillsAttributes(oneInstance));
   Factory.create('task', setDirectorFillsAttributes(oneInstance));
   Factory.create('task', setMentorSignsAttributes(oneInstance));
 
-  // last one had the mentor. Let's do one withou the mentor task this time
+  // The last one had the mentor. Let's do one without the mentor task this time
   oneInstance = generateAGenericTaskAttributes()
   Factory.create('task', setCoDirectorFillsAttributes(oneInstance));
   Factory.create('task', setDirectorFillsAttributes(oneInstance));
@@ -240,7 +240,7 @@ export const createTasksForDashboardV2Fixtures = () => {
   Factory.create('task', setMentorSignsAttributes(oneInstance));
   Factory.create('task', setProgramDirectorSignsUnsatisfactoryAndDisagreesAttributes(oneInstance));
 
-  // get somes flavors of some steps
+  // get some flavors of some steps
   Factory.create('task', setDirectorFillsAttributes());
   Factory.create('task', setCoDirectorFillsAttributes());
   Factory.create('task', setPHDFillsAttributes());

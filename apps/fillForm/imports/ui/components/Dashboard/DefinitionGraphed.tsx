@@ -50,13 +50,13 @@ export const convertDefinitionToGraph = (definition: StepsDefinition | undefined
       // as it will be virtual siblings later
       step.knownAs.forEach( as => graph.setNode(as))
 
-    // allow to get an order by using the parent-child graphlib relationship
+    // allow getting an order by using the parent-child graphlib relationship
     if (index > 0) graph.setParent(step.id, definition[index-1].id)
 
     // set all parents (as Edges) of this node
     step.parents?.forEach(p => graph.setParentEdge(step.id, p))
 
-    // set a link between nodes, as sibling, for the one that have the same parents configuration.
+    // set a link between nodes, as sibling, for the ones that have the same parents configuration.
     // They represent the same level.
     if (step.parents) {
       definition.filter(

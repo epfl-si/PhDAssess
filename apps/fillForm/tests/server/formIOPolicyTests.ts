@@ -66,8 +66,8 @@ describe('Algos around the FormIO definition testing ', function () {
     ) as string[]
 
     assert.isNotEmpty(submittableFieldsOnly)
-    // okFields.forEach( (field) => assert.include(submittableFieldsOnly, field) )
-    // disabledFields.forEach( (field) => assert.notInclude(submittableFieldsOnly, field) )
-    // panelFields.forEach( (field) => assert.notInclude(submittableFieldsOnly, field) )
+    // okFields.forEach((field) => assert.include(submittableFieldsOnly, field))
+    // disabledFields.forEach((field) => assert.notInclude(submittableFieldsOnly, field))
+    // panelFields.forEach((field) => assert.notInclude(submittableFieldsOnly, field))
   });
 })

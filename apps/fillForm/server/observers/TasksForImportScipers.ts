@@ -3,7 +3,7 @@ import {Tasks} from "/imports/model/tasks";
 
 
 /*
- * Set events on tasks changes, to reflect the status on ImportScipers lists
+ * Set events on tasks changes to reflect the status on ImportScipers lists
  */
 const getQuery = () => { return {} }
 const getUpdateDocument = (hasAlreadyStarted: boolean) => {

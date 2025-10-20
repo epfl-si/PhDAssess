@@ -36,7 +36,7 @@ export default {
 
     void zBClient.createWorker({
       taskType: taskType,
-      // Here you have to find the balance between getting to many data for a pipe and not enough tasks
+      // Here you have to find the balance between getting too many data for a pipe and not enough tasks
       // for a full cycle of activating->activated->reactivating
       maxJobsToActivate: process.env.ZEEBE_WORKER_MAX_JOBS_TO_ACTIVATE ?? 500,
       // Set timeout, the same as we will ask yourself if the job is still up
@@ -59,7 +59,7 @@ export default {
             if (job.variables.uuid) await bumpActivityLogsOnTaskNewArrival(job)
           }
 
-          // as we had no error, tell Zeebe that we'll think about it, and free ourselves to receive more work
+          // as we had no error, tell Zeebe that we'll think about it and free ourselves to receive more work
           return job.forward()
         } catch (error) {
           if (error instanceof MongoInternals.NpmModules.mongodb.module.MongoNetworkError
@@ -67,7 +67,7 @@ export default {
             // retry later, Mongo may not be available at that time
             return job.forward()
           } else {
-            // unable to create the task or a variable is failing to be decrypted => no good at all
+            // unable to create the task, or a variable is failing to be decrypted => no good at all
             // we can't do better than alerting the logs
             debug(`Unable to decrypt or persist Zeebe job (${job.key}). Sending a task fail to the broker. Task process id : ${job.processInstanceKey}. ${error}.`)
             Metrics.zeebe.errors.inc()
@@ -163,7 +163,7 @@ export default {
 
     await this.setTaskToActivateToANewJob(task)
 
-    // fail the old jobs here, or we may get a 'two jobs' for the same element scenario
+    // fail the old jobs here, or we may get a case of 'two jobs for the same element' scenario
     await this.fail(
       task,
       0,
@@ -178,7 +178,7 @@ export default {
       Inform Zeebe that the job is ready to be completed by users, and he can send notifications to them
       tip: publishStartMessage is idempotent if messageId is set
      */
-    // only send a receipt for jobs with a recent workflow -> with the needed variables to trigger a notification
+    // only send a receipt for jobs with a recent workflow -> with the necessary variables to trigger a notification
     if (
       job.variables.uuid &&
       job.customHeaders.notifyTo &&
@@ -186,7 +186,7 @@ export default {
       job.customHeaders.notifyMessage
     ) {
 
-      // Idempotency check : skip the call for notification if this job elementId has been already sent
+      // Idempotency check: skip the call for notification if this job elementId has been already sent
       if (job.variables.notificationLogs) {
         const hasBeenAlreadySent = job.variables.notificationLogs
                                       .map( (notificationLog: string) => {
@@ -203,8 +203,8 @@ export default {
 
       debug(`Job ${job.key} is eligible for a notification receipt. Sending the receipt...`)
 
-      // as the To, Cc or Bcc can come as string, a string of array of string (!, yep that's something like that : "[email1, email2]"), and
-      // some are empty, let's have a function that process them correctly. They are all field specifier, not direct values
+      // as the To, Cc or Bcc can come as string, a string of an array of string (!, yep that's something like that: "[email1, email2]"), and
+      // some are empty, let's have a function that processes them correctly. They are all field specifiers, not direct values
       const parseCustomHeadersNotify = (notifyVar: string | undefined) => {
         if (! notifyVar ) return
 

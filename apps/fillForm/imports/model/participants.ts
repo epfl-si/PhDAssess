@@ -22,12 +22,12 @@ export type ParticipantDetail = {
 export type ParticipantList = Partial<Record<ParticipantRoles, ParticipantDetail>>;
 
 /*
- * Transform incoming Zeebe variables about the participant, to get a ParticipantList
+ * Transform incoming Zeebe variables about the participant to get a ParticipantList
  */
 export const participantsFromZeebe = (variables: PhDInputVariables): ParticipantList =>  {
   let participants: ParticipantList = {}
 
-  // Fetch variables by participant, and get that new Participant from it
+  // Fetch variables by participant and get that new Participant from it
   for (let participantID of Object.values(ParticipantRoles)) {
     if (`${participantID}Sciper` in variables && variables[`${participantID}Sciper`]) {
       try {

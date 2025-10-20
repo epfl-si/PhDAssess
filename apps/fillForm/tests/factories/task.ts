@@ -66,7 +66,7 @@ const buildNotificationLog = (isNotAReminder?: boolean) => {
         })
       )),
     },
-    // using negative boolean, as a default mandatory is not a reminder
+    // using negative boolean as a default mandatory is not a reminder
     fromElementId: isNotAReminder ? 'Activity_PHD_fills_annual_report' :  'Activity_PHD_fills_annual_report_reminder',
     type: isNotAReminder ? 'awaitingForm' : 'reminder'
   } as NotificationLog )
@@ -132,7 +132,7 @@ export const generateAGenericTaskAttributes = (hasThesisCoDirector = true) => {
         buildNotificationLog(true),
         ...Array.from(
         { length: faker.number.int({ min: 0, max: 3 }) },
-        buildNotificationLog  // this defaults to reminder
+        buildNotificationLog  // this defaults to 'reminder' value
       )],
       "uuid": faker.helpers.maybe(  () => faker.string.uuid(), { probability: 0.8 }),
     },

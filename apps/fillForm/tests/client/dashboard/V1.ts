@@ -50,12 +50,12 @@ describe('Dashboard Steps render V1 steps', function (){
       container.querySelectorAll('[data-step="Activity_PHD_fills_annual_report"][data-step-status="done"]'),
       1,
       `Cannot find the Activity_PHD_fills_annual_report with done status. ${ container.innerHTML }`);
-    // second should be 'awaiting'
+    // the second should be 'awaiting'
     assert.lengthOf(
       container.querySelectorAll('[data-step="Activity_Thesis_Co_Director_fills_annual_report"][data-step-status="awaiting"]'),
       1,
       `${ container.innerHTML }`);
-    // third should be 'done'
+    // the third should be 'done'
     assert.lengthOf(
       container.querySelectorAll('[data-step="Activity_Thesis_Director_fills_annual_report"][data-step-status="done"]'),
       1,
@@ -78,12 +78,12 @@ describe('Dashboard Steps render V1 steps', function (){
       container.querySelectorAll('[data-step="Activity_PHD_fills_annual_report"][data-step-status="done"]'),
       1,
       `Cannot find the Activity_PHD_fills_annual_report with done status. ${ container.innerHTML }`);
-    // second should be 'awaiting'
+    // the second should be 'awaiting'
     assert.lengthOf(
       container.querySelectorAll('[data-step="Activity_Thesis_Co_Director_fills_annual_report"][data-step-status="done"]'),
       1,
       container.innerHTML);
-    // third should be 'awaiting'
+    // the third should be 'awaiting'
     assert.lengthOf(
       container.querySelectorAll('[data-step="Activity_Thesis_Director_fills_annual_report"][data-step-status="awaiting"]'),
       1,
@@ -126,14 +126,14 @@ describe('Dashboard Steps render V1 steps', function (){
       ),
       1,
       `Cannot find the Activity_PHD_fills_annual_report with done status. ${ container.innerHTML }`);
-    // second should be 'awaiting'
+    // the second should be 'awaiting'
     assert.lengthOf(
       container.querySelectorAll(
         '[data-step="Activity_Thesis_Co_Director_fills_annual_report"][data-step-status="awaiting"]'),
       1,
       `${ container.innerHTML }`
     );
-    // third should be 'done'
+    // the third should be 'done'
     assert.lengthOf(
       container.querySelectorAll(
         '[data-step="Activity_Thesis_Director_fills_annual_report"][data-step-status="awaiting"]'),
@@ -153,7 +153,7 @@ describe('Dashboard Steps render V1 steps', function (){
 
     const container = await getContainerV1()
 
-    // first three should be done
+    // the first three should be done
     assert.lengthOf(
       container.querySelectorAll('[data-step-status="done"]'),
       3,

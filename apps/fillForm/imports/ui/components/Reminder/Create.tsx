@@ -25,8 +25,8 @@ import {getUserPermittedTaskReminder} from "/imports/policy/reminders";
 import {ParticipantsAsRow} from "/imports/ui/components/Participant/List";
 
 
-// as the To, Cc or Bcc can come as string, a string of array of string (!, yep that's something like that : "[email1, email2]"), and
-// some are empty, let's have a function that process them correctly. They are all field specifier, not direct values
+// as the To, Cc or Bcc can come as string, a string of an array of string (!, yep that's something like that: "[email1, email2]"), and
+// some are empty, let's have a function that processes them correctly. They are all field specifiers, not direct values
 const fromZeebeCustomHeadersEmailsToEmailInput = (field: string | undefined, task: Task) => {
   if (!field) return ''
 
@@ -218,7 +218,7 @@ const ReminderForm = ({ task }: { task: Task }) => {
             init={ {
               branding: false,
               content_style: isSubmitting ? '.mce-content-readonly { background-color: #e6e6e6; }' : undefined,
-              convert_urls: false,  // dont show urls as relative urls, it is disturbing in this context
+              convert_urls: false,  // don't show urls as relative urls, it is disturbing in this context
               height: 500,
               link_context_toolbar: true,
               menubar: false,

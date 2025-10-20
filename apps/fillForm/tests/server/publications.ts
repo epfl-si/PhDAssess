@@ -94,7 +94,7 @@ describe(
         });
 
         await it('should not return the task to the assignee if task is obsolete', async function () {
-          // get count before the obsolete add
+          // get count before the obsolete addition
           const beforeCollector = new PublicationCollector({userId: userAssignee._id});
           const beforeCollections = await beforeCollector.collect('tasksList', {}, {});
           const countTasksBefore = beforeCollections.tasks.length
@@ -112,7 +112,7 @@ describe(
         })
 
         await it('should return the obsolete task to the admin', async function () {
-          // get count before the obsolete add
+          // get count before the obsolete addition
           const beforeCollector = new PublicationCollector({userId: userAdmin._id});
           const beforeCollections = await beforeCollector.collect('tasksList', {}, {});
           const countTasksBefore = beforeCollections.tasks.length
@@ -134,7 +134,7 @@ describe(
 
     describe('"tasksList" to have the already submitted system working', async function () {
       await it('should not return a submitted task to the assignee', async function () {
-        // get count before the obsolete add
+        // get count before the obsolete addition
         const beforeCollector = new PublicationCollector({userId: userAssignee._id});
         const beforeCollections = await beforeCollector.collect('tasksList', {}, {});
         const countTasksBefore = beforeCollections.tasks.length
