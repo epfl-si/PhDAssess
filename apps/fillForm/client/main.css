@@ -370,7 +370,7 @@ details[open] > summary::before {
 }
 
 .tox-tinymce {
-  border-radius: 0px !important;
+  border-radius: 0 !important;
 }
 
 .mce-content-readonly {
