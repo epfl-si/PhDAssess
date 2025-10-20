@@ -24,7 +24,7 @@
     /* Module Resolution Options */
     "baseUrl": ".",
     "paths": {
-      /* Support absolute /imports/* with a leading '/' */
+      /* Support absolute /imports/* with a leading char: '/' */
       "/*": ["*"],
       "meteor/*": [
         "node_modules/@types/meteor/*",
