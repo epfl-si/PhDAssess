@@ -25,7 +25,7 @@ export const DoctoralSchools = new DoctoralSchoolsCollection('doctoralSchools',
   persistentDB && Meteor.isServer ? { _driver : persistentDB } : {})
 
 globalThis.simpleSchemaGlobalConfig = {
-  getErrorMessage(error, label) {
+  getErrorMessage(error) {
     if (error.type === 'notUnique') return "This acronym already exists"
   }
 };
