@@ -10,6 +10,7 @@
 import React, {Suspense, useState} from "react";
 import {Link, useParams} from "react-router";
 import {global_Error, Meteor} from "meteor/meteor";
+// @ts-ignore
 import { useTracker, useSubscribe } from 'meteor/react-meteor-data/suspense'
 
 import {useAccountContext} from "/imports/ui/contexts/Account";
