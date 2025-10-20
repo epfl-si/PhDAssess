@@ -26,7 +26,7 @@ const getOptions = (doctorantSciper: string) => {
 
 /**
  * This part takes care of updating the currently displayed
- * import sciper list  everytime there is a move in the task collection.
+ * import sciper list everytime there is a move in the task collection.
  */
 export const observeTasksForImportScipers = async () => {
   Tasks.find({}).observeAsync({
