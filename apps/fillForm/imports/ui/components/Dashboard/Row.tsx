@@ -1,4 +1,5 @@
 import React, {useEffect, useMemo, useState} from "react";
+import type {JSX} from "react";
 import {Link} from "react-router";
 import {faPenToSquare} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -89,7 +90,7 @@ export const DashboardRow = ({ workflowInstanceTasks }: {
 
   if (!definition) return <></>
 
-  // find the configuration directly into the bpmn, or use the default
+  // find the configuration directly into the BPMN or use the default
   return <details>
     <summary
       className="dashboard-row-workflow-instance row"
