@@ -117,10 +117,10 @@
 - Add info about non-persistent guests data at the top of the import sciper list
 
 *1.3.4* (2022-02-08)
-- Fix again for the thesis co director behaving wrongly when importing list
+- Fix again for the thesis co-director behaving wrongly when importing list
 
 *1.3.3* (2022-02-04)
-- Fix the thesis co director sciper behaving wrongly when importing list
+- Fix the thesis co-director sciper behaving wrongly when importing list
 
 *1.3.2* (2022-02-02)
 - Meteor 2.5.6
