@@ -1,8 +1,8 @@
 import {global_Error, Meteor} from "meteor/meteor";
 import React, {useEffect, useState} from "react";
 import {useTracker} from "meteor/react-meteor-data";
-import {useNavigate, useParams, Link} from "react-router-dom";
-import {Alert, Loader} from "@epfl/epfl-elements-react";
+import {useNavigate, useParams, Link} from "react-router";
+import {Alert, Loader} from "epfl-elements-react";
 import {DoctorantInfoSelectable, ImportScipersList} from "/imports/api/importScipers/schema";
 import StartButton from '/imports/ui/components/ImportSciper/StartButton';
 import {HeaderRow} from "/imports/ui/components/ImportSciper/Header";
@@ -15,6 +15,7 @@ import {useAccountContext} from "/imports/ui/contexts/Account";
 import {canImportScipersFromISA} from "/imports/policy/importScipers";
 import DueDatePicker from "/imports/ui/components/Task/DueDatePicker";
 import {toastErrorClosable} from "/imports/ui/components/Toasters";
+import {isNonspecificDdpError} from "/imports/api/errors";
 
 
 export const ImportScipersSchoolSelector = () => {
@@ -54,6 +55,19 @@ export type sortedByOrderPossibilities = 'asc' | 'desc'
 export type sortDoctorantInfo = {
   func: ((doctorantInfo: DoctorantInfoSelectable) => any)[]  // 'any' because it's a sort function
   order: sortedByOrderPossibilities[]
+}
+
+const AlertError = (
+  { error, onCloseClick }: { error: Error, onCloseClick: () => void }
+) => {
+
+  const message = isNonspecificDdpError(error) ?
+    "Internal server error, please contact 1234@epfl.ch"
+    :  ( "reason" in error ) ?
+      `${error.reason}`
+      : error.message
+
+  return <Alert alertType={ 'danger' } title={ 'Error' } message={ message } onCloseClick={ onCloseClick } />
 }
 
 export function ImportScipersForSchool() {
@@ -109,18 +123,18 @@ export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralS
   }
 
   const [importStarted, setImportStarted] = useState(isBeingImported)
-  const [isErronous, setIsErronous] = useState('')
+  const [isErroneous, setIsErroneous] = useState<Error | undefined>()
   const navigate = useNavigate()
 
   useEffect(() => {
-    Meteor.apply(
-      "getISAScipers", [ doctoralSchool.acronym ], { wait: true, noRetry: true },
-      (error: global_Error | Meteor.Error | undefined) => {
-        if (error) {
-          "reason" in error ? setIsErronous(error.reason!) : setIsErronous(error.message)
-        }
+    const getISAScipers = async () => {
+      try {
+        await Meteor.callAsync("getISAScipers", doctoralSchool.acronym)
+      } catch (error: any) {
+        setIsErroneous(error)
       }
-    )
+    }
+    void getISAScipers();
   }, [doctoralSchool]);
 
   const startImport = () => {
@@ -145,7 +159,7 @@ export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralS
         toast.dismiss(toastId)
         if (error) {
           toast.error(error.reason ?? error.message)
-          setIsErronous(error.reason ?? error.message)
+          setIsErroneous(error)
         } else {
           toast.success("Successfully launched import. Please be patient while entries are getting created...")
         }
@@ -157,7 +171,7 @@ export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralS
   if (!account || !account.isLoggedIn) return (<Loader message={'Loading your data...'}/>)
   if (!account.user || !canImportScipersFromISA(account.user)) return (<div>Your permissions does not allow you to import from ISA.</div>)
 
-  if (isErronous) return <Alert alertType={ 'danger' } title={ 'Error' } message={ isErronous } onCloseClick={ () => navigate(`/import-scipers/`) } />
+  if (isErroneous) return <AlertError error={ isErroneous } onCloseClick={ () => navigate(`/import-scipers/`) } />
 
   if (ISAScipersLoading) return <Loader message={`Fetching ISA for the list of ${doctoralSchool.acronym} PhD students...`}/>
 

@@ -5,7 +5,7 @@ import {ReminderLog, ReminderLogs} from "/imports/api/reminderLogs/schema";
 export const onZeebeReminderCreated = async (
   task: Task
 ) => {
-  const processInstance = ReminderLogs.findOne(
+  const processInstance = await ReminderLogs.findOneAsync(
     { _id: task.processInstanceKey }
   )
 

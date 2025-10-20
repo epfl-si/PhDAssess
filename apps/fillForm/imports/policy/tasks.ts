@@ -87,7 +87,10 @@ export const getAssistantAdministrativeMemberships = (user: Meteor.User, doctora
   return schools;
 }
 
-export const canSubmit = (user: Meteor.User | null, taskId: string) : boolean => {
+export const canSubmit = async (
+  user: Meteor.User | null,
+  taskId: string
+)=> {
   if (!user) return false
 
   if (user.isAdmin) {
@@ -96,7 +99,7 @@ export const canSubmit = (user: Meteor.User | null, taskId: string) : boolean =>
     const groups = user.groupList
 
     if (groups && groups.length > 0) {
-      return Tasks.find({
+      return await Tasks.find({
         $and: [
           { "_id": taskId },
           { $or: [
@@ -105,14 +108,14 @@ export const canSubmit = (user: Meteor.User | null, taskId: string) : boolean =>
             ]
           }
         ]
-      }).count() > 0
+      }).countAsync() > 0
     } else {
-      return Tasks.find({
+      return await Tasks.find({
         $and: [
           { "_id": taskId },
           { "variables.assigneeSciper": user._id }
         ]
-      }).count() > 0
+      }).countAsync() > 0
     }
   }
 }

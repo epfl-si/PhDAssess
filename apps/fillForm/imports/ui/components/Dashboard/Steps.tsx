@@ -1,7 +1,7 @@
 import React from "react";
 import _ from "lodash";
 import styled from "styled-components";
-import {Link} from "react-router-dom";
+import {Link} from "react-router";
 
 import {ITaskDashboard} from "/imports/policy/dashboard/type";
 import {ParticipantDetail} from "/imports/model/participants";

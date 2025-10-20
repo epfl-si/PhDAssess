@@ -1,4 +1,7 @@
 # CHANGELOG
+*2.0.0* (2025-Q3)
+- Update to Meteor 3, welcome the async-await era!
+- Add Entra auth through the home-made epfl:accounts-entra package
 
 *1.23.0* (2024-10-05)
 - Use api instead of websrv when users info are needed

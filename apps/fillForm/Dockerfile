@@ -1,44 +1,56 @@
-ARG BASE_IMAGE=quay-its.epfl.ch/svc1394/ubuntu-node-14:latest
+## Setup a meteor image in production mode
+#
+ARG BASE_IMAGE=node:22-trixie
 
-# Stage 1: Base Environment
-FROM $BASE_IMAGE AS base-stage
+FROM $BASE_IMAGE AS build
 
-RUN groupadd -g 1001 meteoruser && \
-    useradd -u 1001 -g meteoruser -m -s /bin/bash meteoruser && \
-    mkdir -p /app/.meteor/local /app/output && \
-    chown -R meteoruser:meteoruser /app
-
-USER meteoruser
 # Install meteor
 RUN npx meteor
 
 ENV NODE_ENV=production
 # to ignore caniuse-lite outdated warning
 ENV BROWSERSLIST_IGNORE_OLD_DATA=1
-## Update PATH for the `meteoruser` user to be able to user the command 'meteor'
-ENV PATH=$PATH:/home/meteoruser/.meteor/
 
-# Stage 2: Build
-FROM base-stage AS build-stage
+ENV PATH=$PATH:/root/.meteor
+ENV METEOR_ALLOW_SUPERUSER=1
 
 WORKDIR /app
 
-COPY --chown=meteoruser:meteoruser package.json package-lock.json ./
-RUN meteor npm install --omit=dev
+COPY package.json package-lock.json ./
+RUN mkdir patches
+# The other patches are dev-only (pending a released fix to meteor/meteor#13504):
+COPY patches/@grpc* patches/
+RUN meteor npm install --production
 
-COPY --chown=meteoruser:meteoruser . .
-RUN meteor build --directory /app/output && \
-    meteor npm run postinstall
+COPY . .
 
-# Stage 3: Final Runtime Image
+RUN mkdir packages
+WORKDIR /app/packages
+ARG EPFL_ACCOUNTS_ENTRA_BUILD_BRANCH=
+ARG EPFL_ENTRA_OAUTH_BUILD_BRANCH=
+ENV EPFL_ACCOUNTS_ENTRA_BUILD_BRANCH=$EPFL_ACCOUNTS_ENTRA_BUILD_BRANCH
+ENV EPFL_ENTRA_OAUTH_BUILD_BRANCH=$EPFL_ENTRA_OAUTH_BUILD_BRANCH
+RUN set -e -x; if [ -n "$EPFL_ACCOUNTS_ENTRA_BUILD_BRANCH" ]; then \
+      git clone --branch "$EPFL_ACCOUNTS_ENTRA_BUILD_BRANCH" https://github.com/epfl-si/meteor-account-entra accounts-entra ; \
+      cd accounts-entra ; git rev-parse HEAD ; \
+    fi
+RUN set -e -x; if [ -n "$EPFL_ENTRA_OAUTH_BUILD_BRANCH" ]; then \
+      git clone --branch "$EPFL_ENTRA_OAUTH_BUILD_BRANCH" https://github.com/epfl-si/meteor-entra-auth entra-oauth ; \
+      cd entra-oauth ; git rev-parse HEAD ; \
+    fi
+WORKDIR /app
+
+RUN meteor build --directory /built-app
+RUN cd /built-app/bundle/programs/server && meteor npm install --production
+
 FROM $BASE_IMAGE
 
-RUN groupadd -g 1001 meteoruser && \
-    useradd -u 1001 -g meteoruser -m -s /bin/bash meteoruser
-
+ENV NODE_ENV=production
+COPY --from=build /built-app/bundle /app
 WORKDIR /app
-COPY --chown=meteoruser:meteoruser --from=build-stage /app/output/bundle /app
-RUN cd /app/programs/server && npm install --omit=dev
 
-USER meteoruser
+# Provide bundled protobufs for zeebe-node... Kind of
+RUN mkdir /proto
+RUN ln -s /app/programs/server/npm/node_modules/zeebe-node/proto/*.proto /proto/
+
 CMD ["node", "main.js"]

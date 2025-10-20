@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {Task} from "/imports/model/tasks";
-import {Loader} from "@epfl/epfl-elements-react";
+import {Loader} from "epfl-elements-react";
 import DueDatePicker from "/imports/ui/components/Task/DueDatePicker";
 import toast from "react-hot-toast";
 import {global_Error, Meteor} from "meteor/meteor";

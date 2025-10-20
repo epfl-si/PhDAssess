@@ -55,17 +55,16 @@ export const HeaderRow = (
   const [ sortedByOrder, setSortedByOrder ] = useState<sortedByOrderPossibilities>('asc')
 
   const defaultColClasses = "align-self-end"
-  const backgroundColor: CSSProperties = Meteor.settings.public.isTest && !Meteor.settings.public.ignoreTestBackgroundColor ? { backgroundColor: 'Cornsilk' } : { backgroundColor: 'white' }
+  const backgroundColor: CSSProperties = Meteor.settings?.public?.setYellowBackgroundColor ? { backgroundColor: 'Cornsilk' } : { backgroundColor: 'white' }
 
-  const setAllCheck = (state: boolean) => {
-    setIsToggling(true)
-
-    Meteor.call('toggleAllDoctorantCheck', doctoralSchool.acronym, state, (error: any) => {
-        if (!error) {
-          setIsToggling(false)
-        }
-      }
-    )
+  const setAllCheck = async (state: boolean) => {
+    try {
+      setIsToggling(true)
+      await Meteor.callAsync('toggleAllDoctorantCheck', doctoralSchool.acronym, state)
+      setIsToggling(false)
+    } catch (error: any) {
+      console.error(`Setting all checks has an error: ${error.message}`)
+    }
   }
 
   return (
@@ -80,7 +79,7 @@ export const HeaderRow = (
           name="select-all"
           checked={ isAllSelected }
           disabled={ isToggling || disabled }
-          onChange={ () => { setAllCheck(!isAllSelected); } }
+          onChange={ async () => { await setAllCheck(!isAllSelected); } }
         />
         { isToggling &&
           <span className="loader" />

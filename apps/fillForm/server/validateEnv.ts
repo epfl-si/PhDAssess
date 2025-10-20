@@ -3,6 +3,7 @@ export const validateEnv = () => {
   const required = [
     'ZEEBE_ADDRESS',
     'PHDASSESS_ENCRYPTION_KEY',
+    'MONGO_PERSISTENT_URL',
     'API_EPFL_CH_TOKEN',
     'ALFRESCO_USERNAME',
     'ALFRESCO_PASSWORD',

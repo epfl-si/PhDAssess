@@ -5,27 +5,29 @@ import {DoctoralSchools} from "/imports/api/doctoralSchools/schema";
 
 
 Meteor.methods({
-  async refreshDoctoralSchoolsProgramNameFromSciper(doctoralSchoolAcronym) {
+  async refreshDoctoralSchoolsProgramNameFromSciper(doctoralSchoolAcronym: string) {
+    if (Meteor.isDevelopment && Meteor.settings?.skipUsersUpdateOnFail) return
+
     let user: Meteor.User | null = null
     if (this.userId) {
-      user = Meteor.users.findOne({_id: this.userId}) ?? null
+      user = await Meteor.users.findOneAsync( { _id: this.userId } ) ?? null
     }
 
     if (!user) return
 
-    if (!canImportScipersFromISA(user)) {
+    if (!await canImportScipersFromISA(user)) {
       throw new Meteor.Error(403, 'You are not allowed to refresh this data')
     }
 
-    const doctoralSchool = DoctoralSchools.findOne({acronym: doctoralSchoolAcronym})
+    const doctoralSchool = await DoctoralSchools.findOneAsync( { acronym: doctoralSchoolAcronym } )
 
     if (doctoralSchool) {
       const programDirector = await getUserInfoMemoized(doctoralSchool.programDirectorSciper)
 
       if (programDirector && programDirector.firstname && programDirector.lastname) {
-        DoctoralSchools.update(
-          {_id: doctoralSchool._id},
-          {$set: {programDirectorName: `${programDirector.firstname} ${programDirector.lastname}`}}
+        await DoctoralSchools.updateAsync(
+          { _id: doctoralSchool._id },
+          { $set: { programDirectorName: `${programDirector.firstname} ${programDirector.lastname}` } }
         )
       }
     }

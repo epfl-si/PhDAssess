@@ -14,14 +14,14 @@ import {DoctoralSchools} from "/imports/api/doctoralSchools/schema";
  *          processInstance that the user can edit.
  *
  */
-Meteor.publish('processInstanceEdit', function (processInstanceKey: string) {
+Meteor.publish('processInstanceEdit', async function (processInstanceKey: string) {
   if (!this.userId) return this.ready()
-  const user: Meteor.User | null = Meteor.users.findOne({ _id: this.userId }) ?? null
+  const user: Meteor.User | null = await Meteor.users.findOneAsync({ _id: this.userId }) ?? null
   if (!user) return this.ready()
 
   return getUserPermittedProcessInstanceEdit(
     user,
-    DoctoralSchools.find({}).fetch(),
+    await DoctoralSchools.find({}).fetchAsync(),
     processInstanceKey
   )
 })

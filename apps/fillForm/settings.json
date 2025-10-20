@@ -1,13 +1,6 @@
 {
   "skipUsersUpdateOnFail": true,
   "userUpdateWithEnv": false,
-  "fake_tequila": {
-    "requestauth": {
-      "uniqueid": "243371",
-      "displayname": "Dominique Quatravaux",
-      "group": "PhD-annual-report-admin"
-    }
-  },
   "public": {
     "monitor_address": "localhost:8082",
     "phdAssessRoleAdmin":"PhD-annual-report-admin",
@@ -17,6 +10,7 @@
       "neither Meteor.isDevelopment nor Meteor.isProduction)"
     ],
     "isTest": true,
+    "setYellowBackgroundColor": true,
     "ignoreTestBackgroundColor": true,
     "///": [
       "Allow to control the Meteor connexion status from the client"

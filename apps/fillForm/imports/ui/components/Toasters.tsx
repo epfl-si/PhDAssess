@@ -1,6 +1,7 @@
 import React from "react";
 import toast, {Toaster} from "react-hot-toast";
-import {ErrorIcon} from "react-hot-toast/src/components/error";
+import {ErrorIcon} from "react-hot-toast";
+import {isNonspecificDdpError} from "/imports/api/errors";
 
 export const ToasterConfig = () => {
   return (
@@ -31,7 +32,6 @@ export const toastClosable = (toastId: string, message: string) => (
   </div>
 )
 
-
 export const toastErrorClosable = (toastId: string, message: string) => (
   toast(
     toastClosable(toastId, `${message}`),
@@ -42,3 +42,11 @@ export const toastErrorClosable = (toastId: string, message: string) => (
     }
   )
 )
+
+export const toastExceptionClosable= (toastId: string, exception: Error) => {
+  const message = ( isNonspecificDdpError( exception ) ) ?
+    `${exception} - Please contact 1234@epfl.ch` :
+    `${exception}`
+
+  toastErrorClosable(toastId, message)
+}

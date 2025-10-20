@@ -1,24 +1,48 @@
 import {Meteor} from "meteor/meteor";
-import React, {CSSProperties} from "react";
-import {Outlet, useRouteError} from "react-router-dom";
-import {FooterLight} from "@epfl/epfl-elements-react"
+import React, {CSSProperties, useEffect} from "react";
+import {Outlet, useRouteError} from "react-router";
+import {FooterLight, Loader} from "epfl-elements-react"
 
 import {ToasterConfig} from "/imports/ui/components/Toasters";
 import {PhDHeader} from "/imports/ui/components/PhDHeader";
 import {PhDBreadcrumb} from "/imports/ui/components/Breadcrumb";
 import {AsideMenu} from "/imports/ui/components/AsideMenu";
 import {ConnectionStatusFooter} from "/imports/ui/components/ConnectionStatus";
+import {useAccountContext} from "/imports/ui/contexts/Account";
+
+
+/**
+ * This component obliges the user to be connected
+ */
+const AutoLoginComponent = () => {
+  useEffect(() => {
+    Meteor.entraSignIn(
+      {
+        // This set the scope parameter when doing Entra calls.
+        // Using something else will remove you the login capacity
+        // or, worse, disallows you to get the idToken with id data in it
+        requestPermissions: ['openid'],
+      },
+    );
+  });
+  return <></>
+}
 
 /**
  * The base UI for all pages, where other pages are rendered into
  */
 export default function Main() {
-  const mainPanelBackgroundColor: CSSProperties = Meteor.settings.public.isTest && !Meteor.settings.public.ignoreTestBackgroundColor ? {backgroundColor: 'Cornsilk'} : {}
+  const mainPanelBackgroundColor: CSSProperties = Meteor.settings?.public?.setYellowBackgroundColor ? {backgroundColor: 'Cornsilk'} : {}
 
+  const account = useAccountContext()
   const error:any = useRouteError();
 
-  return (
-    <>
+  if (!account?.loginServiceConfigured) return <div><Loader message={'Signing in...'}/></div>
+
+  if (!account?.userId) {
+    return <div><Loader message={'Signing in...'}/><AutoLoginComponent/></div>
+  } else {
+    return <>
       <ToasterConfig/>
       <PhDHeader/>
       <PhDBreadcrumb/>
@@ -44,5 +68,5 @@ export default function Main() {
       <ConnectionStatusFooter/>
       <FooterLight/>
     </>
-  )
+  }
 }

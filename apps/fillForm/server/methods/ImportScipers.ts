@@ -3,13 +3,12 @@ import dayjs from "dayjs";
 import crypto from "node:crypto";
 import path from 'path'
 import _ from "lodash";
-import AbortController from "abort-controller";
 
 import {zBClient} from "/server/zeebe/connector";
 import {auditLogConsoleOut} from "/imports/lib/logging";
 import {fetchTimeout} from "/imports/lib/fetchTimeout";
 import {encrypt} from "/server/encryption";
-import {getUserInfoMemoized} from "/server/userFetcher";
+import {APIPersonInfo, getUserInfoMemoized} from "/server/userFetcher";
 import {
   PhDAssessEditableVariables,
 } from "phd-assess-meta/types/variables";
@@ -72,16 +71,16 @@ const enhanceThesisCoDirectors = async (doctorants: DoctorantInfoSelectable[]) =
   }
 }
 
-const setAlreadyStarted = (doctorants: DoctorantInfoSelectable[]) => {
+const setAlreadyStarted = async (doctorants: DoctorantInfoSelectable[]) => {
   const studentsScipers = _.map(doctorants, 'doctorant.sciper')
 
   // set the flag for the ones already started
-  const alreadyStartedTasks = Tasks.find(
+  const alreadyStartedTasks = await Tasks.find(
     { 'variables.phdStudentSciper': { $in: studentsScipers } },
     {fields:
         {'variables.phdStudentSciper': 1}
     }
-  ).fetch()
+  ).fetchAsync()
 
   const alreadyStartedStudentsScipers = _.map(alreadyStartedTasks, 'variables.phdStudentSciper')
 
@@ -111,57 +110,56 @@ Meteor.methods({
   async getISAScipers(doctoralSchoolAcronym) {
     let user: Meteor.User | null = null
     if (this.userId) {
-      user = Meteor.users.findOne({_id: this.userId}) ?? null
+      user = await Meteor.users.findOneAsync( { _id: this.userId } ) ?? null
     }
 
     if (!user) return
 
-    if (!canImportScipersFromISA(user)) {
+    if (!await canImportScipersFromISA(user)) {
       const auditLog = auditLogConsoleOut.extend('server/methods')
       auditLog(`Unallowed user trying to import scipers from ISA`)
 
       throw new Meteor.Error(403, 'You are not allowed to import scipers')
     }
 
-    ImportScipersList.remove({doctoralSchoolAcronym: doctoralSchoolAcronym})
+    await ImportScipersList.removeAsync( { doctoralSchoolAcronym: doctoralSchoolAcronym } )
 
     let isaReturn = null as isaResponse | null
 
-    try {
-
-      if (process.env.ISA_LOCAL_DATA && process.env.ISA_LOCAL_DATA === 'true') {
-        isaReturn = require("../fixtures/sampleISAData.json")[0]
-      } else {
+    if (process.env.ISA_LOCAL_DATA && process.env.ISA_LOCAL_DATA === 'true') {
+      isaReturn = require("../fixtures/sampleISAData.json")[0]
+    } else {
+      try {
         isaReturn = (await fetchISA(doctoralSchoolAcronym))[0]
+      } catch (e: any) {
+        throw new Meteor.Error('ISA fetching',
+          `Unable to fetch ISA data. ${e.message ?? ''}`)
       }
-
-      let doctorants = _.cloneDeep((isaReturn!.doctorants as DoctorantInfoSelectable[]))
-      await enhanceThesisCoDirectors(doctorants)
-      setAlreadyStarted(doctorants)
-
-      ImportScipersList.insert({
-        _id: doctoralSchoolAcronym,  // import for the ImportScipers hooks
-        doctoralSchoolAcronym: doctoralSchoolAcronym,
-        doctorants: doctorants,
-        createdAt: new Date(),
-        createdBy: user._id ?? '',
-        isAllSelected: false,
-      })
-    } catch (e: any) {
-      throw new Meteor.Error('ISA fetching',
-        `Unable to fetch ISA data. ${e.message ?? ''}`)
     }
+
+    let doctorants = _.cloneDeep((isaReturn!.doctorants as DoctorantInfoSelectable[]))
+    await enhanceThesisCoDirectors(doctorants)
+    await setAlreadyStarted(doctorants)
+
+    await ImportScipersList.insertAsync({
+      _id: doctoralSchoolAcronym,  // import for the ImportScipers hooks
+      doctoralSchoolAcronym: doctoralSchoolAcronym,
+      doctorants: doctorants,
+      createdAt: new Date(),
+      createdBy: user._id ?? '',
+      isAllSelected: false,
+    })
   },
 
   async toggleDoctorantCheck(doctoralSchoolAcronym, sciper, checked: boolean) {
     let user: Meteor.User | null = null
     if (this.userId) {
-      user = Meteor.users.findOne({_id: this.userId}) ?? null
+      user = await Meteor.users.findOneAsync( { _id: this.userId } ) ?? null
     }
 
     if (!user) return
 
-    if (!canImportScipersFromISA(user)) {
+    if (!await canImportScipersFromISA(user)) {
       const auditLog = auditLogConsoleOut.extend('server/methods')
       auditLog(`Unallowed user trying to import scipers from ISA`)
 
@@ -179,11 +177,11 @@ Meteor.methods({
       }]
     }
 
-    ImportScipersList.update(query, updateDocument, options)
+    await ImportScipersList.updateAsync(query, updateDocument, options)
 
     // uncheck the all list if we got an uncheck case
     if (!checked) {
-      ImportScipersList.update({
+      await ImportScipersList.updateAsync({
         doctoralSchoolAcronym: doctoralSchoolAcronym,
       }, { $set: { "isAllSelected": checked } } )
     }
@@ -192,12 +190,12 @@ Meteor.methods({
   async toggleAllDoctorantCheck(doctoralSchoolAcronym: string, checked: boolean) {
     let user: Meteor.User | null = null
     if (this.userId) {
-      user = Meteor.users.findOne({_id: this.userId}) ?? null
+      user = await Meteor.users.findOneAsync( { _id: this.userId } ) ?? null
     }
 
     if (!user) return
 
-    if (!canImportScipersFromISA(user)) {
+    if (!await canImportScipersFromISA(user)) {
       const auditLog = auditLogConsoleOut.extend('server/methods')
       auditLog(`Unallowed user trying to import scipers from ISA`)
 
@@ -216,17 +214,17 @@ Meteor.methods({
           "doctorantInfo.hasAlreadyStarted": {$ne: true}
         }]
       }
-      ImportScipersList.update(query, updateDocument, options)
+      await ImportScipersList.updateAsync(query, updateDocument, options)
     } else {
       const query = { doctoralSchoolAcronym: doctoralSchoolAcronym, }
       const updateDocument = {
         $set: { "doctorants.$[].isSelected": checked }
       }
       const options = {}
-      ImportScipersList.update(query, updateDocument, options)
+      await ImportScipersList.updateAsync(query, updateDocument, options)
     }
 
-    ImportScipersList.update({
+    await ImportScipersList.updateAsync({
       doctoralSchoolAcronym: doctoralSchoolAcronym,
     }, { $set: { "isAllSelected": checked } } )
   },
@@ -237,12 +235,12 @@ Meteor.methods({
 
     let user: Meteor.User | null = null
     if (this.userId) {
-      user = Meteor.users.findOne({_id: this.userId}) ?? null
+      user = await Meteor.users.findOneAsync( { _id: this.userId } ) ?? null
     }
 
     if (!user) return
 
-    if (!canImportScipersFromISA(user)) {
+    if (!await canImportScipersFromISA(user)) {
       const auditLog = auditLogConsoleOut.extend('server/methods')
       auditLog(`Unallowed user trying to import scipers from ISA`)
 
@@ -273,7 +271,7 @@ Meteor.methods({
       }]
     }
 
-    ImportScipersList.update(query, updateDocument, options)
+    await ImportScipersList.updateAsync(query, updateDocument, options)
   },
 
   async startProcessInstancesCreation(
@@ -282,21 +280,21 @@ Meteor.methods({
     ) {
     let user: Meteor.User | null = null
     if (this.userId) {
-      user = Meteor.users.findOne({_id: this.userId}) ?? null
+      user = await Meteor.users.findOneAsync( { _id: this.userId } ) ?? null
     }
 
     if (!user) return
 
     const auditLog = auditLogConsoleOut.extend('server/methods')
 
-    const ds = DoctoralSchools.findOne({'acronym': doctoralSchoolAcronym})
+    const ds = await DoctoralSchools.findOneAsync( { 'acronym': doctoralSchoolAcronym } )
 
     if (
       !ds ||
       !canStartProcessInstance(
         user, [ds
         ]) ||
-      !canImportScipersFromISA(user)
+      !await canImportScipersFromISA(user)
     ) {
       auditLog(`Unallowed user ${user._id} is trying to start a workflow.`)
       throw new Meteor.Error(
@@ -325,18 +323,35 @@ Meteor.methods({
       `The Zeebe client has not been able to start on the server.`
     )
 
-    const doctoralSchool = DoctoralSchools.findOne({acronym: doctoralSchoolAcronym})
+    const doctoralSchool = await DoctoralSchools.findOneAsync( { acronym: doctoralSchoolAcronym } )
     if (!doctoralSchool) throw new Meteor.Error(
       500,
       `The doctoral school does not exist anymore`
     )
 
-    const programDirector = await getUserInfoMemoized(doctoralSchool.programDirectorSciper)
-    // check the user api is working as intended
-    if (!programDirector) throw new Meteor.Error(
-      500,
-      `Unable to fetch user information for the program director ( ${ doctoralSchool.programDirectorSciper } )`
-    )
+    let programDirector
+    programDirector = await getUserInfoMemoized(doctoralSchool.programDirectorSciper)
+
+    // check if the user api is working as intended
+    if (!programDirector) {
+      if (Meteor.isDevelopment && Meteor.settings?.skipUsersUpdateOnFail) {
+        // todo: move this dev step into his own scope
+        programDirector = {
+          id: 0,
+          firstname: 'Program Director FirstName',
+          lastname: 'Program Director LastName',
+          firstnameofficial: 'Program Director FirstNameofficial',
+          lastnameofficial: 'Program Director LastNameofficial',
+          email: 'programdirector@nowhere.com',
+          sciper: "0",
+        } as APIPersonInfo
+      } else {
+        throw new Meteor.Error(
+          500,
+          `Unable to fetch user information for the program director ( ${ doctoralSchool.programDirectorSciper } )`
+        )
+      }
+    }
 
     // set the loading status
     const query = { doctoralSchoolAcronym: doctoralSchoolAcronym, }
@@ -349,18 +364,21 @@ Meteor.methods({
         "doctorantInfo.hasAlreadyStarted": {$ne: true}
       }]
     }
-    ImportScipersList.update(query, updateDocument, options)
 
-    const imports = ImportScipersList.findOne({
+    await ImportScipersList.updateAsync(query, updateDocument, options)
+
+    const imports = await ImportScipersList.findOneAsync({
       doctoralSchoolAcronym: doctoralSchoolAcronym,
     })
 
     const doctorantsToLoad = imports!.doctorants?.filter(
       (doctorant) => doctorant.isSelected
-    )
+    ) ?? []
 
     const ProcessInstanceCreationPromises: any = []
-    doctorantsToLoad?.forEach((doctorant) => {
+
+    for (const doctorant of doctorantsToLoad) {
+
       const dataToPush: Partial<PhDAssessEditableVariables> = {
         doctoralProgramName: encrypt(doctoralSchool.acronym) ?? undefined,
         doctoralProgramEmail: encrypt(`${doctoralSchool.acronym}@epfl.ch`) ?? undefined,
@@ -404,10 +422,22 @@ Meteor.methods({
         thesisCoDirectorEmail: encrypt(doctorant.thesis.coDirecteur?.email ?? '') ?? undefined,
 
         programAssistantSciper: encrypt(user!._id) ?? undefined,
-        programAssistantName: encrypt(user?.tequila?.displayname ?? '') ?? undefined,
-        programAssistantFirstNameUsage: encrypt(user?.tequila?.firstname ?? '') ?? undefined,
-        programAssistantLastNameUsage: encrypt(user?.tequila?.name ?? '') ?? undefined,
-        programAssistantEmail: encrypt(user?.tequila.email ?? '') ?? undefined,
+        programAssistantName: encrypt(user?.displayName ?? '') ?? undefined,
+        programAssistantFirstNameUsage: encrypt(user?.services.entra.given_name ?? '') ?? undefined,
+        programAssistantLastNameUsage: encrypt(user?.services.entra.family_name ?? '') ?? undefined,
+        programAssistantEmail: encrypt(user?.services.entra.mail ?? '') ?? undefined,
+      }
+
+      // Extends the PhD student info, as it is necessary for building the path on GED operations
+      try {
+        const participantInfo = await getUserInfoMemoized(doctorant.doctorant.sciper)
+        dataToPush.phdStudentFirstName = encrypt(participantInfo?.firstnameofficial ?? '') ?? undefined
+        dataToPush.phdStudentLastName = encrypt(participantInfo?.lastnameofficial ?? '') ?? undefined
+      } catch (e) {
+        // allow raising the error on non-dev envs.
+        if (!(Meteor.isDevelopment && Meteor.settings?.skipUsersUpdateOnFail)) {
+          throw e
+        }
       }
 
       ProcessInstanceCreationPromises.push(
@@ -424,12 +454,10 @@ Meteor.methods({
           )
         })
       )
-    })
+    }
 
     try {
       await Promise.all(ProcessInstanceCreationPromises)
-    } catch (error) {
-      throw new Meteor.Error('Zeebe error', 'Unable to start imports. Please contact 1234@epfl.ch.')
     } finally {
       // set the loading status
       const query = { doctoralSchoolAcronym: doctoralSchoolAcronym, }
@@ -441,7 +469,7 @@ Meteor.methods({
         }
       }
       const options = {}
-      ImportScipersList.update(query, updateDocument, options)
+      await ImportScipersList.updateAsync(query, updateDocument, options)
     }
   },
 })

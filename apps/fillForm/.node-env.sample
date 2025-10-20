@@ -1,0 +1,5 @@
+# Env var that are better loaded before node start the Meteor stack.
+# One way to load them: `export $(grep -v '^#' .node-env.sample | xargs) && meteor --settings settings.json`
+DEBUG=*,-babel,-compression-connect*,-combined-stream2,-express:*,-connection-pool,-connect:*,-send,-body-parser:*,-compression,-finalhandler,-express*,-router,-router:*,-http-proxy-middleware
+DEBUG_COLORS=yes
+MONGO_PERSISTENT_URL=mongodb://127.0.0.1:3001/meteor

@@ -20,12 +20,12 @@ Meteor.methods({
   async startWorkflow() {  // aka start a new instance in Zeebe terms
     let user: Meteor.User | null = null
     if (this.userId) {
-      user = Meteor.users.findOne({_id: this.userId}) ?? null
+      user = await Meteor.users.findOneAsync( { _id: this.userId } ) ?? null
     }
 
     if (!user) return
 
-    if (!canStartProcessInstance(user, DoctoralSchools.find({}).fetch())) {
+    if (!canStartProcessInstance(user, await DoctoralSchools.find({}).fetchAsync())) {
       auditLog(`Unallowed user ${user._id} is trying to start a workflow.`)
       throw new Meteor.Error(403, 'You are not allowed to start a workflow')
     }
@@ -38,17 +38,15 @@ Meteor.methods({
 
     try {
       const createProcessInstanceResponse = await Promise.resolve(
-        zBClient.createProcessInstance(
-          {
-            bpmnProcessId: diagramProcessId,
-            variables: {
-              created_at: encrypt(new Date().toJSON())!,
-              created_by: encrypt(user._id)!,
-              updated_at: encrypt(new Date().toJSON())!,
-              uuid: crypto.randomUUID(),
-            }
+        zBClient.createProcessInstance({
+          bpmnProcessId: diagramProcessId,
+          variables: {
+            created_at: encrypt(new Date().toJSON())!,
+            created_by: encrypt(user._id)!,
+            updated_at: encrypt(new Date().toJSON())!,
+            uuid: crypto.randomUUID(),
           }
-        )
+        })
       )
       auditLog(`created new instance ${diagramProcessId}, response: ${JSON.stringify(createProcessInstanceResponse)}`)
       return createProcessInstanceResponse?.processInstanceKey
@@ -61,7 +59,7 @@ Meteor.methods({
   async deleteProcessInstance(processInstanceKey) {
     let user: Meteor.User | null = null
     if (this.userId) {
-      user = Meteor.users.findOne({_id: this.userId}) ?? null
+      user = await Meteor.users.findOneAsync( { _id: this.userId } ) ?? null
     }
 
     if (!user) return
@@ -77,10 +75,10 @@ Meteor.methods({
       await zBClient.cancelProcessInstance(processInstanceKey)
 
       // get linked tasks
-      const tasksToRemove = Tasks.find(
+      const tasksToRemove = await Tasks.find(
         { processInstanceKey: processInstanceKey },
         { fields: { _id: 1 } }
-      ).fetch()
+      ).fetchAsync()
 
       for (const task of tasksToRemove) {
         // delete in db too
@@ -91,7 +89,7 @@ Meteor.methods({
       auditLog(`Successfully deleted a process instance ${processInstanceKey}`)
     } catch (error) {
       auditLog(`Error: Unable to cancel the process instance ${processInstanceKey}. ${error}`)
-      Tasks.remove({processInstanceKey: processInstanceKey})
+      await Tasks.removeAsync( { processInstanceKey: processInstanceKey } )
       throw new Meteor.Error(500, `Unable to cancel the task. ${error}. Deleting locally anyway`)
     }
   },
@@ -99,7 +97,7 @@ Meteor.methods({
   async refreshProcessInstance(processInstanceKey) {
     let user: Meteor.User | null = null
     if (this.userId) {
-      user = Meteor.users.findOne({_id: this.userId}) ?? null
+      user = await Meteor.users.findOneAsync( { _id: this.userId } ) ?? null
     }
 
     if (!user) return

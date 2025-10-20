@@ -1,13 +1,16 @@
-import { Faker, faker as fakerOriginal } from '@faker-js/faker';
+import { faker } from '@faker-js/faker';
 
 
-/*
- Add some functionalities to faker
- */
-const faker = fakerOriginal as Faker & {
-  sciper(): number
+declare module '@faker-js/faker' {
+  interface PersonModule {
+    // Add the custom sciper method
+    sciper(): number;
+  }
 }
 
-faker.sciper = function () { return faker.datatype.number({min: 100000, max: 999999}) }
+// Extend faker.person with a custom sciper function
+faker.person.sciper = function () {
+  return faker.number.int({min: 100000, max: 999999})
+};
 
 export { faker };

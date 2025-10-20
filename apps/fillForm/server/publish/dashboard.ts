@@ -11,30 +11,32 @@ import {
   getUserPermittedTasksForDashboard
 } from "/imports/policy/dashboard/tasks";
 
-
-Meteor.publish('tasksDashboard', function () {
+Meteor.publish('tasksDashboard', async function () {
   if (!this.userId) return this.ready()
 
-  const user = Meteor.users.findOne({_id: this.userId}) ?? null
+  const user = await Meteor.users.findOneAsync({_id: this.userId}) ?? null
 
   if (!user) return this.ready()
 
   // Set a custom handler for users, as we don't want
   //   - to show the AssigneeSciper when the mentor task is going on
   //   - to show the mentor data
-  const handle = getUserPermittedTasksForDashboard(
+  const handle = await getUserPermittedTasksForDashboard(
     user,
-    DoctoralSchools.find({}).fetch()
-  )?.observeChanges({
+    await DoctoralSchools.find({}).fetchAsync()
+  )?.observeChangesAsync({
 
-    added: (id, task) => {
+    added: async (id, task) => {
       if (!canViewMentor(user, task) ) {  // not allowed to view the mentor ? let's clean all traces of it
         task = hideMentor( task );
       }
 
       // activityLogs do not really need his own publish methods,
       // as the value changed when a task is created or removed anyway.
-      const activityLogs = ActivityLogs.findOne({ _id: task.processInstanceKey }) ?? { logs: [] }
+      const activityLogs = await ActivityLogs.findOneAsync(
+        { _id: task.processInstanceKey }
+      ) ?? { logs: [] }
+
       Object.assign(task, { activityLogs: activityLogs.logs })
 
       //task.variables = setFirstNameLastNameForDashboard(task.variables)
@@ -43,12 +45,15 @@ Meteor.publish('tasksDashboard', function () {
       this.added('tasks', id, task);
     },
 
-    changed: (id, task) => {
+    changed: async (id, task) => {
       if (!canViewMentor(user, task) ) {  // not allowed to view the mentor ? let's clean all traces of it
         task = hideMentor( task );
       }
 
-      const activityLogs = ActivityLogs.findOne({ _id: task.processInstanceKey }) ?? { logs: [] }
+      const activityLogs = await ActivityLogs.findOneAsync(
+        { _id: task.processInstanceKey }
+      ) ?? { logs: [] }
+
       Object.assign(task, { activityLogs: activityLogs.logs })
 
       //task.variables = setFirstNameLastNameForDashboard(task.variables)

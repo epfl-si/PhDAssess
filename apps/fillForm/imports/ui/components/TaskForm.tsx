@@ -5,7 +5,7 @@ import {Errors, Form} from '@formio/react'
 import {Link, useNavigate} from "react-router-dom"
 import _ from "lodash"
 
-import {Button, Loader} from "@epfl/epfl-elements-react"
+import {Button, Loader} from "epfl-elements-react"
 import toast from 'react-hot-toast';
 
 import {toastErrorClosable} from "/imports/ui/components/Toasters";
@@ -111,14 +111,14 @@ const TaskFormEdit = ({ task, onSubmitted }: { task: Task, onSubmitted: () => vo
   const saveAsUnfinishedTask = async (data: any) => {
     // filter out well-known uninteresting data
     const eventDataChanged = _.omit(data, [
-      ...findDisabledFields(JSON.parse(task.customHeaders.formIO!)),
-      'assigneeSciper',
-      'submit',
-      'cancel',
-      'created_by',
-      'created_at',
-      'updated_at',
-      'pdfAnnexFile',
+        ...findDisabledFields(JSON.parse(task.customHeaders.formIO!)),
+        'assigneeSciper',
+        'submit',
+        'cancel',
+        'created_by',
+        'created_at',
+        'updated_at',
+        'pdfAnnexFile',
       ]
     )
 
@@ -284,36 +284,36 @@ export const TaskForm = ({ _id }: { _id: string }) => {
         <div>{taskLoadingError.reason}</div> :
         <div>{taskLoadingError.message}</div>
       }
-        <br/>
-        <div>Please try again or go <Link to={`/`}>back to the task list</Link></div>
+      <br/>
+      <div>Please try again or go <Link to={`/`}>back to the task list</Link></div>
     </div>
   )
 
   return (<>
     { task ? (
+      <div>
+        { !taskSubmitted &&
+          <TaskMonitor task={task}/>
+        }
+        { user?.isAdmin &&
+          <TaskAdminInfo taskId={ task._id! }/>
+        }
+        <TaskFormEdit task={ task } onSubmitted={ onSubmit } />
+      </div>
+    ) : (
+      <>
         <div>
-          { !taskSubmitted &&
-            <TaskMonitor task={task}/>
-          }
-          { user?.isAdmin &&
-            <TaskAdminInfo taskId={ task._id! }/>
-          }
-          <TaskFormEdit task={ task } onSubmitted={ onSubmit } />
+          Unable to find the task no {_id}.<br/>
+          Please try again or go <Link to={`/`}>back to the task list</Link>
         </div>
-      ) : (
-        <>
-          <div>
-            Unable to find the task no {_id}.<br/>
-            Please try again or go <Link to={`/`}>back to the task list</Link>
-          </div>
-        </>
-      )
+      </>
+    )
     }
   </>)
 }
 
 /*
- * Get a list of keys, from the fields that are disabled
+ * Get a list of keys of fields that are disabled
  */
 function findDisabledFields(form: any) {
   let disabledFieldKeys: string[] = [];

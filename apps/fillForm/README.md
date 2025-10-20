@@ -18,14 +18,24 @@ Technically, the application consists on a Meteor server, defined as a [Zeebe](h
   cp .env.sample .env
   ```
 - Edit the `.env` to suit your needs
-- (Optional) Edit `settings.json` to put your own identity into the fake Tequila server.
+- Do the same for `.node-env.sample` with:
+  ```
+  cp .node-env.sample .node-env
+  ```
 
 ### Start the support infrastructure
 
-The support infrastructure is required for the Meteor app to function (in addition to Meteor's usual, internally-managed requirement of a MongoDB database). It consists of Zeebe (the persistent store for workflow data and metadata), the zeebe-simple-monitor, and PostgreSQL (required by the latter for persistence).
-
+The support infrastructure is required for the Meteor app to function (in addition to Meteor's usual, internally-managed requirement of a MongoDB database). It consists of Zeebe (the persistent store for workflow data and metadata).
+This command run them through a docker-compose setup:
 ```
-make pull build
+./phd.mjs start
+```
+
+Now you should have a quorum of three Zeebe running, and microservices for them.
+
+You can stop them with
+```
+./phd.mjs stop
 ```
 
 ### Start the Web framework
@@ -40,28 +50,27 @@ make pull build
     ```
   - Start the server
     ```
-    meteor run --settings settings.json
+    meteor npm start
     ```
 
-### Deploy the workflow
+#### Troubleshoot
+
+If you get an error about not having a proto file in `/proto/`, use this trick and start the server again:
+`ln -s ./apps/fillForm/node_modules/zeebe-node/proto/zeebe.proto* /proto/`
+
+### Deploy a workflow
   ```
-  ./cli//phd.mjs deploy-bpmn
+  ./phd.mjs deploy-bpmn
   ```
 
 ### Browse
 
-  - Depending on your authentification setup, you may need to assert your VPN is on, as it is needed by the tequila server
-  - Assert you never use the https protocol while browsing (it may happen after the redirection from the first tequila authentication)
   - Open http://localhost:3000
 
 ### Stop the support infrastructure
 
 ```
-./cli//phd.mjs stop
-```
-or, if you want to clear containers, networks, ...
-```
-make down
+./phd.mjs stop
 ```
 
 # Advanced Tasks
@@ -71,24 +80,7 @@ make down
 Whenever Zeebe sends work to Meteor, the `tasks_journal` collection gets updated. To retrieve the latest status thereof:
 
 ```
-oc -n phd-assess exec -i services/mongo -- mongo --quiet meteor --eval "printjson(db.tasks_journal.find().sort({lastSeen:1}).toArray());" | grep -v '"msg"' | sed -e 's/ISODate(\(".*"\))/\1/' | jq .
-```
-
-## Build and run a custom Zeebe with additional debugging
-
-```
-git clone git@github.com:epfl-si/zeebe.git
-cd zeebe
-git checkout bug/discarded-vars-in-CompleteJob  # Or something
-git pull --rebase origin stable/1.3
-mvn install -DskipTests -DskipChecks
-docker build -t os-docker-registry.epfl.ch/phd-assess-test/zeebe:1.3.9-SNAPSHOT --build-arg DISTBALL=dist/target/camunda-cloud-zeebe-1.3.9-SNAPSHOT.tar.gz
-
-oc login
-docker login os-docker-registry.epfl.ch -u whatever-doesnt-matter -p "$(oc whoami -t)"
-docker push os-docker-registry.epfl.ch/phd-assess-test/zeebe:1.3.9-SNAPSHOT
-
-phdsible -e zeebe_debug_build=1 -t zeebe
+oc -n {your_oc_namespace} exec -i services/web-app-db -- mongo --quiet meteor --eval "printjson(db.tasks_journal.find().sort({lastSeen:1}).toArray());" | grep -v '"msg"' | sed -e 's/ISODate(\(".*"\))/\1/' | jq .
 ```
 
 ## Test

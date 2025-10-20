@@ -13,14 +13,14 @@ const groupsAll = [
 ]
 
 export const createRandomUser = () => {
-  const sciper = faker.sciper();
-  const sex = faker.name.sexType();
-  const firstName = faker.name.firstName(sex);
-  const lastName = faker.name.lastName(sex);
-  const email = faker.internet.email(
-    firstName.toLowerCase(),
-    lastName.toLowerCase()
-  );
+  const sciper = faker.person.sciper();
+  const sex = faker.person.sexType();
+  const firstName = faker.person.firstName(sex);
+  const lastName = faker.person.lastName(sex);
+  const email = faker.internet.email({
+    firstName: firstName.toLowerCase(),
+    lastName: lastName.toLowerCase()
+  });
 
   return {
     "_id": sciper,

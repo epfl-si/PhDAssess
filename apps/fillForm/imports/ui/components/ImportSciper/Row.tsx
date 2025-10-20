@@ -47,15 +47,15 @@ export const Row = ({ doctorant, doctoralSchool, checked }: RowParameters) => {
 
   const key = doctorant.doctorant.sciper
 
-  const toggleCheck = (doctorantId: string) => {
+  const toggleCheck = async (doctorantId: string) => {
     setIsToggling(true)
 
-    Meteor.call('toggleDoctorantCheck', doctoralSchool.acronym, doctorantId, !checked, (error: any) => {
-        if (!error) {
-          setIsToggling(false)
-        }
-      }
-    )
+    try {
+      await Meteor.callAsync('toggleDoctorantCheck', doctoralSchool.acronym, doctorantId, !checked)
+      setIsToggling(false)
+    } catch (error: any) {
+      console.error(`Setting a check has an error: ${error.message}`)
+    }
   }
 
   const defaultColClasses = "align-self-end"
@@ -75,7 +75,7 @@ export const Row = ({ doctorant, doctoralSchool, checked }: RowParameters) => {
             name={ key }
             value={ key }
             checked={ checked }
-            onChange={ () => toggleCheck(key) }
+            onChange={ async () => await toggleCheck(key) }
             disabled={ isToggling ||
               doctorant.needCoDirectorData ||
               !doctorant.thesis?.directeur ||

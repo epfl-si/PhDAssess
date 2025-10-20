@@ -7,20 +7,20 @@ import {initialEcolesDoctorales} from "/server/fixtures/doctoralSchools";
 
 
 describe('Unit tests DoctoralSchools', function () {
-  beforeEach(function () {
-    if ( DoctoralSchools.find({}).count() === 0 ) {
-      initialEcolesDoctorales.forEach((doctoralSchool) => {
-        DoctoralSchools.insert(doctoralSchool);
-      });
+  beforeEach(async function () {
+    if ( await DoctoralSchools.find({}).countAsync() === 0 ) {
+      for (const doctoralSchool of initialEcolesDoctorales) {
+        await DoctoralSchools.insertAsync(doctoralSchool);
+      }
     }
   });
 
   if (Meteor.isServer) {
-    it('should have doctoral schools data', function () {
+    it('should have doctoral schools data', async function () {
       // _dburlesFactory.Factory.create("doctoralSchool");
 
       const ds = DoctoralSchools.find({})
-      assert.notStrictEqual(ds.count(), 0)
+      assert.notStrictEqual(await ds.countAsync(), 0)
     });
   }
 });

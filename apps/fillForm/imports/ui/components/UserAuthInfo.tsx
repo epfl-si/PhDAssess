@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser, faUserGear } from '@fortawesome/free-solid-svg-icons'
 
-import {Loader} from "@epfl/epfl-elements-react";
+import {Loader} from "epfl-elements-react";
 
 import packageJson from '/package.json'
 import {useAccountContext} from "/imports/ui/contexts/Account";
@@ -20,7 +20,7 @@ export const UserAuthInfo = () => {
         {
           name: 'offset',
           options: {
-            offset: [-25, 25],
+            offset: [-20, 5],
           },
         }
       ]
@@ -42,9 +42,10 @@ export const UserAuthInfo = () => {
     <Popper relativeTo={buttonRef.current} options={popperOptions} visible={visible}
             onClickElsewhere={() => setVisibility(false)}>
     <div className="dropdown-menu-popper mt-3">
-      <div className={'mx-3 my-3 text-center'}>
+      <div className={'mx2 my-2 text-center'}>
         <div id={'user-info'}>
-          <span id={'user-info-displayname'}>{ account.user.tequila?.displayname }</span>
+          <div id={'user-info-displayname'}>{ account.user.displayName }</div>
+          <div id={'user-info-mail'}>{ account.user.services?.entra?.mail }</div>
           {
             ( account.user.isAdmin || account.user.isUberProgramAssistant ) &&
               <div id={ 'user-info-status' } className={ 'small' }>

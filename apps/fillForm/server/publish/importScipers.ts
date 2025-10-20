@@ -5,24 +5,24 @@ import {ImportScipersList} from "/imports/api/importScipers/schema";
 import {Tasks} from "/imports/model/tasks";
 
 
-Meteor.publish('importScipersList', function(doctoralSchoolAcronym: string) {
+Meteor.publish('importScipersList', async function(doctoralSchoolAcronym: string) {
   let user: Meteor.User | null = null
   if (this.userId) {
-    user = Meteor.users.findOne({_id: this.userId}) ?? null
+    user = await Meteor.users.findOneAsync({_id: this.userId}) ?? null
   }
 
-  if (user && canImportScipersFromISA(user)) {
+  if (user && await canImportScipersFromISA(user)) {
     let initializing = true;
 
     /*
      * Helper to change the hasAlreadyStarted value in the published collection
      */
-    const changePublishedImportScipersList = (subscription: Subscription,
+    const changePublishedImportScipersList = async (subscription: Subscription,
                                               hasAlreadyStarted: boolean,
                                               doctorantSciper: string) => {
-      refreshAlreadyStartedImportScipersList(doctoralSchoolAcronym, hasAlreadyStarted, doctorantSciper)
+      await refreshAlreadyStartedImportScipersList(doctoralSchoolAcronym, hasAlreadyStarted, doctorantSciper)
 
-      const currentImport = ImportScipersList.findOne({ _id: doctoralSchoolAcronym })
+      const currentImport = await ImportScipersList.findOneAsync({ _id: doctoralSchoolAcronym })
 
       const activatedDoctorants = currentImport?.doctorants ? currentImport.doctorants.map((doctorant) => {
         return doctorant.doctorant.sciper === doctorantSciper ?
@@ -36,23 +36,23 @@ Meteor.publish('importScipersList', function(doctoralSchoolAcronym: string) {
     /*
     * Set observer events on tasks changes, to reflect the status on ImportScipers lists
     */
-    const handle = Tasks.find({}).observe({
-      added: (task) => {
+    const handle = await Tasks.find({}).observeAsync({
+      added: async (task) => {
         if (!initializing && task.variables?.phdStudentSciper) {
-          changePublishedImportScipersList(this, true, task.variables.phdStudentSciper)
+          await changePublishedImportScipersList(this, true, task.variables.phdStudentSciper)
         }
       },
-      changed: (new_task, old_task) => {
+      changed: async (new_task, old_task) => {
         const oldStudentSciper = old_task.variables?.phdStudentSciper
         const newStudentSciper = new_task.variables?.phdStudentSciper
         if (oldStudentSciper && newStudentSciper && oldStudentSciper !== newStudentSciper) {
-          changePublishedImportScipersList(this, true, newStudentSciper)
-          changePublishedImportScipersList(this, false, oldStudentSciper)
+          await changePublishedImportScipersList(this, true, newStudentSciper)
+          await changePublishedImportScipersList(this, false, oldStudentSciper)
         }
       },
-      removed: (task) => {
+      removed: async (task) => {
         if (!initializing && task.variables?.phdStudentSciper) {
-          changePublishedImportScipersList(this, false, task.variables.phdStudentSciper)
+          await changePublishedImportScipersList(this, false, task.variables.phdStudentSciper)
         }
       }
     })

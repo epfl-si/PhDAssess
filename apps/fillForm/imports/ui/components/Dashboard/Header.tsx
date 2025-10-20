@@ -26,7 +26,7 @@ export const DashboardHeader = (
     setSorting: ( sortSpecifier: SortSpecifier ) => void
   }
 ) => {
-  const backgroundColor: CSSProperties = Meteor.settings.public.isTest && !Meteor.settings.public.ignoreTestBackgroundColor ? { backgroundColor: 'Cornsilk' } : { backgroundColor: 'white' }
+  const backgroundColor: CSSProperties = Meteor.settings?.public?.setYellowBackgroundColor ? { backgroundColor: 'Cornsilk' } : { backgroundColor: 'white' }
 
   // keep a trace of the current sort
   const [ sortedBy, setSortedBy ] = useState<sortedByPossibilities>('name')

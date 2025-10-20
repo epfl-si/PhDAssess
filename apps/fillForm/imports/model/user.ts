@@ -24,7 +24,7 @@ import _ from 'lodash'
 
 import { Meteor } from 'meteor/meteor'
 import { Mongo } from 'meteor/mongo'
-import Cursor = Mongo.Cursor;
+import 'meteor/aldeed:collection2/static'
 import * as MongoNpmModule from 'mongodb';
 import { LocalCollection } from 'meteor/minimongo'
 import SimpleSchema from 'simpl-schema'
@@ -68,16 +68,27 @@ export class User {
     public _id : string | null = null
     public isAdmin: boolean = false
     public isUberProgramAssistant: boolean = false
+    public groupList: string[] = []
+    public displayName: string | null = null
+    // this one is kept as a generated field
+    // as some formio fields use them
     public tequila?: {
-      provider: string | ""
-      email: string
       displayname: string
-      firstname: string
-      name: string
-      personaltitle: string
-      group: string | ""
-      user: string
-      org: string
+    }
+    public services?: {
+      entra?: {
+        id: string  // sciper
+        groups: string[]
+        uniqueid: string  // sciper
+        gaspar: string
+        given_name: string  // lookalike a firstname
+        family_name: string  // lookalike a lastname
+        mail: string
+        idToken: string  // jwt token info about the id
+        accessToken: string  // jwt token info about the access
+        scope: string[]
+        expiresAt: number
+      }
     }
 
     static null() : User {
@@ -102,17 +113,6 @@ export class User {
             optional: true,
             blackbox: true
         },
-
-        // `profile` is a feature of Meteor.User; it is "self-service" in
-        // the sense that the field is autopublished, and writes to one's
-        // own profile are accepted (provided they match the `deny` rules,
-        // i.e. in our case, the schema). See
-        // https://docs.meteor.com/api/accounts.html#Meteor-user
-        profile: <any>Object,   // Just `Object,` makes TypeScript cry for no good reason :(
-        'profile.language': {
-            type: String,
-            allowedValues: ["en", "fr"]
-        }
     })
 
     public static transform = new Transform(MeteorUsers)
@@ -122,7 +122,8 @@ export class User {
     }
 }
 
-MeteorUsers.attachSchema(User.Schema)
+Meteor.startup(() =>
+    MeteorUsers.attachSchema(User.Schema))
 
 const MeteorUsersCollectionName = 'users'
 const UsersDataPubName = 'users.data'
@@ -131,30 +132,28 @@ const UsersDataPubName = 'users.data'
 // Administrators get all users and names
 // All users get told whether they are an administrator themselves or not
 if (Meteor.isServer) {
-    import('/imports/lib/map-cursor').then(/* Fiber'd */ function({ MapCursor }) {
-        Meteor.publish(UsersDataPubName, function() {
-            const user = Meteor.user(),
-                  userId = this.userId
-            if (! (user && userId)) return
-            const isAdmin = user.isAdmin
-            const isUberProgramAssistant = user.isUberProgramAssistant
+  Meteor.publish(UsersDataPubName, async function() {
+    const user = await Meteor.userAsync()
+    const userId = this.userId
 
-            debug(`Disclosing %s to ${userId}`,
-                  isAdmin ? "all users' personal data" : "their own personal data")
-            return new MapCursor(
-                Meteor.users.find({_id: userId}),
-                (changes: any, id: string) => {
-                    if (id === userId) {
-                        changes.isAdmin = isAdmin
-                        changes.isUberProgramAssistant = isUberProgramAssistant
-                        return changes
-                    } else {
-                        return _.pick(changes, ['_id', 'tequila'])  // disclosed
-                    }
-                },
-                MeteorUsersCollectionName) as Cursor<User>
-        })
-    })
+    if (! (user && userId)) return
+
+    const isAdmin = user.isAdmin
+    const isUberProgramAssistant = user.isUberProgramAssistant
+
+    this.added(
+      MeteorUsersCollectionName,
+      userId,
+      {
+        ...user,
+        isAdmin,
+        isUberProgramAssistant,
+      }
+    )
+
+    debug(`Disclosing %s to ${userId}`,
+      isAdmin ? "all users' personal data" : "their own personal data")
+  })
 } else {
-    Meteor.subscribe(UsersDataPubName)
+  Meteor.subscribe(UsersDataPubName)
 }
