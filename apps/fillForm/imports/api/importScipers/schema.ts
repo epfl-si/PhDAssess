@@ -1,4 +1,5 @@
 import {Mongo} from "meteor/mongo";
+// @ts-ignore
 import SimpleSchema from 'meteor/aldeed:simple-schema';
 import 'meteor/aldeed:collection2/static';
 import {DoctorantInfo} from "/imports/api/importScipers/isaTypes";
@@ -65,7 +66,8 @@ ImportScipersList.schema = new SimpleSchema({
   // and simpl-schema is annoying with Mongo embedded-arrays updates
   doctorants: {type: Array, optional: true, blackbox: true },
   "doctorants.$": { type: doctorantSchema},
-  createdAt: { type: Date, optional: true, autoValue: function () { !this.isSet && new Date() } },
+  createdAt: { type: Date, optional: true, autoValue: function () { // @ts-ignore
+      !this.isSet && new Date() } },
   createdBy: { type: String, optional: true},
   isAllSelected: { type: Boolean, defaultValue: false },
 })

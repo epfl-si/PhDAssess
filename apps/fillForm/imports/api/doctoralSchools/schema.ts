@@ -1,4 +1,5 @@
 import {Mongo} from "meteor/mongo";
+// @ts-ignore
 import SimpleSchema from 'meteor/aldeed:simple-schema';
 import 'meteor/aldeed:collection2/static';
 import {Sciper} from "/imports/api/datatypes";
