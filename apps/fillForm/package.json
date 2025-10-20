@@ -1,6 +1,6 @@
 {
   "name": "phd-assess",
-  "version": "2.0.15",
+  "version": "2.0.16",
   "private": true,
   "scripts": {
     "start": "export $(grep -v '^#' .node-env | xargs) && meteor --settings settings.json",
@@ -69,7 +69,7 @@
     "@rspack/cli": "^1.5.3",
     "@rspack/core": "^1.5.3",
     "@rspack/plugin-react-refresh": "^1.4.3",
-    "@testing-library/react": "^16",
+    "@testing-library/react": "^16.0.1",
     "@types/chai-datetime": "^1",
     "@types/crypto-js": "^4",
     "@types/debug": "^4",
@@ -78,6 +78,7 @@
     "@types/mocha": "^10",
     "@types/mustache": "^4",
     "@types/react": "^18",
+    "@types/react-bootstrap": "^1",
     "@types/react-dom": "^18",
     "@types/react-flatpickr": "^3",
     "@types/simpl-schema": "^1",

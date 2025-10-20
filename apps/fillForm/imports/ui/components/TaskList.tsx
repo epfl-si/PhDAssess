@@ -8,7 +8,7 @@ import {Button, Loader} from "epfl-elements-react"
 import {Link, useNavigate} from "react-router"
 import {ParticipantsAsRow} from "/imports/ui/components/Participant/List";
 import toast from "react-hot-toast";
-import Dropdown from 'react-bootstrap/Dropdown'
+import * as Bootstrap  from 'react-bootstrap'
 import {
   canDeleteProcessInstance,
   canEditProcessInstance,
@@ -105,8 +105,8 @@ const TaskRow = ({ task, user }: { task: ITaskList, user: Meteor.User }) => {
             </Link>
             { (canRefresh || canDelete || canEditThisProcessInstance) &&
               <span className={ "ml-1" }>
-                <Dropdown as="span">
-                  <Dropdown.Toggle
+                <Bootstrap.Dropdown as="span">
+                  <Bootstrap.Dropdown.Toggle
                     variant="secondary"
                     id="dropdown-task-row-actions"
                     style={ {
@@ -116,10 +116,10 @@ const TaskRow = ({ task, user }: { task: ITaskList, user: Meteor.User }) => {
                       paddingRight: '0.2em',
                     } }
                   >⋮
-                  </Dropdown.Toggle>
+                  </Bootstrap.Dropdown.Toggle>
 
-                  <Dropdown.Menu>
-                    <Dropdown.Header>
+                  <Bootstrap.Dropdown.Menu>
+                    <Bootstrap.Dropdown.Header>
                       <div>Action on</div>
                       <div>Job { task._id }</div>
                       <div>Process { task.processInstanceKey }</div>
@@ -127,34 +127,34 @@ const TaskRow = ({ task, user }: { task: ITaskList, user: Meteor.User }) => {
                         <a href={ task.monitorUri } target="_blank" className={ 'pr-3' }>on Monitor <span
                           className={ "fa fa-external-link" }/></a>
                       }
-                    </Dropdown.Header>
-                    <Dropdown.Divider/>
+                    </Bootstrap.Dropdown.Header>
+                    <Bootstrap.Dropdown.Divider/>
                     { canEditThisProcessInstance &&
-                      <Dropdown.Item
+                      <Bootstrap.Dropdown.Item
                         className={ 'small' }
                         onSelect={ () => navigate(`workflows/${ task.processInstanceKey }`) }
                       >
                         <>Edit workflow</>
-                      </Dropdown.Item>
+                      </Bootstrap.Dropdown.Item>
                     }
                     { canRefresh &&
-                      <Dropdown.Item
+                      <Bootstrap.Dropdown.Item
                         className={ 'small' }
                         eventKey={ task.processInstanceKey }
                         onSelect={ refreshProcessInstance }
                       >Refresh
-                      </Dropdown.Item>
+                      </Bootstrap.Dropdown.Item>
                     }
                     { canDelete &&
-                      <Dropdown.Item
+                      <Bootstrap.Dropdown.Item
                         className={ 'small' }
                         eventKey={ task.processInstanceKey }
                         onSelect={ cancelProcessInstance }
                       >Cancel
-                      </Dropdown.Item>
+                      </Bootstrap.Dropdown.Item>
                     }
-                  </Dropdown.Menu>
-                </Dropdown>
+                  </Bootstrap.Dropdown.Menu>
+                </Bootstrap.Dropdown>
               </span>
             }
           </span>
