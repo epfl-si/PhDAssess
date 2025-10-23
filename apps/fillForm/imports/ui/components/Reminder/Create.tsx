@@ -1,9 +1,9 @@
 /**
- * Allow to prepare and sent a reminder for a task.
+ * Allow preparing and send a reminder for a task.
  * By default, we prefill the form with the same data as the
  * initial notification sent when the task was
  * created.
- * A task can change this by using reminderXXX fields from the task header,
+ * A task can change this by using reminderXXX fields from the task header
  * that take the priority on the preceding rule.
  */
 
@@ -31,7 +31,7 @@ import {ParticipantsAsRow} from "/imports/ui/components/Participant/List";
 const fromZeebeCustomHeadersEmailsToEmailInput = (field: string | undefined, task: Task) => {
   if (!field) return ''
 
-  if (/^\[.*\]$/.test(field)) {  // test for array in a string
+  if (/^\[.*\]$/.test(field)) {  // test for an array in a string
     const array = field.slice(1, -1).split(',').map(item => item.trim());
 
     return array.reduce( (result, fieldSpec) => {
