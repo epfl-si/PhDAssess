@@ -7,7 +7,7 @@ import {DoctorantInfoSelectable, ImportScipersList} from "/imports/api/importSci
 import StartButton from '/imports/ui/components/ImportSciper/StartButton';
 import {HeaderRow} from "/imports/ui/components/ImportSciper/Header";
 import {Row} from "/imports/ui/components/ImportSciper/Row";
-import {DoctoralSchool, DoctoralSchools} from "/imports/api/doctoralSchools/schema";
+import {DoctoralSchools} from "/imports/api/doctoralSchools/schema";
 import {DoctoralSchoolInfo} from "/imports/ui/components/ImportSciper/DoctoralSchoolInfo";
 import toast from "react-hot-toast";
 import _ from "lodash";
@@ -73,28 +73,35 @@ const AlertError = (
 export function ImportScipersForSchool() {
   const {doctoralSchool} = useParams<{ doctoralSchool: string }>()
 
-  return <ImportSciperLoader doctoralSchoolAcronym={doctoralSchool}/>
+  return <ImportSciperList doctoralSchoolAcronym={doctoralSchool}/>
 }
 
-export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralSchool }) {
+export function ImportSciperList({ doctoralSchoolAcronym }: { doctoralSchoolAcronym?: string }) {
   const account = useAccountContext()
 
-  const [
-    sortBy, setSortBy
-  ] = useState<sortDoctorantInfo>({
-    // default to "date exam without the year"
-    func: [
-      (doctorantInfo) =>
-        doctorantInfo?.dateExamCandidature?.split('.')[1] +
-        doctorantInfo?.dateExamCandidature?.split('.')[0]
-    ],
-    order: ['asc']
-  })
+  const doctoralSchoolsLoading = useTracker(() => {
+    // Note that this subscription will get cleaned up
+    // when your component is unmounted or deps change.
+    const handle = Meteor.subscribe('doctoralSchools');
+    return !handle.ready();
+  }, [doctoralSchoolAcronym]);
+
+  const doctoralSchool = useTracker(
+    () => DoctoralSchools.findOne({ acronym: doctoralSchoolAcronym }),
+    [doctoralSchoolAcronym]
+  )
 
   const { ISAScipersForSchool,
     ISAScipersLoading,
     isBeingImported,
   } = useTracker(() => {
+      // no subscribe is the doctoral school is not valid
+      if (!doctoralSchool?.acronym) return {
+        ISAScipersForSchool: {},
+        ISAScipersLoading: false,
+        isBeingImported: false
+      }
+
       const subscription = Meteor.subscribe('importScipersList', doctoralSchool.acronym);
       const ISAScipersForSchool = ImportScipersList.findOne(
         { doctoralSchoolAcronym: doctoralSchool.acronym },
@@ -113,7 +120,19 @@ export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralS
         ISAScipersLoading,
         isBeingImported
       }
-    }, [doctoralSchool.acronym])
+    }, [doctoralSchool?.acronym])
+
+  const [
+    sortBy, setSortBy
+  ] = useState<sortDoctorantInfo>({
+    // default to "date exam without the year"
+    func: [
+      (doctorantInfo) =>
+        doctorantInfo?.dateExamCandidature?.split('.')[1] +
+        doctorantInfo?.dateExamCandidature?.split('.')[0]
+    ],
+    order: ['asc']
+  })
 
   const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
   const [dueDateNeeded, setDueDateNeeded] = useState(false)
@@ -127,14 +146,16 @@ export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralS
   const navigate = useNavigate()
 
   useEffect(() => {
-    const getISAScipers = async () => {
-      try {
-        await Meteor.callAsync("getISAScipers", doctoralSchool.acronym)
-      } catch (error: any) {
-        setIsErroneous(error)
+    if (doctoralSchool?.acronym) {
+      const getISAScipers = async () => {
+        try {
+          await Meteor.callAsync("getISAScipers", doctoralSchool.acronym)
+        } catch (error: any) {
+          setIsErroneous(error)
+        }
       }
+      void getISAScipers();
     }
-    void getISAScipers();
   }, [doctoralSchool]);
 
   const startImport = () => {
@@ -145,6 +166,11 @@ export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralS
         'A due date has to be set'
       );
       return;
+    }
+
+    if (!doctoralSchool?.acronym) {
+      console.error('Can not start the import without an acronym');
+      return
     }
 
     setImportStarted(true)
@@ -173,12 +199,23 @@ export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralS
 
   if (isErroneous) return <AlertError error={ isErroneous } onCloseClick={ () => navigate(`/import-scipers/`) } />
 
+  if (doctoralSchoolsLoading) return <Loader message={`Loading the ${doctoralSchoolAcronym} doctoral program data...`}/>
+
+  if (!doctoralSchool) return (
+    <>
+      <div><b>{doctoralSchoolAcronym}</b> is an unknown doctoral program</div>
+      <Link to={`/import-scipers`}>Try a different school acronym</Link>
+    </>
+  )
+
   if (ISAScipersLoading) return <Loader message={`Fetching ISA for the list of ${doctoralSchool.acronym} PhD students...`}/>
 
   if (!ISAScipersForSchool) return <div>ISA has not data for the {doctoralSchool.acronym} school</div>
 
-  const total = ISAScipersForSchool?.doctorants?.length ?? 0
-  const nbSelected = ISAScipersForSchool?.doctorants?.filter(doctorant => doctorant.isSelected).length ?? 0
+  const isaScipers = ISAScipersForSchool as ImportScipersList
+
+  const total = isaScipers.doctorants?.length ?? 0
+  const nbSelected = isaScipers.doctorants?.filter(doctorant => doctorant.isSelected).length ?? 0
 
   return (
     <>
@@ -186,9 +223,9 @@ export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralS
         <div className={'mb-3'}>
           <DoctoralSchoolInfo doctoralSchool={ doctoralSchool }/>
         </div>
-        { ISAScipersForSchool.createdAt &&
+        { isaScipers.createdAt &&
           <div className={'small'}>
-            ISA List fetched at {ISAScipersForSchool.createdAt.toLocaleString('fr-CH')}
+            ISA List fetched at {isaScipers.createdAt.toLocaleString('fr-CH')}
           </div>
         }
         <hr />
@@ -205,12 +242,12 @@ export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralS
       <div className="container import-scipers-selector">
         <HeaderRow
           doctoralSchool={ doctoralSchool }
-          isAllSelected={ ISAScipersForSchool.isAllSelected }
+          isAllSelected={ isaScipers.isAllSelected }
           disabled={ importStarted }
           setSorting={ setSortBy }
         />
         { _.orderBy(
-          ISAScipersForSchool.doctorants,
+          isaScipers.doctorants,
           sortBy.func,
           sortBy.order
           ).map(
@@ -229,34 +266,4 @@ export function ImportSciperList({ doctoralSchool }: { doctoralSchool: DoctoralS
       </div>
     </>
   )
-}
-
-export function ImportSciperLoader({doctoralSchoolAcronym}: {doctoralSchoolAcronym?: string}) {
-  const account = useAccountContext()
-
-  const doctoralSchoolsLoading = useTracker(() => {
-    // Note that this subscription will get cleaned up
-    // when your component is unmounted or deps change.
-    const handle = Meteor.subscribe('doctoralSchools');
-    return !handle.ready();
-  }, []);
-
-  const currentDoctoralSchool = useTracker(
-    () => DoctoralSchools.findOne({ acronym: doctoralSchoolAcronym }),
-    [])
-
-  if (!account || !account.isLoggedIn) return (<Loader message={'Loading your data...'}/>)
-
-  if (!canImportScipersFromISA(account.user)) return (<div>Your permissions does not allow you to import from Doctoral programs.</div>)
-
-  if (doctoralSchoolsLoading) return <Loader message={`Loading the ${doctoralSchoolAcronym} doctoral program data...`}/>
-
-  if (!currentDoctoralSchool) return (
-    <>
-      <div><b>{doctoralSchoolAcronym}</b> is an unknown doctoral program</div>
-      <Link to={`/import-scipers`}>Try a different school acronym</Link>
-    </>
-  )
-
-  return <ImportSciperList doctoralSchool={ currentDoctoralSchool } />
 }
