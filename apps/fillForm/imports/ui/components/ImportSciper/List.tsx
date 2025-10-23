@@ -92,13 +92,13 @@ export function ImportSciperList({ doctoralSchoolAcronym }: { doctoralSchoolAcro
   )
 
   const { ISAScipersForSchool,
-    ISAScipersLoading,
+    ISAScipersSubscriptionLoading,
     isBeingImported,
   } = useTracker(() => {
       // no subscribe is the doctoral school is not valid
       if (!doctoralSchool?.acronym) return {
         ISAScipersForSchool: {},
-        ISAScipersLoading: false,
+        ISAScipersSubscriptionLoading: false,
         isBeingImported: false
       }
 
@@ -107,7 +107,7 @@ export function ImportSciperList({ doctoralSchoolAcronym }: { doctoralSchoolAcro
         { doctoralSchoolAcronym: doctoralSchool.acronym },
       )
 
-      const ISAScipersLoading: boolean = !subscription.ready()
+      const ISAScipersSubscriptionLoading: boolean = !subscription.ready()
 
       const isBeingImported: boolean = ISAScipersForSchool ?
         ISAScipersForSchool.doctorants?.some(
@@ -117,7 +117,7 @@ export function ImportSciperList({ doctoralSchoolAcronym }: { doctoralSchoolAcro
 
       return {
         ISAScipersForSchool,
-        ISAScipersLoading,
+        ISAScipersSubscriptionLoading,
         isBeingImported
       }
     }, [doctoralSchool?.acronym])
@@ -141,6 +141,8 @@ export function ImportSciperList({ doctoralSchoolAcronym }: { doctoralSchoolAcro
     setDueDateNeeded(!newDate);
   }
 
+  const [ISAScipersMethodLoading, setISAScipersMethodLoading] = useState(false)
+
   const [importStarted, setImportStarted] = useState(isBeingImported)
   const [isErroneous, setIsErroneous] = useState<Error | undefined>()
   const navigate = useNavigate()
@@ -154,7 +156,9 @@ export function ImportSciperList({ doctoralSchoolAcronym }: { doctoralSchoolAcro
           setIsErroneous(error)
         }
       }
+      setISAScipersMethodLoading(true)
       void getISAScipers();
+      setISAScipersMethodLoading(false)
     }
   }, [doctoralSchool]);
 
@@ -208,9 +212,13 @@ export function ImportSciperList({ doctoralSchoolAcronym }: { doctoralSchoolAcro
     </>
   )
 
-  if (ISAScipersLoading) return <Loader message={`Fetching ISA for the list of ${doctoralSchool.acronym} PhD students...`}/>
+  if (
+    ISAScipersSubscriptionLoading || ISAScipersMethodLoading
+  ) return <Loader message={`Fetching ISA for the list of ${doctoralSchool.acronym} PhD students...`}/>
 
-  if (!ISAScipersForSchool) return <div>ISA has not data for the {doctoralSchool.acronym} school</div>
+  if (
+    !ISAScipersMethodLoading && !ISAScipersForSchool
+  ) return <div>ISA has not data for the {doctoralSchool.acronym} school</div>
 
   const isaScipers = ISAScipersForSchool as ImportScipersList
 
