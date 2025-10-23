@@ -59,9 +59,9 @@ export function TaskReminderFormLoader() {
 
   const tasks: Task[] = useTracker('reminderTaskByUser',
     async () => {
-      const tasks = getUserPermittedTaskReminder(account?.user, _id)
+      const tasks = await getUserPermittedTaskReminder(account?.user, _id)
       if (tasks) {
-        return (await tasks)!.fetchAsync()
+        return await tasks.fetchAsync()
       } else {
         return []
       }
