@@ -1,6 +1,6 @@
 {
   "name": "phd-assess",
-  "version": "2.0.16",
+  "version": "2.0.17",
   "private": true,
   "scripts": {
     "start": "export $(grep -v '^#' .node-env | xargs) && meteor --settings settings.json",
