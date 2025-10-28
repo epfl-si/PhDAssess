@@ -213,7 +213,7 @@ export const DashboardHeader = (
               const step = definition.node(node) as Step
 
               // as we are only showing recent entries, we don't need the old steps
-              if (step.customContent === "") return <></>
+              if (step.customContent === "") return null
 
               return <div
                 className={
