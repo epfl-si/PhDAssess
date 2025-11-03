@@ -6,7 +6,7 @@ import {
 } from "/imports/policy/tasks";
 import {ReminderLogs} from "/imports/api/reminderLogs/schema";
 import {getUserPermittedTasksForDashboard} from "/imports/policy/dashboard/tasks";
-import {DoctoralSchools} from "/imports/api/doctoralSchools/schema";
+import {DoctoralSchool, DoctoralSchools} from "/imports/api/doctoralSchools/schema";
 
 
 /**
@@ -28,6 +28,63 @@ export const getUserPermittedTaskReminder = async (
       "variables.doctoralProgramName": {
         $in: Object.keys(
           getAssistantAdministrativeMemberships(user, await DoctoralSchools.find({}).fetchAsync())
+        )
+      }
+    }),
+  }
+
+  // Set which fields can be seen for a user, depending on their right
+  // Better safe than sorry: by default remove the "not for everyone" ones
+  const fieldsView: Mongo.FieldSpecifier = {
+    // filter out mentor infos
+    'variables.mentorSciper': 0,
+    'variables.mentorName': 0,
+    'variables.mentorEmail': 0,
+
+    // and not really needed stuffs for UI
+    'variables.notifyLogs': 0,
+    'variables.activityLogs': 0,
+    'journal': 0,
+  }
+
+  // some can see the exclusions, reactivate it
+  if (user.isAdmin || user.isUberProgramAssistant) {
+    delete fieldsView['variables.mentorSciper']
+    delete fieldsView['variables.mentorName']
+    delete fieldsView['variables.mentorEmail']
+  }
+
+  // add journals info for admin
+  if (user.isAdmin) {
+    delete fieldsView['journal']
+  }
+
+  return Tasks.find(taskQuery, { 'fields': fieldsView })
+}
+
+/**
+ * Get the asked task for creating a reminder, but only if permitted
+ * This is a replicate of the last function but with the doctoral schools
+ * provided as an argument. It espaces the need of an async call.
+ */
+export const getUserPermittedTaskReminderWithSchools = (
+  user?: Meteor.User | null,
+  _id?: string,
+  doctoralSchools?: DoctoralSchool[]
+) => {
+
+  if (!user) return
+  if (!_id) return
+  if (!doctoralSchools) return
+
+  const taskQuery = {
+    _id: _id,
+    ...filterOutSubmittedTasksQuery(),
+    // Get tasks for the group
+    ...( !( user.isAdmin || user.isUberProgramAssistant ) && {
+      "variables.doctoralProgramName": {
+        $in: Object.keys(
+          getAssistantAdministrativeMemberships(user, doctoralSchools)
         )
       }
     }),

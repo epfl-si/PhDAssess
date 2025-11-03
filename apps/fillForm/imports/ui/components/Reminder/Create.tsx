@@ -22,8 +22,9 @@ import { Editor } from "@tinymce/tinymce-react";
 import Mustache from "mustache"
 
 import {Task} from "/imports/model/tasks";
-import {getUserPermittedTaskReminder} from "/imports/policy/reminders";
+import {getUserPermittedTaskReminderWithSchools} from "/imports/policy/reminders";
 import {ParticipantsAsRow} from "/imports/ui/components/Participant/List";
+import {DoctoralSchools} from "/imports/api/doctoralSchools/schema";
 
 
 // as the To, Cc or Bcc can come as string, a string of an array of string (!, yep that's something like that: "[email1, email2]"), and
@@ -56,12 +57,14 @@ export function TaskReminderFormLoader() {
   const {_id} = useParams<{ _id: string }>()
   const account = useAccountContext()
   useSubscribe('taskReminder', [_id])
+  useSubscribe('doctoralSchools', [])
 
   const tasks: Task[] = useTracker('reminderTaskByUser',
-    async () => {
-      const tasks = await getUserPermittedTaskReminder(account?.user, _id)
+    () => {
+      const doctoralSchools = DoctoralSchools.find({}).fetch();
+      const tasks = getUserPermittedTaskReminderWithSchools(account?.user, _id, doctoralSchools)
       if (tasks) {
-        return await tasks.fetchAsync()
+        return tasks.fetch()
       } else {
         return []
       }
