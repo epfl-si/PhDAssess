@@ -99,11 +99,13 @@ Meteor.methods({
       }
 
       // validity check before sending to Zeebe
-      if (!participants[`${ participantData.role }Name`]) {
-        throw new Meteor.Error(422, `Aborting the change : Unable to find the value "Name" for the sciper "${ participantData.sciper }".`)
-      }
-      if (!participants[`${ participantData.role }Email`]) {
-        throw new Meteor.Error(422, `Aborting the change : Unable to find the value "Email" for the sciper "${ participantData.sciper }".`)
+      if (!participants[`${ participantData.role }Name`] ||
+        !participants[`${ participantData.role }Email`]
+      ) {
+        throw new Meteor.Error(
+          422,
+          `Aborting the change : api.epfl.ch is not able to find the mandatory values "Name" and/or "Email" for this sciper: "${ participantData.sciper }".`
+        )
       }
     }
 
