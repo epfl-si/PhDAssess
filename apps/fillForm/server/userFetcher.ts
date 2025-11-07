@@ -52,7 +52,7 @@ export async function getUserInfo (sciper: string | number): Promise<APIPersonIn
 
     try {
       jsonResponse = await response.json()
-    } catch (e: any) {  // can't json decode the result ? not good
+    } catch (e: any) {  // can't JSON decode the result ? not good
       console.warn(
         `${ server } has returned a bad result for ${ sciper }.`,
         `Nothing is returned/cached as a result.`,
@@ -92,7 +92,7 @@ export async function getUserInfo (sciper: string | number): Promise<APIPersonIn
   }
 }
 
-// keep users info in memory for 24 hours
+// keep the user's info in memory for 24 hours
 export const getUserInfoMemoized = memoize(
   getUserInfo, {
     timeout: 86400000,
@@ -121,10 +121,10 @@ export const getParticipantsToUpdateFromSciper = async (variables: PhDInputVaria
     const vFirstNameOfficial = variables[`${participantName}FirstName`]
     const vLastNameOfficial = variables[`${participantName}LastName`]
 
-    if (vSciper) {  // we are going to check if participant exists, firstly
+    if (vSciper) {  // we are going to check if the participant exists, firstly
       const participantInfo = await getUserInfoMemoized(vSciper!)
 
-      // assert all data are here, or ignore this participant
+      // assert all data are here or ignore this participant
       if (!participantInfo || !(
         participantInfo.firstname &&
         participantInfo.lastname &&
@@ -173,7 +173,7 @@ export const getParticipantsToUpdateFromSciper = async (variables: PhDInputVaria
 /**
  * Provide user info from an env file. It used for development envs that
  * do not have access to the api.
- * Env. data exemple:
+ * Env. data example:
  *   PARTICIPANT_PHDSTUDENT_SCIPER="1111111"
  *   PARTICIPANT_PHDSTUDENT_NAME="Joe Bar"
  *   PARTICIPANT_PHDSTUDENT_EMAIL="joe.bar@somewhere.com"
