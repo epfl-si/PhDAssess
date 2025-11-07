@@ -110,10 +110,10 @@ Meteor.methods({
     auditLog(`Refreshing a process instance ${processInstanceKey} by creating new jobs`)
 
     // all jobs have to be refreshed
-    const concernedTasks = Tasks.find({
+    const concernedTasks = await Tasks.find({
         processInstanceKey: processInstanceKey
       }
-    )
+    ).fetchAsync()
 
     for (const taskForThisProcess of concernedTasks) {
       await WorkersClient.refreshTask(taskForThisProcess)
