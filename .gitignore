@@ -1,9 +1,14 @@
-/apps/fillForm/node_modules/
-/apps/fillForm/.env
-/apps/fillForm/.node-env
-/apps/fillForm/packages
+node_modules/
+.env
+.node-env
+packages
+tsconfig.tsbuildinfo
 /doc/API-clients/websrv/.env
 /doc/API-clients/isa/.env
 /doc/API-clients/api.epfl.ch/Persons API/.env
-/apps/fillForm/tsconfig.tsbuildinfo
 
+# Meteor Modern-Tools build context directories
+_build
+*/build-assets
+*/build-chunks
+.rsdoctor
