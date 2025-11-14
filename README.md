@@ -1,70 +1,49 @@
 # PhD Assess
 
-This is an apps stack to allow students to fulfil their PhD assessment process.
+Provide form tasks to users, so they can fulfil their PhD assessment process.
 
-## Structure
+You can take a look at the process by installing the [BPMN Modeler](https://camunda.com/download/modeler/) and by opening [the process definition](https://github.com/epfl-si/PhDAssess-meta/blob/main/bpmn/phdAssessProcess.bpmn).
 
-The stack is composed of:
+The application consists of a Meteor server, defined as a [Zeebe](https://zeebe.io) worker. It shows all jobs of type `phdAssessFillForm` as a task/todo-list. A user can complete his/her form tasks through FormIO forms.
 
-### Operative tools
-- `./phd.mjs`, to command
-- https://github.com/epfl-si/PhDAssess.ops, to deploy
-- `./scripts/`, to hack
+## Run
 
-### Backends
-- the Zeebe stack
-    - a raft of three Zeebes
-    - the BPMN
-      - You can take a look at the process by installing the [BPMN Modeler](https://camunda.com/download/modeler/) and by opening [the process definition](https://github.com/epfl-si/PhDAssess-meta/blob/main/bpmn/phdAssessProcess.bpmn).
-- the GED uploader, as a nodeJS worker
-- the Email sender (aka notifier), as a nodeJS worker
-- the PDF builder, as a nodeJS worker
-- the ISA connector, as a nodeJS worker
+### Prerequisite
 
-### Frontend
-- the task filler
-    - Meteor app with two mongo bases
-    - see code source at ./apps/fillForm
+- [Install Meteor](https://www.meteor.com/developers/install)
+- Read the .env.sample and create your copy as `.env`:
+  ```
+  cp .env.sample .env
+  ```
+- Edit the `.env` to suit your needs
+- Do the same for `.node-env.sample` with:
+  ```
+  cp .node-env.sample .node-env
+  ```
+- Install dependencies
+  ```
+  meteor npm i
+  ```
 
+### Start
+`meteor npm start`, then open http://localhost:3000
 
-## Where to start ?
+Be warned, you only get the frontend app. To have the full PhDAssess stack running, see https://github.com/epfl-si/PhDAssess.ops
 
-How about launching the app locally ?
+### Troubleshoot
 
-### Zeebe
+If you get an error about not having a proto file in `/proto/`, use this trick and start the server again:
+`ln -s ./apps/fillForm/node_modules/zeebe-node/proto/zeebe.proto* /proto/`
 
-- Build the docker images:
-  - `docker compose -f ./docker/docker-compose.yml build zeebe_node_0 zeebe_node_1 zeebe_node_2`
-- Launch the Zeebe server with:
-  - `docker compose -f ./docker/docker-compose.yml up zeebe_node_0 zeebe_node_1 zeebe_node_2`
-- Once Zeebe is running (`watch zbctl status --insecure --port 26501`, you can deploy the bpmn on it.
-  You can use this command to help with the process:
-  - `./phd.mjs deploy-bpmn`
+## Test
+```
+cd ./apps/fillForm
+meteor test --driver-package meteortesting:mocha --port 3100
+```
 
-### Micro-services
+Add --full-app or --once if needed
 
-- In the parent directory of this projet, clone the other services:
-  - `cd ..`
-  - `git clone https://github.com/epfl-si/phdAssess-PDF`
-  - `git clone https://github.com/epfl-si/phdAssess-Notifier`
-  - `git clone https://github.com/epfl-si/phdAssess-GED`
-  - `git clone https://github.com/epfl-si/phdAssess-ISA`
-- Come back into the projet folder
-  - `cd PhDAssess`
-- Build and start the services
-  - `docker compose -f ./docker/docker-compose.yml build pdf notifier ged isa`
-  - `docker compose -f ./docker/docker-compose.yml up pdf notifier ged isa`
-
-### Main app
-
-- Start of the meteor app:
-  - `cd ./apps/fillForm`
-  - install the libs with `meteor npm i`
-  - `cp .env.sample .env` and start editing the .env to your taste
-  - start the app with `meteor --settings settings.json` and open your browser on `http://localhost:3000/`
-
-### Workflow map
-- Build and start the service:
-  - `docker compose -f ./docker/docker-compose.yml build simple-monitor`
-  - `docker compose -f ./docker/docker-compose.yml up simple-monitor`
-- Open `http://localhost:8082/`
+Choose only server or client with env TEST_SERVER=0 TEST_CLIENT=0:
+```
+TEST_SERVER=0 meteor test --driver-package meteortesting:mocha --port 3100
+```
