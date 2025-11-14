@@ -1,4 +1,3 @@
-/ansible/ansible-deps-cache
 /apps/fillForm/node_modules/
 /apps/fillForm/.env
 /apps/fillForm/.node-env
@@ -7,8 +6,4 @@
 /doc/API-clients/isa/.env
 /doc/API-clients/api.epfl.ch/Persons API/.env
 /apps/fillForm/tsconfig.tsbuildinfo
-/docker/zeebe-hazelcast/*.jar
-/docker/simple-monitor/*.jar
-/docker/volumes
-/docker/.env
-/bpmn-model/*
+
