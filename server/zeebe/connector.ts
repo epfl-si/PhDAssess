@@ -4,7 +4,6 @@
 
 import {Meteor} from "meteor/meteor";
 import {Metrics} from "/server/prometheus";
-import {MongoInternals} from "meteor/mongo";
 import {Duration, PublishMessageRequest} from "zeebe-node";
 
 import {ZeebeSpreadingClient} from "/imports/api/zeebeStatus";
@@ -15,10 +14,13 @@ import {PhDAssessCustomVariables} from "phd-assess-meta/types/variables";
 import {NotificationLog, NotificationStartMessage} from "phd-assess-meta/types/notification";
 
 import { PhDZeebeJob, persistJob, PersistOutcome } from "./in";
+import {isErrorFromMongoAndRetryable} from "./connectorErrors";
 
 import debug_ from "debug";
-import {auditLogConsoleOut} from "/imports/lib/logging";
 const debug = debug_('phd-assess:zeebe:connector')
+
+import {auditLogConsoleOut} from "/imports/lib/logging";
+
 const auditLog = auditLogConsoleOut.extend('server/zeebe/connector')
 
 
@@ -62,9 +64,8 @@ export default {
           // as we had no error, tell Zeebe that we'll think about it and free ourselves to receive more work
           return job.forward()
         } catch (error) {
-          if (error instanceof MongoInternals.NpmModules.mongodb.module.MongoNetworkError
-          ) {
-            // retry later, Mongo may not be available at that time
+          if ( isErrorFromMongoAndRetryable(error) ) {
+            // come back later, Mongo may not be available at that time
             return job.forward()
           } else {
             // unable to create the task, or a variable is failing to be decrypted => no good at all
