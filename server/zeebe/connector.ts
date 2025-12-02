@@ -63,8 +63,11 @@ export default {
 
           // as we had no error, tell Zeebe that we'll think about it and free ourselves to receive more work
           return job.forward()
-        } catch (error) {
+        } catch (error: any) {
           if ( isErrorFromMongoAndRetryable(error) ) {
+            debug(`While getting a task, a retryable Mongo error has been caught.
+            The task will be retried later. Error class was: ${ error.constructor.name }`);
+
             // come back later, Mongo may not be available at that time
             return job.forward()
           } else {
