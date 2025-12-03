@@ -35,8 +35,13 @@ Meteor.methods({
     if (task && task[0]) {
       return task[0]
     } else {
-      auditLog(`Error: the task that is trying to be edited can not be found or the user has no the correct rights. Task key requested: ${_id}.`)
-      throw new Meteor.Error('404', `The task ID can not be find. It may not exists, or your are not allowed to get it.`)
+      auditLog(
+        `Error: the task that is trying to be edited can not be found or \
+        the user has no the correct rights. Task key requested: ${_id}.`)
+      throw new Meteor.Error(
+        '404',
+        `The task ID can not be find. It may not exists, or your are not allowed to get it.`
+      )
     }
   },
 
@@ -51,12 +56,18 @@ Meteor.methods({
     const task = await Tasks.findOneAsync( { _id: _id } )
     if (!task) {
       auditLog(`Error: the task that is being submitted can not be found. Task key requested: ${_id}.`)
-      throw new Meteor.Error(404, 'Unknown task', 'The task does not exist anymore.')
+      throw new Meteor.Error(
+        404,
+        'Unknown task', 'The task does not exist anymore.'
+      )
     }
 
     if (!await canSubmit(user, _id)) {
       auditLog(`Unallowed user ${user._id} is trying to submit the task ${_id}`)
-      throw new Meteor.Error(403, 'You are not allowed to submit this task')
+      throw new Meteor.Error(
+        403,
+        'You are not allowed to submit this task'
+      )
     }
 
     formData = filterUnsubmittableVars(
@@ -71,7 +82,9 @@ Meteor.methods({
 
     if (formData.length == 0) {
       auditLog(`Error: the form being submitted by ${user._id} as insufficient data.`)
-      throw new Meteor.Error(400, 'There is not enough valid data to validate this form. Canceling.')
+      throw new Meteor.Error(
+        400,
+        'There is not enough valid data to validate this form. Canceling.')
     }
 
     formData = await updateParticipantsInfoForFormData(formData, task)
@@ -96,11 +109,15 @@ Meteor.methods({
         // free to clear the pdf
         formData.pdfAnnexFile = undefined
 
-        auditLog(`Successfully uploaded a PDF annex on ${ pdfAnnexPath } for job ${ task._id }, process instance ${ task.processInstanceKey }`)
+        auditLog(
+          `Successfully uploaded a PDF annex on ${ pdfAnnexPath } \
+          for job ${ task._id }, process instance ${ task.processInstanceKey }`
+        )
       } catch (e: any) {
         throw new Meteor.Error(
           '504',
-          `Unable to connect to the server to deposit the PDF annex. Please try again later or contact 1234@epfl.ch`
+          `Unable to connect to the server to deposit the PDF annex. \
+          Please try again later or contact 1234@epfl.ch`
         )
       }
     }
@@ -109,7 +126,11 @@ Meteor.methods({
     formData = _.mapValues(formData, x => encrypt(x))
 
     await WorkersClient.success(task._id!, formData)
-    auditLog(`Sending success: job ${task._id} of process instance ${task.processInstanceKey} with data ${JSON.stringify(formData)}`)
+    auditLog(
+      `Sending success: job ${task._id} of process instance ${task.processInstanceKey} \
+      with data ${JSON.stringify(formData)}. \
+      phdStudentSciper: ${ task.participants?.phdStudent?.sciper ?? 'unknow' }`
+    )
 
     debug(`Bumping activity logs about the submit`)
     await bumpActivityLogsOnTaskSubmit(task)

@@ -174,7 +174,10 @@ export async function persistJob (job: PhDZeebeJob): Promise<PersistOutcome> {
   }
 
   if ( !taskExistAlready ) {
-    debug(`Received a new job from Zeebe ${ taskId }`)
+    debug(
+      `Received a new job from Zeebe ${ taskId }. \
+      phdStudentSciper: ${ task.participants?.phdStudent?.sciper ?? 'unknow' }`
+    )
     status = PersistOutcome.NEW
   } else {
     status = PersistOutcome.ALREADY_KNOWN
