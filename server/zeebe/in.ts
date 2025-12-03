@@ -129,9 +129,6 @@ export enum PersistOutcome {
  * jobs should be performed promptly, whereas we are asking humans to
  * fill out forms.
  *
- * This is a Fiber'd function i.e. it may perform async work
- * “transparently” (without using async / await)
- *
  * @returns `PersistOutcome.NEW` if we see this job for the very first time
  * @returns `PersistOutcome.ALREADY_KNOWN` if we already had this job in store
  * @returns `PersistOutcome.ALREADY_SUBMITTED` if the job is new but was marked as submitted. It can happen
