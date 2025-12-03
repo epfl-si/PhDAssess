@@ -1,5 +1,5 @@
 /**
- * Everything that go from zeebe app to this app
+ * Everything that goes from zeebe app to this app
  */
 
 import {
@@ -81,7 +81,7 @@ export function zeebeJobToTask(job: PhDZeebeJob): Task {
   }
 
   // manage the special case of assignees scipers. They can come, historically, as a variable or as field designator
-  // the field designator is the moderne way to get the flexibility to refresh a job when a participant has been changed
+  // the field designator is the modern way to get the flexibility to refresh a job when a participant has been changed
   if (job.customHeaders.assigneeSciperFieldName) {
     //TODO: move this into ./zeebe/fixer.ts
     const fieldsName = []
@@ -96,7 +96,7 @@ export function zeebeJobToTask(job: PhDZeebeJob): Task {
     // get the value for each field
     fieldsName.forEach(field =>
         decryptedVariables[field] && scipers.push(
-          // this one are guaranteed to be string, not null or array
+          // these are guaranteed to be string, not null or array
           decryptedVariables[field] as string
         )
     )
@@ -151,7 +151,7 @@ export async function persistJob (job: PhDZeebeJob): Promise<PersistOutcome> {
   let taskId: string;  // keep a log of the created/updated id
 
   if ( !taskExistAlready ) {
-    // a new task, insert all data, with journaling set
+    // it is a new task: insert all data and set the journaling
     taskId = await Tasks.insertAsync({
         ...{
           journal: {

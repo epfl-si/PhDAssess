@@ -106,7 +106,7 @@ Meteor.methods({
         )
 
         formData.pdfAnnexPath = pdfAnnexPath
-        // free to clear the pdf
+        // free to clear the PDF
         formData.pdfAnnexFile = undefined
 
         auditLog(
