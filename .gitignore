@@ -1,14 +1,14 @@
 node_modules/
 .env
 .node-env
-packages
+/packages
 tsconfig.tsbuildinfo
 /doc/API-clients/websrv/.env
 /doc/API-clients/isa/.env
 /doc/API-clients/api.epfl.ch/Persons API/.env
 
 # Meteor Modern-Tools build context directories
-_build
+_build/
 */build-assets
 */build-chunks
 .rsdoctor

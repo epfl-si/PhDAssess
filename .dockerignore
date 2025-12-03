@@ -1,5 +1,9 @@
 .env
-.meteor/local/
-packages
-node_modules
-_build
+.node-env
+/doc
+
+/node_modules
+/packages
+
+/.meteor/local
+/_build
