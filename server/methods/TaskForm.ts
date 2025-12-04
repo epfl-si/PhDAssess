@@ -36,11 +36,12 @@ Meteor.methods({
       return task[0]
     } else {
       auditLog(
-        `Error: the task that is trying to be edited can not be found or \
-        the user has no the correct rights. Task key requested: ${_id}.`)
+        `Error: the task that is trying to be edited can not be found or ` +
+        `the user has no the correct rights. Task key requested: ${_id}.`)
       throw new Meteor.Error(
         '404',
-        `The task ID can not be find. It may not exists, or your are not allowed to get it.`
+        `The task ID can not be find.` +
+        `It may not exists, or your are not allowed to get it.`
       )
     }
   },
@@ -55,10 +56,14 @@ Meteor.methods({
 
     const task = await Tasks.findOneAsync( { _id: _id } )
     if (!task) {
-      auditLog(`Error: the task that is being submitted can not be found. Task key requested: ${_id}.`)
+      auditLog(
+        `Error: the task that is being submitted can not be found.` +
+        ` Task key requested: ${_id}.`
+      )
       throw new Meteor.Error(
         404,
-        'Unknown task', 'The task does not exist anymore.'
+        'Unknown task',
+        'The task does not exist anymore.'
       )
     }
 
@@ -110,14 +115,14 @@ Meteor.methods({
         formData.pdfAnnexFile = undefined
 
         auditLog(
-          `Successfully uploaded a PDF annex on ${ pdfAnnexPath } \
-          for job ${ task._id }, process instance ${ task.processInstanceKey }`
+          `Successfully uploaded a PDF annex on ${ pdfAnnexPath } ` +
+          `for job ${ task._id }, process instance ${ task.processInstanceKey }`
         )
       } catch (e: any) {
         throw new Meteor.Error(
           '504',
-          `Unable to connect to the server to deposit the PDF annex. \
-          Please try again later or contact 1234@epfl.ch`
+          `Unable to connect to the server to deposit the PDF annex.` +
+          ` Please try again later or contact 1234@epfl.ch`
         )
       }
     }
@@ -127,9 +132,9 @@ Meteor.methods({
 
     await WorkersClient.success(task._id!, formData)
     auditLog(
-      `Sending success: job ${task._id} of process instance ${task.processInstanceKey} \
-      with data ${JSON.stringify(formData)}. \
-      phdStudentSciper: ${ task.participants?.phdStudent?.sciper ?? 'unknow' }`
+      `Sending success: job ${task._id} of process instance ${task.processInstanceKey} ` +
+      `with data ${JSON.stringify(formData)}.` +
+      ` phdStudentSciper: ${ task.participants?.phdStudent?.sciper ?? 'unknow' }`
     )
 
     debug(`Bumping activity logs about the submit`)
