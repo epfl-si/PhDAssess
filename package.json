@@ -1,6 +1,6 @@
 {
   "name": "phd-assess",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "private": true,
   "scripts": {
     "start": "export $(grep -v '^#' .node-env | xargs) && meteor --settings settings.json",
@@ -30,7 +30,6 @@
     "@fortawesome/free-regular-svg-icons": "^6",
     "@fortawesome/free-solid-svg-icons": "^6",
     "@fortawesome/react-fontawesome": "^0",
-    "@meteorjs/rspack": "^0.0.56",
     "@popperjs/core": "^2",
     "@swc/helpers": "^0.5.17",
     "@tinymce/tinymce-react": "^6",
@@ -65,9 +64,10 @@
     "zeebe-node": "^8.3.2"
   },
   "devDependencies": {
+    "@meteorjs/rspack": "^1.0.0",
     "@rsdoctor/rspack-plugin": "^1.2.3",
-    "@rspack/cli": "^1.5.3",
-    "@rspack/core": "^1.5.3",
+    "@rspack/cli": "^1.7.1",
+    "@rspack/core": "^1.7.1",
     "@rspack/plugin-react-refresh": "^1.4.3",
     "@testing-library/react": "^16.0.1",
     "@types/chai-datetime": "^1",

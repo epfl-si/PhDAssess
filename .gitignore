@@ -8,7 +8,9 @@ tsconfig.tsbuildinfo
 /doc/API-clients/api.epfl.ch/Persons API/.env
 
 # Meteor Modern-Tools build context directories
-_build/
+_build
+
+# Meteor Modern-Tools build context directories
 */build-assets
 */build-chunks
 .rsdoctor
