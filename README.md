@@ -11,15 +11,26 @@ The application consists of a Meteor server, defined as a [Zeebe](https://zeebe.
 ### Prerequisite
 
 - [Install Meteor](https://www.meteor.com/developers/install)
-- Read the .env.sample and create your copy as `.env`:
-  ```
-  cp .env.sample .env
-  ```
-- Edit the `.env` to suit your needs
-- Do the same for `.node-env.sample` with:
-  ```
-  cp .node-env.sample .node-env
-  ```
+
+- Prepare the secrets
+  - Use Secretspec or do it manually
+    - with Secretspec
+      - [install the tool](https://secretspec.dev/quick-start/)
+      - Run a check with:
+        ```
+        secretspec check --provider dotenv:/keybase/team/epfl_phdassess/dev/secretspec.env
+        ```
+    - manually
+      - Read the .env.sample and create your copy as `.env`:
+        ```
+        cp .env.sample .env
+        ```
+      - Edit the `.env` to suit your needs. You may need to find the secrets on /keybase/team/epfl_phdassess/dev/secretspec.env.
+      - Do the same for `.node-env.sample` with:
+        ```
+        cp .node-env.sample .node-env
+        ```
+
 - Install dependencies
   ```
   meteor npm i
