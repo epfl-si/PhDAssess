@@ -1,3 +1,4 @@
+import _ from "lodash";
 import { Accounts } from "meteor/accounts-base";
 
 const debug = require('debug')('server/auth')
@@ -24,6 +25,10 @@ Accounts.onExternalLogin((options:any, user: any) => {
  * Use sciper as Mongo _id
  */
 Accounts.onLogin((loginDetails: any) => {
+  // remove some verbosity
+  _.set(loginDetails, 'user.services.entra.idToken', '{hidden}');
+  _.set(loginDetails, 'user.services.entra.accessToken', '{hidden}');
+  _.set(loginDetails, 'user.services.resume.loginTokens', '[{hidden}]');
   debug(`onLogin called: ${JSON.stringify(loginDetails)}`);
 });
 
