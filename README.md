@@ -33,7 +33,7 @@ Be warned, you only get the frontend app. To have the full PhDAssess stack runni
 ### Troubleshoot
 
 If you get an error about not having a proto file in `/proto/`, use this trick and start the server again:
-`ln -s ./apps/fillForm/node_modules/zeebe-node/proto/zeebe.proto* /proto/`
+`ln -s ./node_modules/zeebe-node/proto/zeebe.proto* /proto/`
 
 ## Test
 ```
