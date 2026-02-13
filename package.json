@@ -3,7 +3,7 @@
   "version": "2.1.2",
   "private": true,
   "scripts": {
-    "start": "export $(grep -v '^#' .node-env | xargs) && secretspec run --provider dotenv:/keybase/team/epfl_phdassess/dev/.env -- meteor --settings settings.json",
+    "start": "export $(grep -v '^#' .node-env | xargs) && secretspec run --provider dotenv:/keybase/team/epfl_phdassess/dev/secretspec.env -- meteor --settings settings.json",
     "start-without-secretspec": "export $(grep -v '^#' .node-env | xargs) && meteor --settings settings.json",
     "test": "meteor test --once --driver-package meteortesting:mocha",
     "test-bpmn": "bpmnlint --config bpmn-model/bpmn-lint-rules.json bpmn-model/phdAssessProcess.bpmn",
