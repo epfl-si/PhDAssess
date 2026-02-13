@@ -14,3 +14,8 @@ _build
 */build-assets
 */build-chunks
 .rsdoctor
+
+# Devenv
+.devenv*
+devenv.local.nix
+devenv.local.yaml

@@ -1,0 +1,3 @@
+secretspec:
+  enable: true
+  provider: dotenv:/keybase/team/epfl_phdassess/dev/secretspec.env
