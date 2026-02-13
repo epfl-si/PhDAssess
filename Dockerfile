@@ -4,34 +4,23 @@ ARG BASE_IMAGE=node:22-trixie
 
 FROM $BASE_IMAGE AS build
 
-# Install meteor
 RUN npx meteor
 
-ENV NODE_ENV=production
-# to ignore caniuse-lite outdated warning
-ENV BROWSERSLIST_IGNORE_OLD_DATA=1
-
 ENV PATH=$PATH:/root/.meteor
-ENV METEOR_ALLOW_SUPERUSER=1
+ENV METEOR_ALLOW_SUPERUSER=true
 
-WORKDIR /app
+COPY . /usr/src/app
+WORKDIR /usr/src/app
+RUN meteor npm install
 
-COPY package.json package-lock.json ./
-RUN mkdir patches
-# The other patches are dev-only (pending a released fix to meteor/meteor#13504):
-COPY patches/@grpc* patches/
-RUN meteor npm install --production
-
-COPY . .
-
-RUN meteor build --directory /built-app
-RUN cd /built-app/bundle/programs/server && meteor npm install --production
+RUN set -e -x; mkdir /app; meteor build --directory /app; \
+    cd /app/bundle/programs/server ; meteor npm install --production
 
 FROM $BASE_IMAGE
 
 ENV NODE_ENV=production
-COPY --from=build /built-app/bundle /app
-WORKDIR /app
+COPY --from=build /app /app
+WORKDIR /app/bundle
 
 # Provide bundled protobufs for zeebe-node... Kind of
 RUN mkdir /proto
