@@ -29,7 +29,17 @@ Meteor.startup(async () => {
 
   validateEnv()
 
-  ZeebeClient.start()
+  let isZeebeNeeded = true;
+
+  if (Meteor.isDevelopment) {
+    if (
+      process.env.PHDASSESS_DESACTIVATE_ZEEBE &&
+      process.env.PHDASSESS_DESACTIVATE_ZEEBE === "true") {
+      isZeebeNeeded = false
+    }
+  }
+
+  isZeebeNeeded && ZeebeClient.start()
 
   await initAuth()
 
