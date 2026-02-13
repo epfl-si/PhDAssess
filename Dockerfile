@@ -24,6 +24,6 @@ WORKDIR /app/bundle
 
 # Provide bundled protobufs for zeebe-node... Kind of
 RUN mkdir /proto
-RUN ln -s /app/programs/server/npm/node_modules/zeebe-node/proto/*.proto /proto/
+RUN ln -s /app/bundle/programs/server/npm/node_modules/zeebe-node/proto/*.proto /proto/
 
 CMD ["node", "main.js"]
