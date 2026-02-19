@@ -8,6 +8,7 @@ RUN npx meteor
 
 ENV PATH=$PATH:/root/.meteor
 ENV METEOR_ALLOW_SUPERUSER=true
+ENV METEOR_DISABLE_OPTIMISTIC_CACHING=1
 
 COPY . /usr/src/app
 WORKDIR /usr/src/app
