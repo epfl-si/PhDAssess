@@ -1,7 +1,8 @@
 { pkgs, lib, config, inputs, ... }:
 
 let
-  isNixOS = pkgs.stdenv.isNixOS or false;
+  isNixOS = config.env ? IS_NIXOS;
+
   needed_packages = [
     pkgs.nodejs_22
     pkgs.openssl
@@ -20,9 +21,9 @@ in
 {
   packages =
     if isNixOS then
-          [ meteorFhs ]
-        else
-          needed_packages;
+      [ meteorFhs ]
+    else
+      needed_packages;
 
   dotenv.enable = true;
 
@@ -70,9 +71,9 @@ in
     echo "✅ proto file found."
 
     ${lib.optionalString isNixOS ''
-      echo "🔥 Entering Meteor FHS dev environment for NixOs."
+      echo "❄️ 🔥️ Entering Meteor FHS dev environment for NixOs. ❄️"
       exec meteor-fhs
-      echo "🔥 Running PhD Assess dev environment 🚀 Next: use the 'start' command"
+      echo "🔥 You are in the PhDAssess dev environment 🚀 Next: use the 'start' command"
     ''}
 
     ${lib.optionalString (!isNixOS) ''
