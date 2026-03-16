@@ -43,7 +43,8 @@ in
     fi
   '';
 
-  scripts.alert-if-missing-proto.exec = ''
+  scripts.check-and-stop-if-missing-proto.exec = ''
+    echo "Checking for required proto file 🔬..."
     dir=/proto;
     if [ ! -d "$dir" ] && [ -z "$(ls -A "$dir")" ]; then
       echo "⚠️ Warning, you miss the Zeebe proto file needed by this project.";
@@ -53,6 +54,8 @@ in
       echo "    sudo chmod 755 /proto";
       echo "    sudo chmod 644 /proto/zeebe.proto";
       exit 1;
+    else
+      echo "✅ proto file found."
     fi
   '';
 
@@ -65,10 +68,16 @@ in
   '';
 
   enterShell = ''
+    clear
+    echo ""
+    echo "🎓 📈 ✅ PhDAssess Development Environment 💻 ☄️"
+    echo "=================================="
+    echo "👉  Project: epfl-si/PhDAssess"
+    echo "📌  Running devenv shell…"
+    echo ""
     export PATH="$HOME/.meteor:$PATH"
-    echo "Checking for required proto file 🔬..."
-    alert-if-missing-proto
-    echo "✅ proto file found."
+
+    check-and-stop-if-missing-proto
 
     ${lib.optionalString isNixOS ''
       echo "❄️ 🔥️ Entering Meteor FHS dev environment for NixOs. ❄️"
