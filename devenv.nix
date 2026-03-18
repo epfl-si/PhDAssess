@@ -13,10 +13,17 @@ let
     name = "meteor-fhs";
     targetPkgs = pkgs: needed_packages;
 
-    runScript = ''
-        bash
-      '';
+    runScript = pkgs.writeShellScript "meteor-fhs-run" ''
+      ${welcome}
+      exec bash
+    '';
   };
+
+  welcome = ''
+    echo "🔥 You are in the PhDAssess dev environment 🚀"
+        echo "It may be a good time to look into the PhDAssess.ops project and start the Zeebe quorum."
+    echo "Next: use the 'start' command"
+  '';
 in
 {
   packages =
@@ -68,7 +75,6 @@ in
   '';
 
   enterShell = ''
-    clear
     echo ""
     echo "🎓 📈 ✅ PhDAssess Development Environment 💻 ☄️"
     echo "=================================="
@@ -80,13 +86,12 @@ in
     check-and-stop-if-missing-proto
 
     ${lib.optionalString isNixOS ''
-      echo "❄️ 🔥️ Entering Meteor FHS dev environment for NixOs. ❄️"
+      echo "❄️ 🔥️ Entering Meteor FHS dev environment for NixOs... ❄️"
       exec meteor-fhs
-      echo "🔥 You are in the PhDAssess dev environment 🚀 Next: use the 'start' command"
     ''}
 
     ${lib.optionalString (!isNixOS) ''
-      echo "🔥 You are in the PhDAssess dev environment 🚀 Next: use the 'start' command"
+      ${welcome}
     ''}
   '';
 }
