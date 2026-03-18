@@ -32,10 +32,10 @@ Meteor.startup(async () => {
   let isZeebeNeeded = true;
 
   if (Meteor.isDevelopment) {
-    if (
-      process.env.PHDASSESS_DESACTIVATE_ZEEBE &&
-      process.env.PHDASSESS_DESACTIVATE_ZEEBE === "true") {
+    const deactivateZeebe = process.env.PHDASSESS_DESACTIVATE_ZEEBE?.toLowerCase() === "true";
+    if (deactivateZeebe) {
       isZeebeNeeded = false
+      console.debug("️⚠️  As requested by the env var, the Zeebe client will not be started.")
     }
   }
 
