@@ -37,7 +37,26 @@ in
   # this env variables are loaded before NodeJS start
   env = {
     NODE_ENV = "development";
-    DEBUG = "*,-babel,-compression-connect*,-combined-stream2,-express:*,-connection-pool,-connect:*,-send,-body-parser:*,-compression,-finalhandler,-express*,-router,-router:*,-http-proxy-middleware";
+    # ignore some log info
+    DEBUG = ''
+        *
+        ,-grpc
+        ,-worker
+        ,-babel
+        ,-compression-connect*
+        ,-combined-stream2
+        ,-express:*
+        ,-connection-pool
+        ,-connect:*
+        ,-send
+        ,-body-parser:*
+        ,-compression
+        ,-finalhandler
+        ,-express*
+        ,-router
+        ,-router:*
+        ,-http-proxy-middleware
+      '';
     DEBUG_COLORS = "yes";
     MONGO_PERSISTENT_URL = "mongodb://127.0.0.1:3001/meteor";
     TOOL_NODE_FLAGS = "";   # Meteor's node options
