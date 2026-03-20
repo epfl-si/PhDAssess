@@ -20,9 +20,9 @@ let
   };
 
   welcome = ''
-    echo "🔥 You are in the PhDAssess dev environment 🚀"
-        echo "It may be a good time to look into the PhDAssess.ops project and start the Zeebe quorum."
-    echo "Next: use the 'start' command"
+    echo "🔥 You are in the PhDAssess dev environment 💻 ☄"
+    echo "It may be a good time to look into the PhDAssess.ops project and start the Zeebe quorum and his auxiliaries."
+    echo "Next: use the 'start' command to launch Meteor"
   '';
 in
 {
@@ -34,11 +34,13 @@ in
 
   dotenv.enable = true;
 
+  # this env variables are loaded before NodeJS start
   env = {
     NODE_ENV = "development";
     DEBUG = "*,-babel,-compression-connect*,-combined-stream2,-express:*,-connection-pool,-connect:*,-send,-body-parser:*,-compression,-finalhandler,-express*,-router,-router:*,-http-proxy-middleware";
     DEBUG_COLORS = "yes";
     MONGO_PERSISTENT_URL = "mongodb://127.0.0.1:3001/meteor";
+    TOOL_NODE_FLAGS = "";   # Meteor's node options
   };
 
   scripts.meteor-install.exec = ''
