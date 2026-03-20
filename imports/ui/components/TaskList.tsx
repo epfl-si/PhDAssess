@@ -4,7 +4,7 @@ import _ from "lodash"
 import {useTracker} from 'meteor/react-meteor-data'
 import {Tasks} from "/imports/model/tasks";
 import {WorkflowStarter} from './workflowStarter'
-import {Button, Loader} from "epfl-elements-react"
+import {Button, Loader, Dropdown} from "epfl-elements-react"
 import {Link, useNavigate} from "react-router"
 import {ParticipantsAsRow} from "/imports/ui/components/Participant/List";
 import toast from "react-hot-toast";
@@ -20,6 +20,31 @@ import {useAccountContext} from "/imports/ui/contexts/Account";
 import {TaskInfo} from "/imports/ui/components/Task/Info";
 
 
+export const TaskListGrouperFilterer = (
+  {
+    titles,
+    onChange,
+  } : {
+    titles: string[],
+    onChange: (title: string) => void,
+  }
+) => {
+  return <>
+    <Dropdown
+      label="Show >"
+      onChangeFn={ onChange }
+      options={
+        [{ active: true, option: 'All' }].concat(
+          titles.map((title) => (
+            { active: false, option: title }
+          ))
+        )
+      }
+    />
+  </>
+}
+
+
 export default function TaskList() {
   const account = useAccountContext()
 
@@ -32,6 +57,9 @@ export default function TaskList() {
 
   const tasks = useTracker(() => Tasks.find({}).fetch() as ITaskList[])
   const groupByTasks = _.groupBy(tasks, 'customHeaders.title')
+  const groups = Object.keys(groupByTasks)
+
+  const [groupFilter, setGroupFilter] = useState('All')
 
   if (!account || !account.isLoggedIn || !account.user) return (<Loader message={'Loading your data...'}/>)
 
@@ -43,24 +71,31 @@ export default function TaskList() {
         <Loader message={'Fetching tasks...'}/>
       ) : (
         <>
-          {tasks.length > 0 ?
-            Object.keys(groupByTasks).map((tasksGrouper: string) => (
-              <div
-                className={'tasksGrouper'}
-                key={ tasksGrouper }
-              >
-                <h3 className={'mt-5'}>{tasksGrouper}</h3>
-                {
-                  groupByTasks[tasksGrouper].map((task) =>
-                    <TaskRow
-                      key={ task._id }
-                      user={ account.user! }
-                      task={ task }
-                    />
-                  )
-                }
-              </div>
-            ))
+          { account.user.isAdmin && tasks.length > 0 &&
+            <TaskListGrouperFilterer titles={ groups } onChange={ setGroupFilter }/>
+          }
+          { tasks.length > 0 ?
+            groups.filter(
+              group => groupFilter === 'All' || groupFilter.includes(group)
+            ).map(
+              (group: string) => (
+                <div
+                  className={'tasksGrouper'}
+                  key={ group }
+                >
+                  <h3 className={'mt-5'}>{ group }</h3>
+                  {
+                    groupByTasks[group].map((task) =>
+                      <TaskRow
+                        key={ task._id }
+                        user={ account.user! }
+                        task={ task }
+                      />
+                    )
+                  }
+                </div>
+              )
+            )
             : (
               <p>There is currently no task waiting your input</p>
             )}
