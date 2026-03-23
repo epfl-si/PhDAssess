@@ -11,6 +11,7 @@ import {Tab, Tabs} from "react-bootstrap";
 import {ListTasks} from "/imports/ui/components/ProcessInstance/ListTasks";
 import {EditVariables} from "/imports/ui/components/ProcessInstance/UpdateVariables";
 import {EditParticipants} from "/imports/ui/components/ProcessInstance/EditParticipants";
+import {ProcessInstanceLogs} from "./ProcessInstanceLogs";
 
 
 export const Show = () => {
@@ -36,6 +37,11 @@ export const Show = () => {
     <Tabs>
       <Tab key='listJobs' eventKey='listJobs' title='Ongoing tasks'>
         <ListTasks tasks={ tasks }/>
+      </Tab>
+      <Tab key='logs' eventKey='listLogs' title='Logs'>
+        <div className={ 'mt-3' }>
+          <ProcessInstanceLogs processInstanceKey={ processInstanceKey }/>
+        </div>
       </Tab>
       <Tab key='editParticipants' eventKey='editParticipants' title='Change participants'>
         <div className={ 'mt-3' }>
