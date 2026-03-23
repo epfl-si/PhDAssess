@@ -21,8 +21,10 @@ let
 
   welcome = ''
     echo "🔥 You are in the PhDAssess dev environment 💻 ☄"
+    echo ""
     echo "It may be a good time to look into the PhDAssess.ops project and start the Zeebe quorum and his auxiliaries."
-    echo "Next: use the 'start' command to launch Meteor"
+    echo ""
+    echo "⏭️ use the 'start' command to launch Meteor"
   '';
 in
 {
