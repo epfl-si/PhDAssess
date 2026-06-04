@@ -7,7 +7,7 @@ This project uses devenv to provide a consistent local development environment.
 - Install devenv
 
 ## Daily workflow
-Run `devenv shell` and follow the indications. You can install direnv to automate this step.
+Run `devenv allow` and follow the indications.
 
 ## Secrets
 They are defined by the `secretspec.toml` and loaded directly from keybase when the devenv shell is loaded.

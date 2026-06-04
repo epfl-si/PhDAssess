@@ -1,38 +1,8 @@
 { pkgs, lib, config, inputs, ... }:
-
-let
-  isNixOS = config.env ? IS_NIXOS;
-
-  needed_packages = [
-    pkgs.nodejs_22
-    pkgs.openssl
-    pkgs.secretspec
-  ];
-
-  meteorFhs = pkgs.buildFHSEnv {
-    name = "meteor-fhs";
-    targetPkgs = pkgs: needed_packages;
-
-    runScript = pkgs.writeShellScript "meteor-fhs-run" ''
-      ${welcome}
-      exec bash
-    '';
-  };
-
-  welcome = ''
-    echo "🔥 You are in the PhDAssess dev environment 💻 ☄"
-    echo ""
-    echo "It may be a good time to look into the PhDAssess.ops project and start the Zeebe quorum and his auxiliaries."
-    echo ""
-    echo "⏭️ use the 'start' command to launch Meteor"
-  '';
-in
 {
-  packages =
-    if isNixOS then
-      [ meteorFhs ]
-    else
-      needed_packages;
+  packages = [
+    pkgs.meteor
+  ];
 
   dotenv.enable = true;
 
@@ -62,16 +32,24 @@ in
     DEBUG_COLORS = "yes";
     MONGO_PERSISTENT_URL = "mongodb://127.0.0.1:3001/meteor";
     TOOL_NODE_FLAGS = "";   # Meteor's node options
-  };
+    PHDASSESS_DESACTIVATE_ZEEBE = "false";
 
-  scripts.meteor-install.exec = ''
-    if ! command -v meteor >/dev/null; then
-      echo "Installing Meteor..."
-      curl https://install.meteor.com/ | sh
-    else
-      echo "Meteor is already installed"
-    fi
-  '';
+    # Secrets
+    AUTH_ENTRA_TENANT_ID = config.secretspec.secrets.AUTH_ENTRA_TENANT_ID or "";
+    AUTH_ENTRA_CLIENT_ID = config.secretspec.secrets.AUTH_ENTRA_CLIENT_ID or "";
+    AUTH_ENTRA_SECRET = config.secretspec.secrets.AUTH_ENTRA_SECRET or "";
+
+    PHDASSESS_ENCRYPTION_KEY = config.secretspec.secrets.PHDASSESS_ENCRYPTION_KEY or "";
+
+    WEBSRV_PASSWORD = config.secretspec.secrets.WEBSRV_PASSWORD or "";
+
+    ALFRESCO_URL = config.secretspec.secrets.ALFRESCO_URL or "";
+    ALFRESCO_USERNAME = config.secretspec.secrets.ALFRESCO_USERNAME or "";
+    ALFRESCO_PASSWORD = config.secretspec.secrets.ALFRESCO_PASSWORD or "";
+
+    API_EPFL_CH_TOKEN = config.secretspec.secrets.API_EPFL_CH_TOKEN or "";
+
+  };
 
   scripts.check-and-stop-if-missing-proto.exec = ''
     echo "Checking for required proto file 🔬..."
@@ -90,11 +68,7 @@ in
   '';
 
   scripts.start.exec = ''
-    if ! command -v meteor >/dev/null; then
-      echo "First install Meteor first with meteor-install"
-    else
-      meteor npm start
-    fi
+    meteor --settings=settings.json
   '';
 
   enterShell = ''
@@ -104,17 +78,10 @@ in
     echo "👉  Project: epfl-si/PhDAssess"
     echo "📌  Running devenv shell…"
     echo ""
-    export PATH="$HOME/.meteor:$PATH"
 
     check-and-stop-if-missing-proto
 
-    ${lib.optionalString isNixOS ''
-      echo "❄️ 🔥️ Entering Meteor FHS dev environment for NixOs... ❄️"
-      exec meteor-fhs
-    ''}
-
-    ${lib.optionalString (!isNixOS) ''
-      ${welcome}
-    ''}
+    echo ""
+    echo "Use 'start' to serve the web app."
   '';
 }
