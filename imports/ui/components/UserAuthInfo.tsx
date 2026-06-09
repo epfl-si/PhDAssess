@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react'
+import { Link } from "react-router";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser, faUserGear } from '@fortawesome/free-solid-svg-icons'
 
@@ -59,6 +60,9 @@ export const UserAuthInfo = () => {
         <div id={'application-version'} className={'small'}>
           { packageJson.version }
         </div>
+        }
+        { account.user.isAdmin &&
+          <Link to={`/admin/notice`}>Set a notice</Link>
         }
       </div>
     </div>

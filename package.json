@@ -1,6 +1,6 @@
 {
   "name": "phd-assess",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "private": true,
   "scripts": {
     "start": "export $(grep -v '^#' .node-env | xargs) && secretspec run --provider dotenv:/keybase/team/epfl_phdassess/dev/secretspec.env -- meteor --settings settings.json",
@@ -39,6 +39,7 @@
     "csstype": "^3",
     "dayjs": "^1",
     "debug": "^4",
+    "dompurify": "^3.4.7",
     "dotenv": "^17",
     "epfl-elements-react": "^2",
     "find-up-simple": "^1",

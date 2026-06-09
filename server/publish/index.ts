@@ -1,6 +1,7 @@
 import './dashboard'
 import './doctoralSchools'
 import './importScipers'
+import './maintenance'
 import './processInstances'
 import './reminders'
 import './tasks'

@@ -9,6 +9,7 @@ import {PhDBreadcrumb} from "/imports/ui/components/Breadcrumb";
 import {AsideMenu} from "/imports/ui/components/AsideMenu";
 import {ConnectionStatusFooter} from "/imports/ui/components/ConnectionStatus";
 import {useAccountContext} from "/imports/ui/contexts/Account";
+import {MaintenanceInfo} from "./components/Maintenance";
 
 
 /**
@@ -52,6 +53,7 @@ export default function Main() {
           { Meteor.settings.public.isTest &&
             <div className={'alert alert-info'} role={'alert'}><strong>Testing</strong> You are on the testing environment.</div>
           }
+          <MaintenanceInfo/>
           { error ?
             <div id="error-page">
               <h2>Oops!</h2>
