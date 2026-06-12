@@ -51,7 +51,7 @@ const enhanceThesisCoDirectors = async (doctorants: DoctorantInfoSelectable[]) =
         if ("email" in doctorant.thesis.coDirecteur && doctorant.thesis.coDirecteur.email) {
           // case : email is not the one we have in our db
           try {
-            // check that the provided epfl email is still up-to-date with the websrv db
+            // check that the provided epfl email is still up to date with ID provider
             if (doctorant.thesis.coDirecteur.email.includes('@epfl.ch')) {
               doctorants[index].needCoDirectorData = !(await verifyEmailFromSciper(doctorant.thesis.coDirecteur.email, doctorant.thesis.coDirecteur.sciper))
             } else {

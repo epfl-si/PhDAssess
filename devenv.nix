@@ -41,8 +41,6 @@
 
     PHDASSESS_ENCRYPTION_KEY = config.secretspec.secrets.PHDASSESS_ENCRYPTION_KEY or "";
 
-    WEBSRV_PASSWORD = config.secretspec.secrets.WEBSRV_PASSWORD or "";
-
     ALFRESCO_URL = config.secretspec.secrets.ALFRESCO_URL or "";
     ALFRESCO_USERNAME = config.secretspec.secrets.ALFRESCO_USERNAME or "";
     ALFRESCO_PASSWORD = config.secretspec.secrets.ALFRESCO_PASSWORD or "";
