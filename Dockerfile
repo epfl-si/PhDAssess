@@ -1,6 +1,6 @@
 ## Setup a meteor image in production mode
 #
-ARG BASE_IMAGE=node:22-trixie
+ARG BASE_IMAGE=node:24-trixie
 
 FROM $BASE_IMAGE AS build
 

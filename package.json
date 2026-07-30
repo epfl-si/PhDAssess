@@ -1,6 +1,6 @@
 {
   "name": "phd-assess",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "private": true,
   "scripts": {
     "start": "export $(grep -v '^#' .node-env | xargs) && secretspec run --provider dotenv:/keybase/team/epfl_phdassess/dev/secretspec.env -- meteor --settings settings.json",
@@ -13,7 +13,7 @@
   },
   "engineStrict": true,
   "engines": {
-    "node": "22"
+    "node": "24"
   },
   "//_dependencies": [
     "The formiojs lib version is fixed for a reason: the calendar widget behave differently with the input provided to the custom validate function, ",
