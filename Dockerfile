@@ -14,7 +14,7 @@ COPY . /usr/src/app
 WORKDIR /usr/src/app
 RUN meteor npm install
 
-RUN set -e -x; mkdir /app; meteor build --directory /app; \
+RUN set -e -x; mkdir /app; meteor build --directory /app --server-only; \
     cd /app/bundle/programs/server ; meteor npm install --production
 
 FROM $BASE_IMAGE
