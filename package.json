@@ -31,6 +31,7 @@
     "@fortawesome/free-regular-svg-icons": "^6",
     "@fortawesome/free-solid-svg-icons": "^6",
     "@fortawesome/react-fontawesome": "^0",
+    "@meteorjs/rspack": "^2.0.1",
     "@popperjs/core": "^2",
     "@swc/helpers": "^0.5.17",
     "@tinymce/tinymce-react": "^6",
@@ -66,7 +67,6 @@
     "zeebe-node": "^8.3.2"
   },
   "devDependencies": {
-    "@meteorjs/rspack": "^2.0.1",
     "@rsdoctor/rspack-plugin": "^1.5.7",
     "@rspack/cli": "^1.7.1",
     "@rspack/core": "^1.7.1",
