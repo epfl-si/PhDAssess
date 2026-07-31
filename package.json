@@ -1,6 +1,6 @@
 {
   "name": "phd-assess",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "private": true,
   "scripts": {
     "start": "export $(grep -v '^#' .node-env | xargs) && secretspec run --provider dotenv:/keybase/team/epfl_phdassess/dev/secretspec.env -- meteor --settings settings.json",
@@ -13,7 +13,7 @@
   },
   "engineStrict": true,
   "engines": {
-    "node": "22"
+    "node": "24"
   },
   "//_dependencies": [
     "The formiojs lib version is fixed for a reason: the calendar widget behave differently with the input provided to the custom validate function, ",
@@ -31,6 +31,7 @@
     "@fortawesome/free-regular-svg-icons": "^6",
     "@fortawesome/free-solid-svg-icons": "^6",
     "@fortawesome/react-fontawesome": "^0",
+    "@meteorjs/rspack": "^2.0.1",
     "@popperjs/core": "^2",
     "@swc/helpers": "^0.5.17",
     "@tinymce/tinymce-react": "^6",
@@ -66,7 +67,6 @@
     "zeebe-node": "^8.3.2"
   },
   "devDependencies": {
-    "@meteorjs/rspack": "^2.0.1",
     "@rsdoctor/rspack-plugin": "^1.5.7",
     "@rspack/cli": "^1.7.1",
     "@rspack/core": "^1.7.1",
