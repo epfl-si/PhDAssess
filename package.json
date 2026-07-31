@@ -1,6 +1,6 @@
 {
   "name": "phd-assess",
-  "version": "2.5.0",
+  "version": "2.5.1",
   "private": true,
   "scripts": {
     "start": "export $(grep -v '^#' .node-env | xargs) && secretspec run --provider dotenv:/keybase/team/epfl_phdassess/dev/secretspec.env -- meteor --settings settings.json",
