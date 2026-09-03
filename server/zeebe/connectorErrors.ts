@@ -25,4 +25,12 @@ export const isErrorFromMongoAndRetryable = (error: unknown) => {
     error instanceof mongodb.MongoNetworkError) {
     return true
   }
+
+  // the network to mongo can be cut
+  if (
+    error instanceof Error &&
+    (error as NodeJS.ErrnoException).code === "ECONNRESET"
+  ) {
+    return true;
+  }
 };
